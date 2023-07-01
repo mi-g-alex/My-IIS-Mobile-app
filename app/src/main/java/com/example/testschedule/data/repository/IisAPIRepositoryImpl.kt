@@ -4,6 +4,8 @@ import com.example.testschedule.data.remote.IisAPI
 import com.example.testschedule.data.remote.dto.ScheduleDto
 import com.example.testschedule.data.remote.dto.ScheduleEmployeeItemDto
 import com.example.testschedule.data.remote.dto.ScheduleGroupItemDto
+import com.example.testschedule.domain.modal.schedule.ScheduleModel
+import com.example.testschedule.domain.modal.schedule.scheduleFromDtoToModel
 import com.example.testschedule.domain.repository.IisAPIRepository
 import javax.inject.Inject
 
@@ -18,11 +20,11 @@ class IisAPIRepositoryImpl @Inject constructor(
         return api.getListOfEmployees()
     }
 
-    override suspend fun getSchedule(id: String): ScheduleDto {
+    override suspend fun getSchedule(id: String): ScheduleModel {
         return if(id[0] in '0'..'9') {
-            api.getGroupSchedule(id)
+            scheduleFromDtoToModel(api.getGroupSchedule(id))
         } else {
-            api.getEmployeeSchedule(id)
+            scheduleFromDtoToModel(api.getEmployeeSchedule(id))
         }
     }
 

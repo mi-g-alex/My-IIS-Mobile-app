@@ -9,8 +9,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.ViewScheduleScreen
 
 object Routes {
-    const val SCHEDULE_ROUTE = "SCHEDULE_HOME_ROUTE"
-    const val SCHEDULE_HOME_ROUTE = "SCHEDULE_HOME_ROUTE/{id}"
+    const val SCHEDULE_ROUTE = "SCHEDULE_ROUTE"
+    const val SCHEDULE_HOME_ROUTE = "SCHEDULE_HOME_ROUTE"
     const val SCHEDULE_EDIT_LIST_ROUTE = "SCHEDULE_EDIT_LIST_ROUTE"
 }
 

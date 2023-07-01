@@ -2,6 +2,8 @@ package com.example.testschedule.presentation.schedule_screen.view_schedule_scre
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,11 +38,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
+import com.example.testschedule.domain.modal.schedule.ScheduleModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun ViewScheduleScreen() {
+fun ViewScheduleScreen(
+    viewModel: ViewScheduleViewModel = hiltViewModel()
+) {
     val cnt = LocalContext.current
 
     val bottomSheetState = rememberModalBottomSheetState(
@@ -51,6 +57,7 @@ fun ViewScheduleScreen() {
 
     val scope = rememberCoroutineScope()
 
+    val vm = viewModel.state.value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -61,12 +68,25 @@ fun ViewScheduleScreen() {
                 { showToast(cnt, "ActionButton", Toast.LENGTH_LONG) })
         },
     ) { pv ->
-        Text(
-            text = "WellCome",
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(pv)
-        )
+        if (vm.schedule != null) {
+            ShowSchedule(vm.schedule, Modifier.padding(pv))
+        }
+
+        if (vm.isLoading) {
+            Text(
+                "Loading",
+                modifier = Modifier.padding(pv)
+            )
+        }
+
+        if (!vm.error.isNullOrBlank()) {
+            Text(
+                vm.error.toString(),
+                modifier = Modifier.padding(pv)
+            )
+        }
+
+
         if (showBottomSheet) {
             BottomSheet(
                 sheetState = bottomSheetState,
@@ -81,6 +101,107 @@ fun ViewScheduleScreen() {
                 onEditButtonClicked = { showToast(cnt, "Edit", Toast.LENGTH_SHORT) },
                 selectScheduleClicked = { id -> showToast(cnt, "Selected $id", Toast.LENGTH_SHORT) }
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ShowSchedule(it : ScheduleModel, modifier: Modifier) {
+    LazyColumn(modifier = modifier) {
+        for(i in 1..it.schedules.size) {
+            val week = it.schedules[i - 1]
+            stickyHeader {
+                Text(
+                    text = "Понедельник Неделя $i",
+                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            week.monday.forEach{lesson ->
+                item {
+                    Text(
+                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
+                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                    )
+                }
+            }
+            stickyHeader {
+                Text(
+                    text = "Вторник Неделя $i",
+                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            week.tuesday.forEach{lesson ->
+                item {
+                    Text(
+                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
+                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                    )
+                }
+            }
+            stickyHeader {
+                Text(
+                    text = "Среда Неделя $i",
+                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            week.wednesday.forEach{lesson ->
+                item {
+                    Text(
+                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
+                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                    )
+                }
+            }
+            stickyHeader {
+                Text(
+                    text = "Четверг Неделя $i",
+                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            week.thursday.forEach{lesson ->
+                item {
+                    Text(
+                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
+                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                    )
+                }
+            }
+            stickyHeader {
+                Text(
+                    text = "Пятница Неделя $i",
+                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            week.friday.forEach{lesson ->
+                item {
+                    Text(
+                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
+                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                    )
+                }
+            }
+            stickyHeader {
+                Text(
+                    text = "Суббота Неделя $i",
+                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+            week.saturday.forEach{lesson ->
+                item {
+                    Text(
+                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
+                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                    )
+                }
+            }
+
         }
     }
 }
