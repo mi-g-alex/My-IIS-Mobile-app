@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -63,7 +64,7 @@ fun ViewScheduleScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             MyTopAppBar(
-                "253501",
+                titleText = vm.schedule?.title ?: "",
                 { showBottomSheet = true },
                 { showToast(cnt, "ActionButton", Toast.LENGTH_LONG) })
         },
@@ -73,16 +74,18 @@ fun ViewScheduleScreen(
         }
 
         if (vm.isLoading) {
-            Text(
-                "Loading",
-                modifier = Modifier.padding(pv)
+            LinearProgressIndicator(
+                modifier = Modifier.padding(pv).fillMaxWidth(
+
+                )
             )
         }
 
         if (!vm.error.isNullOrBlank()) {
             Text(
                 vm.error.toString(),
-                modifier = Modifier.padding(pv)
+                modifier = Modifier
+                    .padding(pv)
             )
         }
 
@@ -107,97 +110,127 @@ fun ViewScheduleScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShowSchedule(it : ScheduleModel, modifier: Modifier) {
+fun ShowSchedule(it: ScheduleModel, modifier: Modifier) {
     LazyColumn(modifier = modifier) {
-        for(i in 1..it.schedules.size) {
+        for (i in 1..it.schedules.size) {
             val week = it.schedules[i - 1]
             stickyHeader {
                 Text(
                     text = "Понедельник Неделя $i",
-                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(8.dp),
                     style = MaterialTheme.typography.titleLarge
                 )
             }
-            week.monday.forEach{lesson ->
+            week.monday.forEach { lesson ->
                 item {
                     Text(
                         text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
                     )
                 }
             }
             stickyHeader {
                 Text(
                     text = "Вторник Неделя $i",
-                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(8.dp),
                     style = MaterialTheme.typography.titleLarge
                 )
             }
-            week.tuesday.forEach{lesson ->
+            week.tuesday.forEach { lesson ->
                 item {
                     Text(
                         text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
                     )
                 }
             }
             stickyHeader {
                 Text(
                     text = "Среда Неделя $i",
-                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(8.dp),
                     style = MaterialTheme.typography.titleLarge
                 )
             }
-            week.wednesday.forEach{lesson ->
+            week.wednesday.forEach { lesson ->
                 item {
                     Text(
                         text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
                     )
                 }
             }
             stickyHeader {
                 Text(
                     text = "Четверг Неделя $i",
-                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(8.dp),
                     style = MaterialTheme.typography.titleLarge
                 )
             }
-            week.thursday.forEach{lesson ->
+            week.thursday.forEach { lesson ->
                 item {
                     Text(
                         text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
                     )
                 }
             }
             stickyHeader {
                 Text(
                     text = "Пятница Неделя $i",
-                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(8.dp),
                     style = MaterialTheme.typography.titleLarge
                 )
             }
-            week.friday.forEach{lesson ->
+            week.friday.forEach { lesson ->
                 item {
                     Text(
                         text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
                     )
                 }
             }
             stickyHeader {
                 Text(
                     text = "Суббота Неделя $i",
-                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background).padding(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(8.dp),
                     style = MaterialTheme.typography.titleLarge
                 )
             }
-            week.saturday.forEach{lesson ->
+            week.saturday.forEach { lesson ->
                 item {
                     Text(
                         text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
                     )
                 }
             }

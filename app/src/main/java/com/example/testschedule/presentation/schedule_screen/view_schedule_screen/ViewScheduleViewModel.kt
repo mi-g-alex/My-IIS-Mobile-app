@@ -5,6 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.data.local.UserDataBase
+import com.example.testschedule.data.local.entity.ScheduleEntity
+import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.schedule.get_schedule.GetScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -13,25 +16,30 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ViewScheduleViewModel @Inject constructor(
-    private val getScheduleUseCase: GetScheduleUseCase
+    private val getScheduleUseCase: GetScheduleUseCase,
+    private val db: UserDatabaseRepository
 ) : ViewModel() {
 
     private val _state = mutableStateOf(ViewScheduleState())
     val state: State<ViewScheduleState> = _state
 
     init {
-        getSchedule()
+        getSchedule("e-strojnikova")
     }
 
-    fun getSchedule() {
-        getScheduleUseCase("253501").onEach { result ->
+    fun getSchedule(id: String) {
+        getScheduleUseCase(id = id).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = ViewScheduleState(schedule = result.data)
+                    result.data?.let {
+                        db.setSchedule(it)
+                    }
                 }
 
                 is Resource.Loading -> {
-                    _state.value = ViewScheduleState(isLoading = true)
+                    val a = db.getSchedule(id)
+                    _state.value = ViewScheduleState(isLoading = true, schedule = a)
                 }
 
                 is Resource.Error -> {

@@ -1,9 +1,17 @@
 package com.example.testschedule.di
 
+import android.app.Application
+import androidx.room.Room
 import com.example.testschedule.common.Constants
+import com.example.testschedule.data.local.Converters
+import com.example.testschedule.data.local.UserDataBase
 import com.example.testschedule.data.remote.IisAPI
 import com.example.testschedule.data.repository.IisAPIRepositoryImpl
+import com.example.testschedule.data.repository.UserDatabaseRepositoryImpl
+import com.example.testschedule.data.util.GsonParser
 import com.example.testschedule.domain.repository.IisAPIRepository
+import com.example.testschedule.domain.repository.UserDatabaseRepository
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,6 +47,23 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideIisAPIRepository(api: IisAPI) : IisAPIRepository = IisAPIRepositoryImpl(api)
+    fun provideIisAPIRepository(api: IisAPI): IisAPIRepository = IisAPIRepositoryImpl(api)
+
+
+    @Provides
+    @Singleton
+    fun provideUserDatabase(app: Application): UserDataBase =
+        Room.databaseBuilder(
+            app,
+            UserDataBase::class.java,
+            UserDataBase.DATABASE_NAME
+        )
+            .addTypeConverter(Converters(GsonParser(Gson())))
+            .build()
+
+
+    @Provides
+    @Singleton
+    fun provideUserDataBaseRepository(db : UserDataBase) : UserDatabaseRepository = UserDatabaseRepositoryImpl(db.userDao)
 
 }

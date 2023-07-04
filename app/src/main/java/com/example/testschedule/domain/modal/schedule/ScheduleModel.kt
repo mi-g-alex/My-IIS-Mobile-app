@@ -5,7 +5,9 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 data class ScheduleModel(
-    val isGroupSchedule: Boolean,
+    val id: String, // Тут ID как номер группы или urlId
+    val title: String, // Что будет в шапке
+    val isGroupSchedule: Boolean, // Группа да или нет
     val startLessonsDate: Long?, // Дата начала занятий в этой группе в формате dd.MM.yyyy
     val endLessonsDate: Long?, // Дата окончания занятий в этой группе
     val startExamsDate: Long?, // Дата начала экзаменов в этой группе
@@ -23,7 +25,7 @@ data class ScheduleModel(
         val photoLink: String?, // https://iis.bsuir.by/api/v1/employees/photo/501822 (ля какой)
         val degree: String?, // кандидат технических наук и т.п.
         val degreeAbbrev: String?, // кратко? к.т.н.
-        val rank: String?, // доцент и т.п.
+        val rank: String?, // доцент и т.п.h
         val urlId: String, // s-nesterenkov
     )
 
@@ -207,8 +209,20 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
     val schedules = listOfWeeks.map { it.toWeekList() }
 
     val exams = schedule.exams?.map { convertDay(it) }
+    val empFio = if (schedule.employeeDto != null) {
+        schedule.employeeDto.lastName + " " + schedule.employeeDto.firstName[0] + "." + if (schedule.employeeDto.middleName != null) {
+            " " + schedule.employeeDto.middleName[0] + "."
+        } else {
+            ""
+        }
+    } else {
+        ""
+    }
 
     return ScheduleModel(
+        id = if (isGroupSchedule) schedule.studentGroupDto?.name
+            ?: "" else schedule.employeeDto?.urlId ?: "",
+        title = if (isGroupSchedule) schedule.studentGroupDto?.name ?: "" else empFio,
         isGroupSchedule = isGroupSchedule,
         startLessonsDate = startLessonsDate,
         endLessonsDate = endLessonsDate,
@@ -237,8 +251,8 @@ fun timeToInt(time: String): Int {
 }
 
 fun convertDay(
-    day :  ScheduleDto.SchedulesDto.SchedulesItemDto
-) : ScheduleModel.WeeksSchedule.Lesson {
+    day: ScheduleDto.SchedulesDto.SchedulesItemDto
+): ScheduleModel.WeeksSchedule.Lesson {
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
 
     val startLessonTime = timeToInt(day.startLessonTime)

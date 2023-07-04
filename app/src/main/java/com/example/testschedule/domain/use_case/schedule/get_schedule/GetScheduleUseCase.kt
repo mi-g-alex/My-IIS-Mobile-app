@@ -12,11 +12,11 @@ import javax.inject.Inject
 class GetScheduleUseCase @Inject constructor(
     private val rep: IisAPIRepository
 ) {
-    operator fun invoke(id: String) : Flow<Resource<ScheduleModel>> = flow {
+    operator fun invoke(id: String): Flow<Resource<ScheduleModel>> = flow {
         try {
             emit(Resource.Loading())
-            val schedule = rep.getSchedule(id)
-            emit(Resource.Success(schedule))
+             val schedule = rep.getSchedule(id)
+             emit(Resource.Success(schedule))
         } catch (e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "ERROR"))
         } catch (e: IOException) {
