@@ -5,8 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
-import com.example.testschedule.data.local.UserDataBase
-import com.example.testschedule.data.local.entity.ScheduleEntity
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.schedule.get_schedule.GetScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,18 +21,14 @@ class ViewScheduleViewModel @Inject constructor(
     private val _state = mutableStateOf(ViewScheduleState())
     val state: State<ViewScheduleState> = _state
 
-    init {
-        getSchedule("e-strojnikova")
-    }
-
     fun getSchedule(id: String) {
         getScheduleUseCase(id = id).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = ViewScheduleState(schedule = result.data)
-                    result.data?.let {
+                    /*result.data?.let {
                         db.setSchedule(it)
-                    }
+                    }*/
                 }
 
                 is Resource.Loading -> {

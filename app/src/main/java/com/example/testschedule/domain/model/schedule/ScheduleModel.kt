@@ -1,6 +1,6 @@
-package com.example.testschedule.domain.modal.schedule
+package com.example.testschedule.domain.model.schedule
 
-import com.example.testschedule.data.remote.dto.ScheduleDto
+import com.example.testschedule.data.remote.dto.schedule_view.ScheduleDto
 import java.text.SimpleDateFormat
 import java.util.Locale
 

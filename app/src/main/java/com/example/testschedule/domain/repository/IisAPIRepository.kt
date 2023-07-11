@@ -1,18 +1,15 @@
 package com.example.testschedule.domain.repository
 
-import com.example.testschedule.data.remote.dto.ScheduleDto
-import com.example.testschedule.data.remote.dto.ScheduleEmployeeItemDto
-import com.example.testschedule.data.remote.dto.ScheduleGroupItemDto
-import com.example.testschedule.domain.modal.schedule.ScheduleModel
-import retrofit2.http.Path
-import retrofit2.http.Query
+import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
+import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
+import com.example.testschedule.domain.model.schedule.ScheduleModel
 
 interface IisAPIRepository {
 
-    suspend fun getListOfGroups() : List<ScheduleGroupItemDto>
+    suspend fun getListOfGroups(): List<ListOfGroupsModel>
 
-    suspend fun getListOfEmployees() : List<ScheduleEmployeeItemDto>
+    suspend fun getListOfEmployees(): List<ListOfEmployeesModel>
 
-    suspend fun getSchedule(id : String) : ScheduleModel
+    suspend fun getSchedule(id: String): ScheduleModel
 
 }

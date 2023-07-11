@@ -1,0 +1,12 @@
+package com.example.testschedule.domain.model.schedule
+
+data class ListOfEmployeesModel(
+    val academicDepartment: List<String>, // ["каф. фиб"]
+    val fio: String, // Абрамов И. И. (профессор)
+    val firstName: String, // Игорь
+    val lastName: String, // Абрамов
+    val middleName: String?, // Иванович
+    val photoLink: String?, // https://iis.bsuir.by/api/v1/employees/photo/500434
+    val rank: String?, // профессор
+    val urlId: String // i-abramov
+)

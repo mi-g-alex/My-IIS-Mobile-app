@@ -3,7 +3,7 @@ package com.example.testschedule.data.local
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.example.testschedule.data.util.JsonParser
-import com.example.testschedule.domain.modal.schedule.ScheduleModel
+import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.google.gson.reflect.TypeToken
 
 @ProvidedTypeConverter

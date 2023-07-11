@@ -2,7 +2,7 @@ package com.example.testschedule.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.testschedule.domain.modal.schedule.ScheduleModel
+import com.example.testschedule.domain.model.schedule.ScheduleModel
 
 @Entity
 data class ScheduleEntity(

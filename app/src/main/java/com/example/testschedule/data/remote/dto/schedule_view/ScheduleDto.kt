@@ -1,4 +1,4 @@
-package com.example.testschedule.data.remote.dto
+package com.example.testschedule.data.remote.dto.schedule_view
 
 import com.google.gson.annotations.SerializedName
 

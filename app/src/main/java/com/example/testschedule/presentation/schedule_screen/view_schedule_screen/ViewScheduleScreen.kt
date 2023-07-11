@@ -4,12 +4,10 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -28,12 +26,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -41,13 +39,26 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
-import com.example.testschedule.domain.modal.schedule.ScheduleModel
+import com.example.testschedule.domain.model.schedule.ScheduleModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun ViewScheduleScreen(
+    scheduleId: String? = null,
+    titleLink: String? = null,
+    goToAddSchedule: () -> Unit,
     viewModel: ViewScheduleViewModel = hiltViewModel()
 ) {
+    var title = titleLink ?: "253501"
+    LaunchedEffect(null) {
+        if (scheduleId != null)
+            viewModel.getSchedule(scheduleId)
+        else {
+            viewModel.getSchedule("253501")
+            title = "253501"
+        }
+    }
+
     val cnt = LocalContext.current
 
     val bottomSheetState = rememberModalBottomSheetState(
@@ -64,7 +75,7 @@ fun ViewScheduleScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             MyTopAppBar(
-                titleText = vm.schedule?.title ?: "",
+                titleText = vm.schedule?.title ?: title,
                 { showBottomSheet = true },
                 { showToast(cnt, "ActionButton", Toast.LENGTH_LONG) })
         },
@@ -75,9 +86,11 @@ fun ViewScheduleScreen(
 
         if (vm.isLoading) {
             LinearProgressIndicator(
-                modifier = Modifier.padding(pv).fillMaxWidth(
+                modifier = Modifier
+                    .padding(pv)
+                    .fillMaxWidth(
 
-                )
+                    )
             )
         }
 
@@ -101,7 +114,7 @@ fun ViewScheduleScreen(
                         }
                     }
                 },
-                onEditButtonClicked = { showToast(cnt, "Edit", Toast.LENGTH_SHORT) },
+                onEditButtonClicked = { goToAddSchedule() },
                 selectScheduleClicked = { id -> showToast(cnt, "Selected $id", Toast.LENGTH_SHORT) }
             )
         }

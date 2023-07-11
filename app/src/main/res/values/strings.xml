@@ -3,4 +3,7 @@
     <string name="open_list_of_saved_schedule_desc">Открыть список сохраненных расписаний</string>
     <string name="bottom_sheet_title">Выберите расписание</string>
     <string name="bottom_sheet_edit_btn_desc">Изменить сохраненные расписания</string>
+    <string name="search_schedule_hint">Номер группы или фамилия</string>
+    <string name="add_schedule_group_title">Группы</string>
+    <string name="add_schedule_staff_title">Преподаватели</string>
 </resources>
