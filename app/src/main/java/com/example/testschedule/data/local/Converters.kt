@@ -67,4 +67,19 @@ class Converters(
             json,
             object : TypeToken<ArrayList<ScheduleModel.WeeksSchedule.Lesson>>() {}.type
         )
+
+    @TypeConverter
+    fun listOfStringToJson(meaning: List<String>?): String =
+        jsonParser.toJson(
+            meaning,
+            object : TypeToken<ArrayList<String>>() {}.type
+        ) ?: ""
+
+    @TypeConverter
+    fun listOfStringFromJson(json: String): List<String>? =
+        jsonParser.fromJson<ArrayList<String>>(
+            json,
+            object : TypeToken<ArrayList<String>>() {}.type
+        )
+
 }

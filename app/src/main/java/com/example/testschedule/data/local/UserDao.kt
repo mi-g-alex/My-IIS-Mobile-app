@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.testschedule.data.local.entity.ListOfEmployeesEntity
+import com.example.testschedule.data.local.entity.ListOfGroupsEntity
 import com.example.testschedule.data.local.entity.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.ScheduleEntity
 import com.example.testschedule.domain.model.schedule.ScheduleModel
@@ -29,6 +31,28 @@ interface UserDao {
 
     @Query("DELETE FROM ListOfSavedEntity WHERE id = :id")
     suspend fun deleteFromScheduleList(id: String)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllGroupsList(group: ListOfGroupsEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllEmployeesList(employee: ListOfEmployeesEntity)
+
+    @Query("SELECT * FROM ListOfGroupsEntity")
+    suspend fun getAllGroupsList(): List<ListOfGroupsEntity>
+
+    @Query("SELECT * FROM ListOfEmployeesEntity")
+    suspend fun getAllEmployeesList(): List<ListOfEmployeesEntity>
+
+    @Query("DELETE FROM ListOfGroupsEntity")
+    suspend fun deleteAllGroupsList()
+
+    @Query("DELETE FROM ListOfEmployeesEntity")
+    suspend fun deleteAllEmployeesList()
+
+
+
+
 
 
 }
