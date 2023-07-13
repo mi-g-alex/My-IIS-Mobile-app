@@ -44,22 +44,27 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         dao.addNewSavedScheduleToList(model)
     }
 
-    override suspend fun deleteFromScheduleList(id: String) {
-        dao.deleteSchedule(id)
+    override suspend fun deleteFromSavedScheduleList(id: String) {
+        dao.deleteFromSavedScheduleList(id)
     }
 
     override suspend fun insertAllGroupsList(groups: List<ListOfGroupsModel>) {
         groups.forEach {
             dao.insertAllGroupsList(it.toEntity())
         }
-
     }
+
+    override suspend fun getGroupById(name: String): ListOfGroupsModel =
+        dao.getGroupById(name).toModel()
 
     override suspend fun insertAllEmployeesList(employees: List<ListOfEmployeesModel>) {
         employees.forEach {
             dao.insertAllEmployeesList(it.toEntity())
         }
     }
+
+    override suspend fun getEmployeeById(id: String): ListOfEmployeesModel =
+        dao.getEmployeeById(id).toModel()
 
     override suspend fun getAllGroupsList(): List<ListOfGroupsModel> {
         return dao.getAllGroupsList().map { it.toModel() }

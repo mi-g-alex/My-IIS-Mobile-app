@@ -22,7 +22,6 @@ interface UserDao {
     @Query("DELETE FROM ScheduleEntity WHERE id = :id")
     suspend fun deleteSchedule(id: String)
 
-
     @Query("SELECT * FROM ListOfSavedEntity")
     suspend fun getAllSavedScheduleList(): List<ListOfSavedEntity>
 
@@ -30,13 +29,19 @@ interface UserDao {
     suspend fun addNewSavedScheduleToList(model: ListOfSavedEntity)
 
     @Query("DELETE FROM ListOfSavedEntity WHERE id = :id")
-    suspend fun deleteFromScheduleList(id: String)
+    suspend fun deleteFromSavedScheduleList(id: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllGroupsList(group: ListOfGroupsEntity)
 
+    @Query("SELECT * FROM ListOfGroupsEntity WHERE name= :name")
+    suspend fun getGroupById(name: String) : ListOfGroupsEntity
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllEmployeesList(employee: ListOfEmployeesEntity)
+
+    @Query("SELECT * FROM ListOfEmployeesEntity WHERE urlId= :id")
+    suspend fun getEmployeeById(id: String) : ListOfEmployeesEntity
 
     @Query("SELECT * FROM ListOfGroupsEntity")
     suspend fun getAllGroupsList(): List<ListOfGroupsEntity>
@@ -49,10 +54,6 @@ interface UserDao {
 
     @Query("DELETE FROM ListOfEmployeesEntity")
     suspend fun deleteAllEmployeesList()
-
-
-
-
 
 
 }

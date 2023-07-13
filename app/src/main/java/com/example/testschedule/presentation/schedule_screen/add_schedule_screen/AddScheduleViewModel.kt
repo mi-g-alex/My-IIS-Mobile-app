@@ -1,10 +1,12 @@
 package com.example.testschedule.presentation.schedule_screen.add_schedule_screen
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.data.local.entity.ListOfSavedEntity
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
@@ -26,14 +28,18 @@ class AddScheduleViewModel @Inject constructor(
     private val _state = mutableStateOf(AddScheduleState())
     val state: State<AddScheduleState> = _state
 
-    var groups: List<ListOfGroupsModel>? = listOf()
-    var employees: List<ListOfEmployeesModel>? = listOf()
+    var groups: MutableState<List<ListOfGroupsModel>?> = mutableStateOf(listOf())
+    var employees: MutableState<List<ListOfEmployeesModel>?> = mutableStateOf(listOf())
+    var savedSchedule: MutableState<List<ListOfSavedEntity>?> = mutableStateOf(listOf())
+    var savedGroups: MutableState<List<ListOfGroupsModel>> = mutableStateOf(listOf())
+    var savedEmployees: MutableState<List<ListOfEmployeesModel>> = mutableStateOf(listOf())
 
     init {
         getLists()
+        getSaved()
         viewModelScope.launch {
-            groups = db.getAllGroupsList()
-            employees = db.getAllEmployeesList()
+            groups.value = db.getAllGroupsList()
+            employees.value = db.getAllEmployeesList()
         }
     }
 
@@ -43,11 +49,11 @@ class AddScheduleViewModel @Inject constructor(
         getListOfGroupsUseCase().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    groupsTmp = result.data?.sortedBy { it.course }?.filter { it.course > 0}
+                    groupsTmp = result.data?.sortedBy { it.course }?.filter { it.course > 0 }
                     viewModelScope.launch { groupsTmp?.let { db.insertAllGroupsList(it) } }
                     if (employeesTmp?.isNotEmpty() == true) {
-                        groups = groupsTmp
-                        employees = employeesTmp
+                        groups.value = groupsTmp
+                        employees.value = employeesTmp
                         _state.value = AddScheduleState()
                     }
                 }
@@ -68,8 +74,8 @@ class AddScheduleViewModel @Inject constructor(
                     employeesTmp = result.data
                     viewModelScope.launch { employeesTmp?.let { db.insertAllEmployeesList(it) } }
                     if (groupsTmp?.isNotEmpty() == true) {
-                        groups = groupsTmp
-                        employees = employeesTmp
+                        groups.value = groupsTmp
+                        employees.value = employeesTmp
                         _state.value = AddScheduleState()
                     }
                 }
@@ -84,5 +90,33 @@ class AddScheduleViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
+
+    private fun getSaved() {
+        viewModelScope.launch {
+            savedSchedule.value = db.getAllSavedScheduleList()
+            val tmpGroups: MutableList<ListOfGroupsModel> = mutableListOf()
+            val tmpEmployees: MutableList<ListOfEmployeesModel> = mutableListOf()
+            savedSchedule.value!!.forEach {
+                if(it.isGroup) {
+                    tmpGroups.add(db.getGroupById(it.id))
+                } else {
+                    tmpEmployees.add(db.getEmployeeById(it.id))
+                }
+            }
+            savedGroups.value = tmpGroups.toList()
+            savedEmployees.value = tmpEmployees.toList()
+        }
+    }
+
+    fun saveOrRemoveFromSaved(item: ListOfSavedEntity) {
+        viewModelScope.launch {
+            if (savedSchedule.value?.contains(item) == true) {
+                db.deleteFromSavedScheduleList(item.id)
+            } else
+                db.addNewSavedScheduleToList(item)
+            getSaved()
+        }
+    }
+
 
 }

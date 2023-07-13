@@ -6,4 +6,8 @@
     <string name="search_schedule_hint">Номер группы или фамилия</string>
     <string name="add_schedule_group_title">Группы</string>
     <string name="add_schedule_staff_title">Преподаватели</string>
+    <string name="add_schedule_saved_title">Сохранённые</string>
+    <string name="no_schedule_saved_title">Нет сохранённых расписаний</string>
+    <string name="save_schedule_desc">Добавить расписание</string>
+    <string name="remove_schedule_desc">Удалить расписание</string>
 </resources>

@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -31,6 +32,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.testschedule.R
+import com.example.testschedule.data.local.entity.ListOfSavedEntity
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import kotlinx.coroutines.launch
@@ -60,15 +63,30 @@ fun AddScheduleScreen(
     goBackWhenSelect: (id: String, title: String) -> Unit,
     vm: AddScheduleViewModel = hiltViewModel()
 ) {
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { MySearchBar(goBackWhenSelect, vm.groups!!, vm.employees!!) }
+        topBar = {
+            MySearchBar(
+                { item ->
+                    vm.saveOrRemoveFromSaved(item)
+                }, goBackWhenSelect, vm.groups, vm.employees, vm.savedSchedule
+            )
+        }
     ) {
 
         Box(Modifier.padding(it)) {
-            if (vm.groups?.isNotEmpty() == true && vm.employees?.isNotEmpty() == true) {
-                TabScreen(goBackWhenSelect, vm.groups!!, vm.employees!!)
+            if (vm.groups.value?.isNotEmpty() == true && vm.employees.value?.isNotEmpty() == true) {
+                TabScreen(
+                    { item ->
+                        vm.saveOrRemoveFromSaved(item)
+                    },
+                    goBackWhenSelect,
+                    vm.groups,
+                    vm.employees,
+                    vm.savedSchedule,
+                    vm.savedGroups,
+                    vm.savedEmployees
+                )
             }
         }
     }
@@ -82,9 +100,13 @@ fun AddScheduleScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabScreen(
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
-    groups: List<ListOfGroupsModel>,
-    employees: List<ListOfEmployeesModel>
+    groups: MutableState<List<ListOfGroupsModel>?>,
+    employees: MutableState<List<ListOfEmployeesModel>?>,
+    saved: MutableState<List<ListOfSavedEntity>?>,
+    savedGroups: MutableState<List<ListOfGroupsModel>>,
+    savedEmployees: MutableState<List<ListOfEmployeesModel>>
 ) {
     val pagerState = rememberPagerState(0)
 
@@ -93,10 +115,14 @@ fun TabScreen(
     ) {
         Tabs(pagerState = pagerState)
         TabsContent(
+            onAddRemoveButtonClicked = onAddRemoveButtonClicked,
             goBackWhenSelect = goBackWhenSelect,
             pagerState = pagerState,
             groups = groups,
-            employees = employees
+            employees = employees,
+            saved = saved,
+            savedGroups = savedGroups,
+            savedEmployees = savedEmployees
         )
     }
 }
@@ -105,6 +131,7 @@ fun TabScreen(
 @Composable
 fun Tabs(pagerState: PagerState) {
     val listOfTabs = listOf(
+        stringResource(id = R.string.add_schedule_saved_title),
         stringResource(id = R.string.add_schedule_group_title),
         stringResource(id = R.string.add_schedule_staff_title)
     )
@@ -130,36 +157,117 @@ fun Tabs(pagerState: PagerState) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabsContent(
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     pagerState: PagerState,
-    groups: List<ListOfGroupsModel>,
-    employees: List<ListOfEmployeesModel>
+    groups: MutableState<List<ListOfGroupsModel>?>,
+    employees: MutableState<List<ListOfEmployeesModel>?>,
+    saved: MutableState<List<ListOfSavedEntity>?>,
+    savedGroups: MutableState<List<ListOfGroupsModel>>,
+    savedEmployees: MutableState<List<ListOfEmployeesModel>>
 ) {
     HorizontalPager(
         state = pagerState,
-        pageCount = 2
+        pageCount = 3
     ) { page ->
         when (page) {
             0 -> {
-                GroupListView(goBackWhenSelect, groups)
+                SavedListView(
+                    onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                    goBackWhenSelect = goBackWhenSelect,
+                    saved = saved,
+                    savedGroups = savedGroups,
+                    savedEmployees = savedEmployees
+                )
             }
 
             1 -> {
-                StaffListView(goBackWhenSelect, employees)
+                GroupListView(
+                    onAddRemoveButtonClicked,
+                    goBackWhenSelect,
+                    groups,
+                    saved
+                )
+            }
+
+            2 -> {
+                EmployeeListView(
+                    onAddRemoveButtonClicked,
+                    goBackWhenSelect,
+                    employees,
+                    saved
+                )
             }
         }
     }
 }
 
 @Composable
-fun GroupListView(
+fun SavedListView(
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
-    groups: List<ListOfGroupsModel>
+    saved: MutableState<List<ListOfSavedEntity>?>,
+    savedGroups: MutableState<List<ListOfGroupsModel>>,
+    savedEmployees: MutableState<List<ListOfEmployeesModel>>
+) {
+    if (saved.value?.isNotEmpty() == true)
+        LazyColumn(Modifier.fillMaxSize()) {
+            saved.value?.forEach {
+                if (it.isGroup) {
+                    savedGroups.value.find { item -> item.name == it.id }?.let { it1 ->
+                        item {
+                            GroupItemCard(
+                                onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                                goBackWhenSelect = goBackWhenSelect,
+                                item = it1,
+                                isSaved = true
+                            )
+                        }
+                    }
+                } else {
+                    savedEmployees.value.find { item -> item.urlId == it.id }?.let { it1 ->
+                        item {
+                            EmployeeItemCard(
+                                onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                                goBackWhenSelect = goBackWhenSelect,
+                                item = it1,
+                                isSaved = true
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    else {
+        Box(Modifier.fillMaxSize()) {
+            Text(
+                stringResource(id = R.string.no_schedule_saved_title),
+                modifier = Modifier.align(Alignment.Center),
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+    }
+}
+
+
+@Composable
+fun GroupListView(
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
+    goBackWhenSelect: (id: String, title: String) -> Unit,
+    groups: MutableState<List<ListOfGroupsModel>?>,
+    saved: MutableState<List<ListOfSavedEntity>?>
 ) {
     LazyColumn {
-        groups.forEach {
+        groups.value?.forEach {
+            val isSaved =
+                saved.value?.contains(ListOfSavedEntity(it.name, true, it.name)) ?: false
             item {
-                GroupItemCard(goBackWhenSelect = goBackWhenSelect, item = it)
+                GroupItemCard(
+                    onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                    goBackWhenSelect = goBackWhenSelect,
+                    item = it,
+                    isSaved = isSaved
+                )
             }
         }
     }
@@ -168,33 +276,58 @@ fun GroupListView(
 
 @Composable
 fun SearchListView(
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     groups: List<ListOfGroupsModel>,
-    employees: List<ListOfEmployeesModel>
+    employees: List<ListOfEmployeesModel>,
+    saved: MutableState<List<ListOfSavedEntity>?>
 ) {
     LazyColumn {
         groups.forEach {
             item {
-                GroupItemCard(goBackWhenSelect = goBackWhenSelect, item = it)
+                val isSaved =
+                    saved.value?.contains(ListOfSavedEntity(it.name, true, it.name)) ?: false
+                GroupItemCard(
+                    onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                    goBackWhenSelect = goBackWhenSelect,
+                    item = it,
+                    isSaved = isSaved
+                )
             }
         }
         employees.forEach {
             item {
-                EmployeeItemCard(goBackWhenSelect = goBackWhenSelect, item = it)
+                val isSaved =
+                    saved.value?.contains(ListOfSavedEntity(it.urlId, false, it.fio)) ?: false
+                EmployeeItemCard(
+                    onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                    goBackWhenSelect = goBackWhenSelect,
+                    item = it,
+                    isSaved = isSaved
+                )
             }
         }
     }
 }
 
 @Composable
-fun StaffListView(
+fun EmployeeListView(
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
-    employees: List<ListOfEmployeesModel>
+    employees: MutableState<List<ListOfEmployeesModel>?>,
+    saved: MutableState<List<ListOfSavedEntity>?>
 ) {
     LazyColumn {
-        employees.forEach {
+        employees.value?.forEach {
+            val isSaved =
+                saved.value?.contains(ListOfSavedEntity(it.urlId, false, it.fio)) ?: false
             item {
-                EmployeeItemCard(goBackWhenSelect = goBackWhenSelect, item = it)
+                EmployeeItemCard(
+                    onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                    goBackWhenSelect = goBackWhenSelect,
+                    item = it,
+                    isSaved = isSaved
+                )
             }
         }
     }
@@ -203,9 +336,11 @@ fun StaffListView(
 
 @Composable
 fun MySearchBar(
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
-    groups: List<ListOfGroupsModel>,
-    employees: List<ListOfEmployeesModel>
+    groups: MutableState<List<ListOfGroupsModel>?>,
+    employees: MutableState<List<ListOfEmployeesModel>?>,
+    saved: MutableState<List<ListOfSavedEntity>?>
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
@@ -234,16 +369,23 @@ fun MySearchBar(
             if (tmpText.isNotEmpty()) {
                 Column {
                     SearchListView(
-                        goBackWhenSelect,
-                        groups = groups.filter {
+                        onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                        goBackWhenSelect = goBackWhenSelect,
+                        groups = groups.value?.filter {
                             it.name.contains(tmpText) ||
                                     it.specialityAbbrev.contains(tmpText, true) ||
                                     it.facultyAbbrev.contains(tmpText, true)
-                        },
-                        employees = employees.filter { employee ->
+                        } ?: emptyList(),
+                        employees = employees.value?.filter { employee ->
                             employee.fio.contains(tmpText, true) ||
-                                    employee.academicDepartment.any { it.contains(tmpText, true) }
-                        }
+                                    employee.academicDepartment.any {
+                                        it.contains(
+                                            tmpText,
+                                            true
+                                        )
+                                    }
+                        } ?: emptyList(),
+                        saved = saved
                     )
                 }
             }
@@ -253,8 +395,10 @@ fun MySearchBar(
 
 @Composable
 fun GroupItemCard(
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
-    item: ListOfGroupsModel
+    item: ListOfGroupsModel,
+    isSaved: Boolean
 ) {
     ElevatedCard(
         onClick = {
@@ -306,14 +450,24 @@ fun GroupItemCard(
             }
 
             IconButton(
-                onClick = {},
+                onClick = {
+                    onAddRemoveButtonClicked(
+                        ListOfSavedEntity(
+                            item.name,
+                            true,
+                            item.name
+                        )
+                    )
+                },
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Icon(
-                    Icons.Outlined.Add, null,
+                    if (isSaved) Icons.Outlined.Delete else Icons.Outlined.Add,
+                    if (isSaved) stringResource(id = R.string.remove_schedule_desc)
+                    else stringResource(id = R.string.save_schedule_desc),
                     Modifier,
                     tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -324,8 +478,10 @@ fun GroupItemCard(
 
 @Composable
 fun EmployeeItemCard(
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
-    item: ListOfEmployeesModel
+    item: ListOfEmployeesModel,
+    isSaved: Boolean
 ) {
     ElevatedCard(
         onClick = {
@@ -400,7 +556,15 @@ fun EmployeeItemCard(
             }
 
             IconButton(
-                onClick = {},
+                onClick = {
+                    onAddRemoveButtonClicked(
+                        ListOfSavedEntity(
+                            item.urlId,
+                            false,
+                            item.fio
+                        )
+                    )
+                },
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
@@ -408,7 +572,9 @@ fun EmployeeItemCard(
             ) {
                 Column {
                     Icon(
-                        Icons.Outlined.Add, null,
+                        if (isSaved) Icons.Outlined.Delete else Icons.Outlined.Add,
+                        if (isSaved) stringResource(id = R.string.remove_schedule_desc)
+                        else stringResource(id = R.string.save_schedule_desc),
                         Modifier,
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -422,6 +588,7 @@ fun EmployeeItemCard(
 @Composable
 fun CardPreview() {
     GroupItemCard(
+        { },
         { _, _ -> },
         item = ListOfGroupsModel(
             1,
@@ -429,7 +596,8 @@ fun CardPreview() {
             "253501",
             "ИиТП",
             "Информатика и Технологии Программирования"
-        )
+        ),
+        true
     )
 }
 
@@ -437,6 +605,7 @@ fun CardPreview() {
 @Composable
 fun EmployeeCardPreview() {
     EmployeeItemCard(
+        { },
         { _, _ -> },
         item = ListOfEmployeesModel(
             listOf("ФКП"),
@@ -446,7 +615,8 @@ fun EmployeeCardPreview() {
             "Денисович",
             "htttp",
             "доцент",
-            "v-vlad"
-        )
+            "v-vlad",
+        ),
+        false
     )
 }

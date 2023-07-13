@@ -18,11 +18,15 @@ interface UserDatabaseRepository {
 
     suspend fun addNewSavedScheduleToList(model: ListOfSavedEntity)
 
-    suspend fun deleteFromScheduleList(id: String)
+    suspend fun deleteFromSavedScheduleList(id: String)
 
     suspend fun insertAllGroupsList(groups: List<ListOfGroupsModel>)
 
+    suspend fun getGroupById(name: String) : ListOfGroupsModel
+
     suspend fun insertAllEmployeesList(employees: List<ListOfEmployeesModel>)
+
+    suspend fun getEmployeeById(id: String) : ListOfEmployeesModel
 
     suspend fun getAllGroupsList(): List<ListOfGroupsModel>
 
