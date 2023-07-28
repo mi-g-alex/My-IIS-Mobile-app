@@ -22,11 +22,11 @@ interface UserDatabaseRepository {
 
     suspend fun insertAllGroupsList(groups: List<ListOfGroupsModel>)
 
-    suspend fun getGroupById(name: String) : ListOfGroupsModel
+    suspend fun getGroupById(name: String) : ListOfGroupsModel?
 
     suspend fun insertAllEmployeesList(employees: List<ListOfEmployeesModel>)
 
-    suspend fun getEmployeeById(id: String) : ListOfEmployeesModel
+    suspend fun getEmployeeById(id: String) : ListOfEmployeesModel?
 
     suspend fun getAllGroupsList(): List<ListOfGroupsModel>
 

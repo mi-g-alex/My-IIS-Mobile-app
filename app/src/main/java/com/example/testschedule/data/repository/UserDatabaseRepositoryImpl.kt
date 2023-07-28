@@ -54,8 +54,8 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getGroupById(name: String): ListOfGroupsModel =
-        dao.getGroupById(name).toModel()
+    override suspend fun getGroupById(name: String): ListOfGroupsModel? =
+        dao.getGroupById(name)?.toModel()
 
     override suspend fun insertAllEmployeesList(employees: List<ListOfEmployeesModel>) {
         employees.forEach {
@@ -63,8 +63,8 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getEmployeeById(id: String): ListOfEmployeesModel =
-        dao.getEmployeeById(id).toModel()
+    override suspend fun getEmployeeById(id: String): ListOfEmployeesModel? =
+        dao.getEmployeeById(id)?.toModel()
 
     override suspend fun getAllGroupsList(): List<ListOfGroupsModel> {
         return dao.getAllGroupsList().map { it.toModel() }

@@ -98,9 +98,9 @@ class AddScheduleViewModel @Inject constructor(
             val tmpEmployees: MutableList<ListOfEmployeesModel> = mutableListOf()
             savedSchedule.value!!.forEach {
                 if(it.isGroup) {
-                    tmpGroups.add(db.getGroupById(it.id))
+                    db.getGroupById(it.id)?.let { it1 -> tmpGroups.add(it1) }
                 } else {
-                    tmpEmployees.add(db.getEmployeeById(it.id))
+                    db.getEmployeeById(it.id)?.let { it1 -> tmpEmployees.add(it1) }
                 }
             }
             savedGroups.value = tmpGroups.toList()

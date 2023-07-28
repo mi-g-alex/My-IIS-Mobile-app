@@ -35,13 +35,13 @@ interface UserDao {
     suspend fun insertAllGroupsList(group: ListOfGroupsEntity)
 
     @Query("SELECT * FROM ListOfGroupsEntity WHERE name= :name")
-    suspend fun getGroupById(name: String) : ListOfGroupsEntity
+    suspend fun getGroupById(name: String) : ListOfGroupsEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllEmployeesList(employee: ListOfEmployeesEntity)
 
     @Query("SELECT * FROM ListOfEmployeesEntity WHERE urlId= :id")
-    suspend fun getEmployeeById(id: String) : ListOfEmployeesEntity
+    suspend fun getEmployeeById(id: String) : ListOfEmployeesEntity?
 
     @Query("SELECT * FROM ListOfGroupsEntity")
     suspend fun getAllGroupsList(): List<ListOfGroupsEntity>

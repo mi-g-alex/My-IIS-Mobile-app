@@ -108,7 +108,7 @@ fun TabScreen(
     savedGroups: MutableState<List<ListOfGroupsModel>>,
     savedEmployees: MutableState<List<ListOfEmployeesModel>>
 ) {
-    val pagerState = rememberPagerState(0)
+    val pagerState = rememberPagerState(if (saved.value?.size == 0) 1 else 0)
 
     Column(
         modifier = Modifier.background(MaterialTheme.colorScheme.background)
