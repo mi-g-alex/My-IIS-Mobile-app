@@ -1,8 +1,6 @@
 package com.example.testschedule.presentation.schedule_screen.view_schedule_screen
 
 import android.content.Context
-import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,17 +44,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.testschedule.R
+import com.example.testschedule.common.Constants
 import com.example.testschedule.data.local.entity.ListOfSavedEntity
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 @Composable
 fun ViewScheduleScreen(
@@ -65,18 +66,22 @@ fun ViewScheduleScreen(
     goToAddSchedule: () -> Unit,
     viewModel: ViewScheduleViewModel = hiltViewModel()
 ) {
+    val cnt = LocalContext.current
+    val sharedPref = cnt.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
+    val openScheduleId = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
+    val openScheduleTitle = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, null)
     LaunchedEffect(null) {
         viewModel.getSaved()
         viewModel.title.value = titleLink ?: ""
         if (scheduleId != null)
             viewModel.getSchedule(scheduleId)
         else {
-            viewModel.getSchedule("253501")
-            viewModel.title.value = "253501"
+            if (openScheduleTitle != null && openScheduleId != null) {
+                viewModel.getSchedule(openScheduleId)
+                viewModel.title.value = openScheduleTitle
+            }
         }
     }
-
-    val cnt = LocalContext.current
 
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = false,
@@ -94,12 +99,16 @@ fun ViewScheduleScreen(
             MyTopAppBar(
                 titleText = viewModel.title.value,
                 { showBottomSheet = true },
-                { showToast(cnt, "ActionButton", Toast.LENGTH_LONG) })
+                { }
+            )
         },
     ) { pv ->
-        if (vm.schedule != null) {
-            ShowSchedule(vm.schedule, Modifier.padding(pv))
-        }
+        if (openScheduleId == null) {
+            NoScheduleAdded()
+        } else
+            if (vm.schedule != null) {
+                ShowSchedule(vm.schedule, Modifier.padding(pv))
+            }
 
         if (vm.isLoading) {
             LinearProgressIndicator(
@@ -149,133 +158,27 @@ fun ViewScheduleScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun NoScheduleAdded() {
+    Box(
+        Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(id = R.string.no_schedule_added_start_screen),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+}
+
 @Composable
 fun ShowSchedule(it: ScheduleModel, modifier: Modifier) {
-    LazyColumn(modifier = modifier) {
-        for (i in 1..it.schedules.size) {
-            val week = it.schedules[i - 1]
-            stickyHeader {
-                Text(
-                    text = "Понедельник Неделя $i",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(8.dp),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            week.monday.forEach { lesson ->
-                item {
-                    Text(
-                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                    )
-                }
-            }
-            stickyHeader {
-                Text(
-                    text = "Вторник Неделя $i",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(8.dp),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            week.tuesday.forEach { lesson ->
-                item {
-                    Text(
-                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                    )
-                }
-            }
-            stickyHeader {
-                Text(
-                    text = "Среда Неделя $i",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(8.dp),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            week.wednesday.forEach { lesson ->
-                item {
-                    Text(
-                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                    )
-                }
-            }
-            stickyHeader {
-                Text(
-                    text = "Четверг Неделя $i",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(8.dp),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            week.thursday.forEach { lesson ->
-                item {
-                    Text(
-                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                    )
-                }
-            }
-            stickyHeader {
-                Text(
-                    text = "Пятница Неделя $i",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(8.dp),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            week.friday.forEach { lesson ->
-                item {
-                    Text(
-                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                    )
-                }
-            }
-            stickyHeader {
-                Text(
-                    text = "Суббота Неделя $i",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(8.dp),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            week.saturday.forEach { lesson ->
-                item {
-                    Text(
-                        text = lesson.subjectFullName + " (${lesson.lessonTypeAbbrev})",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                    )
-                }
-            }
 
+    LazyColumn(modifier = modifier) {
+        item {
+            val cal = Calendar.getInstance().time
+            Text(String.format("dd MM yyyy HH:mm:ss", cal), )
         }
     }
 }
@@ -516,8 +419,4 @@ fun EmployeeItemCard(
             }
         }
     }
-}
-
-private fun showToast(cnt: Context, text: String, length: Int) {
-    Toast.makeText(cnt, text, length).show()
 }

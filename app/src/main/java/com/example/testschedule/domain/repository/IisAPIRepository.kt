@@ -12,4 +12,6 @@ interface IisAPIRepository {
 
     suspend fun getSchedule(id: String): ScheduleModel
 
+    suspend fun getCurrentWeek(): Int
+
 }

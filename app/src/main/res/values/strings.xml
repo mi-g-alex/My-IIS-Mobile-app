@@ -10,4 +10,10 @@
     <string name="no_schedule_saved_title">Нет сохранённых расписаний</string>
     <string name="save_schedule_desc">Добавить расписание</string>
     <string name="remove_schedule_desc">Удалить расписание</string>
+    <string name="select_default_schedule_text">Открывать по умолчанию</string>
+    <string name="nothing_selected_schedule">Ничего не выбрано</string>
+    <string name="select_default_schedule_ok">Сохранить</string>
+    <string name="select_default_schedule_cancel">Отмена</string>
+    <string name="removed_from_server_schedules_list">Не найдено в списке на сервере!</string>
+    <string name="no_schedule_added_start_screen">Не добавлено ни одного расписания!\n\nНажмите ≡, а потом ✏️</string>
 </resources>

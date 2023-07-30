@@ -14,7 +14,7 @@ data class ScheduleModel(
     val endExamsDate: Long?, // Дата окончания экзаменов в этой группе
     val employeeInfo: EmployeeInfo?, // Информация о преподавателе, если это его расписание
     val studentGroupInfo: StudentGroupInfo?, // Информация о группе, если это её расписание
-    val schedules: List<WeeksSchedule>, // Тут храним список из недель, где в каждой неделе если список дней, а в каждом дне список занятий
+    val schedules: List<WeeksSchedule>, // Тут храним список из недель, где в каждой неделе есть список дней, а в каждом дне список занятий
     val exams: List<WeeksSchedule.Lesson>? // Тут список храним экзаменов
 ) {
     data class EmployeeInfo(

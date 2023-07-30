@@ -20,4 +20,7 @@ interface IisAPI {
 
     @GET("employees/schedule/{urlId}") // Получение расписания преподавателя
     suspend fun getEmployeeSchedule(@Path("urlId") urlId: String): ScheduleDto
+
+    @GET("schedule/current-week")
+    suspend fun getCurrentWeek(): Int
 }

@@ -1,6 +1,7 @@
 package com.example.testschedule.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.example.testschedule.common.Constants
 import com.example.testschedule.data.local.Converters
@@ -15,11 +16,13 @@ import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Module
@@ -64,6 +67,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserDataBaseRepository(db : UserDataBase) : UserDatabaseRepository = UserDatabaseRepositoryImpl(db.userDao)
+    fun provideUserDataBaseRepository(db: UserDataBase): UserDatabaseRepository =
+        UserDatabaseRepositoryImpl(db.userDao)
+
+    @Singleton
+    class MyPreference @Inject constructor(@ApplicationContext context: Context) {
+        private val prefs = context.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
+
+        fun getLastUpdateCurrentWeek(): Long = prefs.getLong(Constants.LAST_UPDATE_CURRENT_WEEK, 0)
+        fun getCurrentWeek(): Int = prefs.getInt(Constants.CURRENT_WEEK, 0)
+
+        fun setCurrentWeek(date: Long, week: Int) {
+            prefs.edit()
+                .putLong(Constants.LAST_UPDATE_CURRENT_WEEK, date)
+                .putInt(Constants.CURRENT_WEEK, week)
+                .apply()
+        }
+    }
 
 }

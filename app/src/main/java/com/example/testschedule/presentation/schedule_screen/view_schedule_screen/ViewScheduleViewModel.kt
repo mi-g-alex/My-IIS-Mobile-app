@@ -7,20 +7,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
 import com.example.testschedule.data.local.entity.ListOfSavedEntity
+import com.example.testschedule.di.AppModule
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
+import com.example.testschedule.domain.use_case.schedule.get_schedule.GetCurrentWeekUseCase
 import com.example.testschedule.domain.use_case.schedule.get_schedule.GetScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class ViewScheduleViewModel @Inject constructor(
+    private val myPreference: AppModule.MyPreference,
     private val getScheduleUseCase: GetScheduleUseCase,
+    private val getCurrentWeek: GetCurrentWeekUseCase,
     private val db: UserDatabaseRepository
+
 ) : ViewModel() {
 
     private val _state = mutableStateOf(ViewScheduleState())
@@ -33,6 +39,7 @@ class ViewScheduleViewModel @Inject constructor(
 
     init {
         getSaved()
+        getCurrentWeek()
     }
 
     fun getSchedule(id: String) {
@@ -40,9 +47,10 @@ class ViewScheduleViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     _state.value = ViewScheduleState(schedule = result.data)
-                    /*result.data?.let {
+                    result.data?.let {
+                        db.deleteSchedule(id)
                         db.setSchedule(it)
-                    }*/
+                    }
                 }
 
                 is Resource.Loading -> {
@@ -72,6 +80,25 @@ class ViewScheduleViewModel @Inject constructor(
             savedGroups.value = tmpGroups.toList()
             savedEmployees.value = tmpEmployees.toList()
         }
+    }
+    private fun getCurrentWeek() {
+        getCurrentWeek.invoke().onEach {result ->
+            when (result) {
+                is Resource.Success -> {
+                    result.data?.let {
+                        myPreference.setCurrentWeek(Calendar.getInstance().timeInMillis,
+                            it
+                        )
+                    }
+                }
+                is Resource.Loading -> {
+
+                }
+                is Resource.Error -> {
+
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
 }

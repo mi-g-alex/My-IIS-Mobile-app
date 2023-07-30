@@ -1,5 +1,6 @@
 package com.example.testschedule.presentation.schedule_screen.add_schedule_screen
 
+import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +21,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,6 +56,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.testschedule.R
+import com.example.testschedule.common.Constants
 import com.example.testschedule.data.local.entity.ListOfSavedEntity
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
@@ -63,21 +67,76 @@ fun AddScheduleScreen(
     goBackWhenSelect: (id: String, title: String) -> Unit,
     vm: AddScheduleViewModel = hiltViewModel()
 ) {
+    val cnt = LocalContext.current
+    val sharedPref = cnt.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             MySearchBar(
-                { item ->
+                { item, deleting ->
+                    val tmp = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
+                    if (deleting) {
+                        if (tmp == item.id) {
+                            sharedPref.edit()
+                                .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
+                                .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, null)
+                                .apply()
+                        }
+                    } else {
+                        if (tmp == null) {
+                            sharedPref.edit()
+                                .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, item.id)
+                                .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, item.title)
+                                .apply()
+                        }
+                    }
                     vm.saveOrRemoveFromSaved(item)
                 }, goBackWhenSelect, vm.groups, vm.employees, vm.savedSchedule
             )
         }
     ) {
-
         Box(Modifier.padding(it)) {
             if (vm.groups.value?.isNotEmpty() == true && vm.employees.value?.isNotEmpty() == true) {
                 TabScreen(
-                    { item ->
+                    { item, deleting ->
+                        var saved = vm.savedSchedule.value?.toMutableList()
+                        val tmp = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
+                        if (deleting) {
+                            saved =
+                                saved?.filter { item1 -> item1.id != tmp } as MutableList<ListOfSavedEntity>?
+                            if (tmp == item.id) {
+                                if (saved?.isNotEmpty() == true) {
+                                    sharedPref.edit()
+                                        .putString(
+                                            Constants.PREF_OPEN_BY_DEFAULT_ID,
+                                            saved[0].id
+                                        )
+                                        .putString(
+                                            Constants.PREF_OPEN_BY_DEFAULT_TITLE,
+                                            saved[0].title
+                                        )
+                                        .apply()
+                                } else {
+                                    sharedPref.edit()
+                                        .putString(
+                                            Constants.PREF_OPEN_BY_DEFAULT_ID,
+                                            null
+                                        )
+                                        .putString(
+                                            Constants.PREF_OPEN_BY_DEFAULT_TITLE,
+                                            null
+                                        )
+                                        .apply()
+                                }
+                            }
+                        } else {
+                            if (tmp == null) {
+                                sharedPref.edit()
+                                    .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, item.id)
+                                    .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, item.title)
+                                    .apply()
+                            }
+                        }
                         vm.saveOrRemoveFromSaved(item)
                     },
                     goBackWhenSelect,
@@ -100,7 +159,7 @@ fun AddScheduleScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabScreen(
-    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     groups: MutableState<List<ListOfGroupsModel>?>,
     employees: MutableState<List<ListOfEmployeesModel>?>,
@@ -157,7 +216,7 @@ fun Tabs(pagerState: PagerState) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabsContent(
-    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     pagerState: PagerState,
     groups: MutableState<List<ListOfGroupsModel>?>,
@@ -204,14 +263,83 @@ fun TabsContent(
 
 @Composable
 fun SavedListView(
-    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     saved: MutableState<List<ListOfSavedEntity>?>,
     savedGroups: MutableState<List<ListOfGroupsModel>>,
     savedEmployees: MutableState<List<ListOfEmployeesModel>>
 ) {
+    val sharedPref =
+        LocalContext.current.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
+    val openDialog = remember { mutableStateOf(false) }
+    saved.value?.let {
+        if (openDialog.value) {
+
+            OpenByDefaultScheduleDialog(
+                closeDialog = { openDialog.value = false },
+                clickOk = { item ->
+                    if (item != null) {
+                        sharedPref.edit()
+                            .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, item.id)
+                            .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, item.title)
+                            .apply()
+                    }
+                    openDialog.value = false
+                },
+                saved = it,
+                selected = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, "") ?: ""
+            )
+        }
+    }
     if (saved.value?.isNotEmpty() == true)
         LazyColumn(Modifier.fillMaxSize()) {
+            item {
+                ElevatedCard(
+                    onClick = {
+                        openDialog.value = true
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp, start = 8.dp, end = 8.dp, bottom = 4.dp)
+                ) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.select_default_schedule_text),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Text(
+                                text = sharedPref.getString(
+                                    Constants.PREF_OPEN_BY_DEFAULT_TITLE,
+                                    null
+                                ) ?: stringResource(id = R.string.nothing_selected_schedule),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        Icon(
+                            Icons.Outlined.KeyboardArrowRight,
+                            stringResource(id = R.string.add_schedule_saved_title)
+                        )
+                    }
+                }
+            }
+
+            item {
+                Divider(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp, 8.dp)
+                )
+            }
+
             saved.value?.forEach {
                 if (it.isGroup) {
                     savedGroups.value.find { item -> item.name == it.id }?.let { it1 ->
@@ -223,6 +351,15 @@ fun SavedListView(
                                 isSaved = true
                             )
                         }
+                    } ?: {
+                        item {
+                            GroupItemCard(
+                                onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                                goBackWhenSelect = goBackWhenSelect,
+                                item = ListOfGroupsModel(0, "", it.title, "", ""),
+                                isSaved = true
+                            )
+                        }
                     }
                 } else {
                     savedEmployees.value.find { item -> item.urlId == it.id }?.let { it1 ->
@@ -231,6 +368,24 @@ fun SavedListView(
                                 onAddRemoveButtonClicked = onAddRemoveButtonClicked,
                                 goBackWhenSelect = goBackWhenSelect,
                                 item = it1,
+                                isSaved = true
+                            )
+                        }
+                    } ?: {
+                        item {
+                            EmployeeItemCard(
+                                onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                                goBackWhenSelect = goBackWhenSelect,
+                                item = ListOfEmployeesModel(
+                                    listOf(stringResource(id = R.string.removed_from_server_schedules_list)),
+                                    it.title,
+                                    it.title,
+                                    "",
+                                    null,
+                                    null,
+                                    null,
+                                    it.id
+                                ),
                                 isSaved = true
                             )
                         }
@@ -252,7 +407,7 @@ fun SavedListView(
 
 @Composable
 fun GroupListView(
-    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     groups: MutableState<List<ListOfGroupsModel>?>,
     saved: MutableState<List<ListOfSavedEntity>?>
@@ -276,7 +431,7 @@ fun GroupListView(
 
 @Composable
 fun SearchListView(
-    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     groups: List<ListOfGroupsModel>,
     employees: List<ListOfEmployeesModel>,
@@ -312,7 +467,7 @@ fun SearchListView(
 
 @Composable
 fun EmployeeListView(
-    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     employees: MutableState<List<ListOfEmployeesModel>?>,
     saved: MutableState<List<ListOfSavedEntity>?>
@@ -336,7 +491,7 @@ fun EmployeeListView(
 
 @Composable
 fun MySearchBar(
-    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     groups: MutableState<List<ListOfGroupsModel>?>,
     employees: MutableState<List<ListOfEmployeesModel>?>,
@@ -395,7 +550,7 @@ fun MySearchBar(
 
 @Composable
 fun GroupItemCard(
-    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     item: ListOfGroupsModel,
     isSaved: Boolean
@@ -456,7 +611,8 @@ fun GroupItemCard(
                             item.name,
                             true,
                             item.name
-                        )
+                        ),
+                        isSaved
                     )
                 },
                 modifier = Modifier
@@ -478,7 +634,7 @@ fun GroupItemCard(
 
 @Composable
 fun EmployeeItemCard(
-    onAddRemoveButtonClicked: (item: ListOfSavedEntity) -> Unit,
+    onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     item: ListOfEmployeesModel,
     isSaved: Boolean
@@ -562,7 +718,8 @@ fun EmployeeItemCard(
                             item.urlId,
                             false,
                             item.fio
-                        )
+                        ),
+                        isSaved
                     )
                 },
                 modifier = Modifier
@@ -588,7 +745,7 @@ fun EmployeeItemCard(
 @Composable
 fun CardPreview() {
     GroupItemCard(
-        { },
+        { _, _ -> },
         { _, _ -> },
         item = ListOfGroupsModel(
             1,
@@ -605,7 +762,7 @@ fun CardPreview() {
 @Composable
 fun EmployeeCardPreview() {
     EmployeeItemCard(
-        { },
+        { _, _ -> },
         { _, _ -> },
         item = ListOfEmployeesModel(
             listOf("ФКП"),

@@ -50,7 +50,12 @@ class AddScheduleViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     groupsTmp = result.data?.sortedBy { it.course }?.filter { it.course > 0 }
-                    viewModelScope.launch { groupsTmp?.let { db.insertAllGroupsList(it) } }
+                    viewModelScope.launch {
+                        groupsTmp?.let {
+                            db.deleteAllGroupsList()
+                            db.insertAllGroupsList(it)
+                        }
+                    }
                     if (employeesTmp?.isNotEmpty() == true) {
                         groups.value = groupsTmp
                         employees.value = employeesTmp
@@ -72,7 +77,12 @@ class AddScheduleViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     employeesTmp = result.data
-                    viewModelScope.launch { employeesTmp?.let { db.insertAllEmployeesList(it) } }
+                    viewModelScope.launch {
+                        employeesTmp?.let {
+                            db.deleteAllEmployeesList()
+                            db.insertAllEmployeesList(it)
+                        }
+                    }
                     if (groupsTmp?.isNotEmpty() == true) {
                         groups.value = groupsTmp
                         employees.value = employeesTmp
@@ -97,7 +107,7 @@ class AddScheduleViewModel @Inject constructor(
             val tmpGroups: MutableList<ListOfGroupsModel> = mutableListOf()
             val tmpEmployees: MutableList<ListOfEmployeesModel> = mutableListOf()
             savedSchedule.value!!.forEach {
-                if(it.isGroup) {
+                if (it.isGroup) {
                     db.getGroupById(it.id)?.let { it1 -> tmpGroups.add(it1) }
                 } else {
                     db.getEmployeeById(it.id)?.let { it1 -> tmpEmployees.add(it1) }

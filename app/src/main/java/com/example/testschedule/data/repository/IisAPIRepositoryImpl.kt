@@ -27,4 +27,5 @@ class IisAPIRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getCurrentWeek(): Int = api.getCurrentWeek()
 }
