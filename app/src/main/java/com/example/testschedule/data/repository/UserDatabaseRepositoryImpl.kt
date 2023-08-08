@@ -1,5 +1,6 @@
 package com.example.testschedule.data.repository
 
+import android.util.Log
 import com.example.testschedule.data.local.UserDao
 import com.example.testschedule.data.local.entity.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.ScheduleEntity
@@ -49,6 +50,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertAllGroupsList(groups: List<ListOfGroupsModel>) {
+        dao.deleteAllGroupsList()
         groups.forEach {
             dao.insertAllGroupsList(it.toEntity())
         }
@@ -58,6 +60,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         dao.getGroupById(name)?.toModel()
 
     override suspend fun insertAllEmployeesList(employees: List<ListOfEmployeesModel>) {
+        dao.deleteAllEmployeesList()
         employees.forEach {
             dao.insertAllEmployeesList(it.toEntity())
         }
@@ -81,4 +84,26 @@ class UserDatabaseRepositoryImpl @Inject constructor(
     override suspend fun deleteAllEmployeesList() {
         dao.deleteAllEmployeesList()
     }
+
+    override suspend fun setExams(model: ScheduleModel) {
+        dao.setSchedule(
+            ScheduleEntity(
+                "EXAM",
+                model.title,
+                model.isGroupSchedule,
+                model.startLessonsDate,
+                model.endLessonsDate,
+                model.endExamsDate,
+                model.startExamsDate,
+                model.employeeInfo,
+                model.studentGroupInfo,
+                model.schedules,
+                model.exams
+            )
+        )
+        Log.e("~~``", getExams().toString())
+    }
+
+    override suspend fun getExams() : ScheduleModel = dao.getSchedule("EXAM")
+
 }

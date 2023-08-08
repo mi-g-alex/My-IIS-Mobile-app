@@ -7,4 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="lecture">#FF33DB24</color>
+    <color name="practice">#FF8E4FEC</color>
+    <color name="labs">#FFF98F43</color>
+    <color name="exams">#FF840C96</color>
+    <color name="consultation">#FF960C56</color>
+    <color name="other">#FFAAAAAA</color>
 </resources>

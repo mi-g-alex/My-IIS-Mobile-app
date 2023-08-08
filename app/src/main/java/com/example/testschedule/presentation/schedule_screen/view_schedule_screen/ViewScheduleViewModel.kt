@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.GregorianCalendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,7 +50,8 @@ class ViewScheduleViewModel @Inject constructor(
                     _state.value = ViewScheduleState(schedule = result.data)
                     result.data?.let {
                         db.deleteSchedule(id)
-                        db.setSchedule(it)
+                        if (savedSchedule.value?.any { f -> f.id == it.id } == true)
+                            db.setSchedule(it)
                     }
                 }
 
@@ -71,7 +73,7 @@ class ViewScheduleViewModel @Inject constructor(
             val tmpGroups: MutableList<ListOfGroupsModel> = mutableListOf()
             val tmpEmployees: MutableList<ListOfEmployeesModel> = mutableListOf()
             savedSchedule.value!!.forEach {
-                if(it.isGroup) {
+                if (it.isGroup) {
                     db.getGroupById(it.id)?.let { it1 -> tmpGroups.add(it1) }
                 } else {
                     db.getEmployeeById(it.id)?.let { it1 -> tmpEmployees.add(it1) }
@@ -81,24 +83,43 @@ class ViewScheduleViewModel @Inject constructor(
             savedEmployees.value = tmpEmployees.toList()
         }
     }
+
     private fun getCurrentWeek() {
-        getCurrentWeek.invoke().onEach {result ->
+        getCurrentWeek.invoke().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    result.data?.let {
-                        myPreference.setCurrentWeek(Calendar.getInstance().timeInMillis,
-                            it
+                    val week = result.data
+                    if (week != null) {
+                        val calTmp = Calendar.getInstance()
+                        calTmp.timeInMillis += 10800000 - calTmp.timeZone.rawOffset
+                        val cal = GregorianCalendar(
+                            calTmp.get(Calendar.YEAR),
+                            calTmp.get(Calendar.MONTH),
+                            calTmp.get(Calendar.DAY_OF_MONTH),
+                            0, 0, 0
                         )
+                        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                            cal.timeInMillis -= 6 * 24 * 60 * 60 * 1000
+                        } else {
+                            cal.timeInMillis -= (cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY) * 24 * 60 * 60 * 1000
+                        }
+                        myPreference.setCurrentWeek(cal.timeInMillis, week)
                     }
                 }
+
                 is Resource.Loading -> {
 
                 }
+
                 is Resource.Error -> {
 
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun setExamsToDB() {
+        viewModelScope.launch { state.value.schedule?.let { db.setExams(it) } }
     }
 
 }

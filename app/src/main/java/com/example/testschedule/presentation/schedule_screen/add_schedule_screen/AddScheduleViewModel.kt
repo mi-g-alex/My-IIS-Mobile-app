@@ -52,7 +52,6 @@ class AddScheduleViewModel @Inject constructor(
                     groupsTmp = result.data?.sortedBy { it.course }?.filter { it.course > 0 }
                     viewModelScope.launch {
                         groupsTmp?.let {
-                            db.deleteAllGroupsList()
                             db.insertAllGroupsList(it)
                         }
                     }
@@ -79,7 +78,6 @@ class AddScheduleViewModel @Inject constructor(
                     employeesTmp = result.data
                     viewModelScope.launch {
                         employeesTmp?.let {
-                            db.deleteAllEmployeesList()
                             db.insertAllEmployeesList(it)
                         }
                     }

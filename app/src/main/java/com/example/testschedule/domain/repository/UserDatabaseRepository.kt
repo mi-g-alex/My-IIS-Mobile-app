@@ -35,4 +35,8 @@ interface UserDatabaseRepository {
     suspend fun deleteAllGroupsList()
 
     suspend fun deleteAllEmployeesList()
+
+    suspend fun setExams(model: ScheduleModel)
+
+    suspend fun getExams()  : ScheduleModel
 }

@@ -22,6 +22,7 @@ class IisAPIRepositoryImpl @Inject constructor(
     override suspend fun getSchedule(id: String): ScheduleModel {
         return if (id[0] in '0'..'9') {
             scheduleFromDtoToModel(api.getGroupSchedule(id))
+            //scheduleFromDtoToModel(Constants.test)
         } else {
             scheduleFromDtoToModel(api.getEmployeeSchedule(id))
         }

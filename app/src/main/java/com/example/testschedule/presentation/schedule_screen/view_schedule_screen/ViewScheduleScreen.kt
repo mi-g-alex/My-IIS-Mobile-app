@@ -1,38 +1,23 @@
 package com.example.testschedule.presentation.schedule_screen.view_schedule_screen
 
 import android.content.Context
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,36 +25,44 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.testschedule.R
 import com.example.testschedule.common.Constants
-import com.example.testschedule.data.local.entity.ListOfSavedEntity
-import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
-import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
+import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items.BottomSheet
+import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items.ExamsFAB
+import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items.LessonCard
+import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items.MoreDetailCard
+import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items.MyTopAppBar
+import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items.StickySchedule
+import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items.getLessons
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.GregorianCalendar
+
+// TODO: доделать просмотр событий
 
 @Composable
 fun ViewScheduleScreen(
+    goBackSet: (id: String, title: String) -> Unit,
     scheduleId: String? = null,
     titleLink: String? = null,
     goToAddSchedule: () -> Unit,
+    navToExams: () -> Unit,
     viewModel: ViewScheduleViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
     val sharedPref = cnt.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
     val openScheduleId = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
     val openScheduleTitle = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, null)
+    val scope = rememberCoroutineScope()
+    val vm = viewModel.state.value
+    val state = rememberLazyListState()
+
     LaunchedEffect(null) {
         viewModel.getSaved()
         viewModel.title.value = titleLink ?: ""
@@ -83,15 +76,15 @@ fun ViewScheduleScreen(
         }
     }
 
+    LaunchedEffect(viewModel.title.value) {
+        scope.launch { state.animateScrollToItem(0, 0) }
+    }
+
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = false,
         confirmValueChange = { true }
     )
     var showBottomSheet by remember { mutableStateOf(false) }
-
-    val scope = rememberCoroutineScope()
-
-    val vm = viewModel.state.value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -102,21 +95,39 @@ fun ViewScheduleScreen(
                 { }
             )
         },
+        floatingActionButton = {
+            if (vm.schedule?.exams?.isNotEmpty() == true)
+                if ((vm.schedule.endExamsDate ?: 0) > Calendar.getInstance().timeInMillis)
+                    ExamsFAB(
+                        goToExams = {
+                        viewModel.setExamsToDB()
+                        goBackSet(vm.schedule.id, viewModel.title.value)
+                        navToExams()
+                    }, state)
+        }
     ) { pv ->
-        if (openScheduleId == null) {
+        if (scheduleId == null && openScheduleId == null) {
             NoScheduleAdded()
         } else
             if (vm.schedule != null) {
-                ShowSchedule(vm.schedule, Modifier.padding(pv))
+                ShowSchedule(vm.schedule, Modifier.padding(pv), state) { id, t ->
+                    viewModel.getSchedule(id)
+                    viewModel.title.value = t
+                    scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
+                        if (!bottomSheetState.isVisible) {
+                            showBottomSheet = false
+                        }
+                    }
+                    goBackSet(id, t)
+                    scope.launch { state.animateScrollToItem(0, 0) }
+                }
             }
 
         if (vm.isLoading) {
             LinearProgressIndicator(
                 modifier = Modifier
                     .padding(pv)
-                    .fillMaxWidth(
-
-                    )
+                    .fillMaxWidth()
             )
         }
 
@@ -149,12 +160,92 @@ fun ViewScheduleScreen(
                             showBottomSheet = false
                         }
                     }
+                    goBackSet(id, t)
+                    scope.launch { state.animateScrollToItem(0, 0) }
                 },
                 saved = viewModel.savedSchedule,
                 savedEmployees = viewModel.savedEmployees,
                 savedGroups = viewModel.savedGroups
             )
         }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ShowSchedule(
+    it: ScheduleModel,
+    modifier: Modifier,
+    state: LazyListState,
+    selectScheduleClicked: (id: String, title: String) -> Unit
+) {
+    val a = LocalContext.current.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
+    val inst = Calendar.getInstance()
+    val openDialog = remember { mutableStateOf(false) }
+    var dialogLesson by remember { mutableStateOf<ScheduleModel.WeeksSchedule.Lesson?>(null) }
+
+    val day = GregorianCalendar(
+        inst.get(Calendar.YEAR),
+        inst.get(Calendar.MONTH),
+        inst.get(Calendar.DAY_OF_MONTH),
+        0, 0, 0
+    )
+    val lastUpdate = a.getLong(Constants.LAST_UPDATE_CURRENT_WEEK, 0)
+    val week = a.getInt(Constants.CURRENT_WEEK, 0)
+    if (it.startLessonsDate != null && it.endLessonsDate != null) {
+        if (day.timeInMillis < it.startLessonsDate) day.timeInMillis = it.startLessonsDate
+        val lessons = getLessons(
+            startDay = day,
+            endDay = it.endExamsDate ?: it.endLessonsDate,
+            all = it.schedules,
+            lastUpdate = lastUpdate,
+            week = week
+        )
+        if (lessons.isNotEmpty()) {
+            LazyColumn(modifier = modifier, state = state) {
+                lessons.forEach { lesson ->
+                    if (lesson.lessons.isNotEmpty()) {
+                        stickyHeader {
+                            StickySchedule(lesson = lesson)
+                        }
+                        lesson.lessons.forEach { les ->
+                            item {
+                                if (!les.announcement)
+                                    LessonCard(lesson = les, isGroup = it.isGroupSchedule, click = {
+                                        openDialog.value = true
+                                        dialogLesson = les
+                                    })
+                            }
+                        }
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(50.dp))
+                }
+            }
+        } else {
+            NoLessonsLeft()
+        }
+        if (openDialog.value && dialogLesson != null) {
+            MoreDetailCard(
+                lesson = dialogLesson!!,
+                {
+                    openDialog.value = false
+                },
+                selectScheduleClicked
+            )
+        }
+    }
+}
+
+@Composable
+fun NoLessonsLeft() {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            text = stringResource(id = R.string.no_lessons),
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
@@ -172,251 +263,4 @@ fun NoScheduleAdded() {
     }
 }
 
-@Composable
-fun ShowSchedule(it: ScheduleModel, modifier: Modifier) {
 
-    LazyColumn(modifier = modifier) {
-        item {
-            val cal = Calendar.getInstance().time
-            Text(String.format("dd MM yyyy HH:mm:ss", cal), )
-        }
-    }
-}
-
-@Composable
-fun MyTopAppBar(
-    titleText: String,
-    navIconClicked: () -> Unit,
-    actionIconClicked: () -> Unit,
-) {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                titleText,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = navIconClicked) {
-                Icon(
-                    Icons.Default.Menu,
-                    stringResource(id = R.string.open_list_of_saved_schedule_desc)
-                )
-            }
-        },
-        actions = {
-            Row { // TODO
-                IconButton(onClick = actionIconClicked) {
-                    Icon(
-                        Icons.Default.Favorite,
-                        stringResource(id = R.string.open_list_of_saved_schedule_desc)
-                    )
-                }
-            }
-        }
-    )
-}
-
-@Composable
-fun BottomSheet(
-    sheetState: SheetState,
-    onDismissRequest: () -> Unit,
-    closeBottomSheet: () -> Unit,
-    onEditButtonClicked: () -> Unit,
-    selectScheduleClicked: (id: String, title: String) -> Unit,
-    saved: MutableState<List<ListOfSavedEntity>?>,
-    savedGroups: MutableState<List<ListOfGroupsModel>>,
-    savedEmployees: MutableState<List<ListOfEmployeesModel>>
-) {
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
-        dragHandle = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.bottom_sheet_title),
-                        modifier = Modifier,
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                },
-                actions = {
-                    IconButton(
-                        onClick = { onEditButtonClicked(); closeBottomSheet(); },
-                    ) {
-                        Icon(
-                            Icons.Filled.Edit,
-                            stringResource(id = R.string.bottom_sheet_edit_btn_desc)
-                        )
-                    }
-                }
-            )
-        }
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp)
-        ) {
-            saved.value?.forEach {
-                if (it.isGroup) {
-                    savedGroups.value.find { item -> item.name == it.id }?.let { it1 ->
-                        item {
-                            GroupItemCard(
-                                selectScheduleClicked,
-                                item = it1
-                            )
-                        }
-                    }
-                } else {
-                    savedEmployees.value.find { item -> item.urlId == it.id }?.let { it1 ->
-                        item {
-                            EmployeeItemCard(
-                                selectScheduleClicked,
-                                item = it1
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun GroupItemCard(
-    selectScheduleClicked: (id: String, title: String) -> Unit,
-    item: ListOfGroupsModel
-) {
-    Card(
-        onClick = {
-            selectScheduleClicked(item.name, item.name)
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp)
-    ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .wrapContentHeight(Alignment.CenterVertically),
-            Arrangement.SpaceBetween,
-            Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 12.dp)
-            ) {
-                Box(
-                    Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
-
-                ) {
-                    Text(
-                        item.course.toString(),
-                        Modifier
-                            .align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                }
-                Column(Modifier.padding(start = 16.dp)) {
-                    Text(
-                        item.name,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Text(
-                        item.facultyAbbrev + " " + item.specialityAbbrev,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun EmployeeItemCard(
-    selectScheduleClicked: (id: String, title: String) -> Unit,
-    item: ListOfEmployeesModel
-) {
-    Card(
-        onClick = {
-            selectScheduleClicked(item.urlId, item.fio)
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp)
-    ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .wrapContentHeight(Alignment.CenterVertically),
-            Arrangement.SpaceBetween,
-            Alignment.CenterVertically,
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 12.dp)
-            ) {
-                Box(
-                    Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
-
-                ) {
-                    Icon(
-                        Icons.Outlined.Person,
-                        null,
-                        modifier = Modifier.align(Alignment.Center),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-
-                    if (item.photoLink != null) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(item.photoLink)
-                                .crossfade(true).build(),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                        )
-                    }
-                }
-                Column(Modifier.padding(start = 16.dp)) {
-                    Text(
-                        item.lastName + " " + item.firstName + item.middleName.let { " $it" },
-                        style = MaterialTheme.typography.titleLarge,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    var kaf = ""
-                    item.academicDepartment.forEach {
-                        kaf += "$it, "
-                    }
-                    kaf = kaf.removeSuffix(", ")
-                    if (kaf.isNotEmpty()) {
-                        Text(
-                            kaf,
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
-            }
-        }
-    }
-}

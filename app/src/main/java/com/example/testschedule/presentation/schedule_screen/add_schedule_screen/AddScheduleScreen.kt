@@ -18,6 +18,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
@@ -64,6 +65,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AddScheduleScreen(
+    goBack: () -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     vm: AddScheduleViewModel = hiltViewModel()
 ) {
@@ -73,6 +75,7 @@ fun AddScheduleScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             MySearchBar(
+                goBack,
                 { item, deleting ->
                     val tmp = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
                     if (deleting) {
@@ -155,6 +158,8 @@ fun AddScheduleScreen(
         )
     }
 }
+
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -274,7 +279,6 @@ fun SavedListView(
     val openDialog = remember { mutableStateOf(false) }
     saved.value?.let {
         if (openDialog.value) {
-
             OpenByDefaultScheduleDialog(
                 closeDialog = { openDialog.value = false },
                 clickOk = { item ->
@@ -342,36 +346,46 @@ fun SavedListView(
 
             saved.value?.forEach {
                 if (it.isGroup) {
-                    savedGroups.value.find { item -> item.name == it.id }?.let { it1 ->
-                        item {
-                            GroupItemCard(
-                                onAddRemoveButtonClicked = onAddRemoveButtonClicked,
-                                goBackWhenSelect = goBackWhenSelect,
-                                item = it1,
-                                isSaved = true
-                            )
+                    if (savedGroups.value.any { item -> item.name == it.id }) {
+                        savedGroups.value.find { item -> item.name == it.id }?.let { it1 ->
+                            item {
+                                GroupItemCard(
+                                    onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                                    goBackWhenSelect = goBackWhenSelect,
+                                    item = it1,
+                                    isSaved = true
+                                )
+                            }
                         }
-                    } ?: {
+                    } else {
                         item {
                             GroupItemCard(
                                 onAddRemoveButtonClicked = onAddRemoveButtonClicked,
                                 goBackWhenSelect = goBackWhenSelect,
-                                item = ListOfGroupsModel(0, "", it.title, "", ""),
+                                item = ListOfGroupsModel(
+                                    0,
+                                    stringResource(id = R.string.removed_from_server_schedules_list),
+                                    it.title,
+                                    "",
+                                    ""
+                                ),
                                 isSaved = true
                             )
                         }
                     }
                 } else {
-                    savedEmployees.value.find { item -> item.urlId == it.id }?.let { it1 ->
-                        item {
-                            EmployeeItemCard(
-                                onAddRemoveButtonClicked = onAddRemoveButtonClicked,
-                                goBackWhenSelect = goBackWhenSelect,
-                                item = it1,
-                                isSaved = true
-                            )
+                    if (savedEmployees.value.any { item -> item.urlId == it.id }) {
+                        savedEmployees.value.find { item -> item.urlId == it.id }?.let { it1 ->
+                            item {
+                                EmployeeItemCard(
+                                    onAddRemoveButtonClicked = onAddRemoveButtonClicked,
+                                    goBackWhenSelect = goBackWhenSelect,
+                                    item = it1,
+                                    isSaved = true
+                                )
+                            }
                         }
-                    } ?: {
+                    } else {
                         item {
                             EmployeeItemCard(
                                 onAddRemoveButtonClicked = onAddRemoveButtonClicked,
@@ -491,6 +505,7 @@ fun EmployeeListView(
 
 @Composable
 fun MySearchBar(
+    goBack: () -> Unit,
     onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     groups: MutableState<List<ListOfGroupsModel>?>,
@@ -511,11 +526,19 @@ fun MySearchBar(
             placeholder = {
                 Text(stringResource(id = R.string.search_schedule_hint))
             },
-            leadingIcon = {
+            trailingIcon = {
                 Icon(
                     Icons.Default.Search,
                     stringResource(id = R.string.search_schedule_hint)
                 )
+            },
+            leadingIcon = {
+                IconButton(onClick = { if(active) active = false else goBack() }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
             }
         ) {
             var tmpText = text

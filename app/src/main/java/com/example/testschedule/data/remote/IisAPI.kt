@@ -24,3 +24,4 @@ interface IisAPI {
     @GET("schedule/current-week")
     suspend fun getCurrentWeek(): Int
 }
+
