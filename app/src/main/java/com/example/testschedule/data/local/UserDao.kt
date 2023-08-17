@@ -4,14 +4,18 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.testschedule.data.local.entity.ListOfEmployeesEntity
-import com.example.testschedule.data.local.entity.ListOfGroupsEntity
-import com.example.testschedule.data.local.entity.ListOfSavedEntity
-import com.example.testschedule.data.local.entity.ScheduleEntity
+import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
+import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
+import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
+import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
+import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
+import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
 import com.example.testschedule.domain.model.schedule.ScheduleModel
 
 @Dao
 interface UserDao {
+
+    // Schedule
 
     @Query("SELECT * FROM ScheduleEntity WHERE id = :id")
     suspend fun getSchedule(id: String): ScheduleModel
@@ -55,5 +59,24 @@ interface UserDao {
     @Query("DELETE FROM ListOfEmployeesEntity")
     suspend fun deleteAllEmployeesList()
 
+
+    // User Auth
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setLoginAndPassword(data: LoginAndPasswordEntity)
+
+    @Query("SELECT * FROM LoginAndPasswordEntity LIMIT 1")
+    suspend fun getLoginAndPassword() : LoginAndPasswordEntity
+
+    @Query("DELETE FROM LoginAndPasswordEntity WHERE `key`=0")
+    suspend fun deleteLoginAndPassword()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setUserBasicData(data: UserBasicDataEntity)
+
+    @Query("SELECT * FROM UserBasicDataEntity LIMIT 1")
+    suspend fun getUserBasicData() : UserBasicDataEntity?
+
+    @Query("DELETE FROM UserBasicDataEntity WHERE `key`=0")
+    suspend fun deleteUserBasicData()
 
 }

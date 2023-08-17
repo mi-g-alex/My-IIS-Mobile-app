@@ -1,9 +1,12 @@
 package com.example.testschedule.data.repository
 
-import android.util.Log
 import com.example.testschedule.data.local.UserDao
-import com.example.testschedule.data.local.entity.ListOfSavedEntity
-import com.example.testschedule.data.local.entity.ScheduleEntity
+import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
+import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
+import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
+import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
+import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
+import com.example.testschedule.domain.model.auth.UserBasicDataModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
@@ -14,22 +17,22 @@ class UserDatabaseRepositoryImpl @Inject constructor(
     private val dao: UserDao
 ) : UserDatabaseRepository {
     override suspend fun getSchedule(id: String): ScheduleModel =
-        dao.getSchedule(id)
+        dao.getSchedule(id = id)
 
     override suspend fun setSchedule(model: ScheduleModel) {
         dao.setSchedule(
             ScheduleEntity(
-                model.id,
-                model.title,
-                model.isGroupSchedule,
-                model.startLessonsDate,
-                model.endLessonsDate,
-                model.endExamsDate,
-                model.startExamsDate,
-                model.employeeInfo,
-                model.studentGroupInfo,
-                model.schedules,
-                model.exams
+                id = model.id,
+                title = model.title,
+                isGroupSchedule = model.isGroupSchedule,
+                startLessonsDate = model.startLessonsDate,
+                endLessonsDate = model.endLessonsDate,
+                startExamsDate = model.endExamsDate,
+                endExamsDate = model.startExamsDate,
+                employeeInfo = model.employeeInfo,
+                studentGroupInfo = model.studentGroupInfo,
+                schedules = model.schedules,
+                exams = model.exams
             )
         )
     }
@@ -42,17 +45,17 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         dao.getAllSavedScheduleList()
 
     override suspend fun addNewSavedScheduleToList(model: ListOfSavedEntity) {
-        dao.addNewSavedScheduleToList(model)
+        dao.addNewSavedScheduleToList(model = model)
     }
 
     override suspend fun deleteFromSavedScheduleList(id: String) {
-        dao.deleteFromSavedScheduleList(id)
+        dao.deleteFromSavedScheduleList(id = id)
     }
 
     override suspend fun insertAllGroupsList(groups: List<ListOfGroupsModel>) {
         dao.deleteAllGroupsList()
         groups.forEach {
-            dao.insertAllGroupsList(it.toEntity())
+            dao.insertAllGroupsList(group = it.toEntity())
         }
     }
 
@@ -67,7 +70,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getEmployeeById(id: String): ListOfEmployeesModel? =
-        dao.getEmployeeById(id)?.toModel()
+        dao.getEmployeeById(id = id)?.toModel()
 
     override suspend fun getAllGroupsList(): List<ListOfGroupsModel> {
         return dao.getAllGroupsList().map { it.toModel() }
@@ -88,22 +91,92 @@ class UserDatabaseRepositoryImpl @Inject constructor(
     override suspend fun setExams(model: ScheduleModel) {
         dao.setSchedule(
             ScheduleEntity(
-                "EXAM",
-                model.title,
-                model.isGroupSchedule,
-                model.startLessonsDate,
-                model.endLessonsDate,
-                model.endExamsDate,
-                model.startExamsDate,
-                model.employeeInfo,
-                model.studentGroupInfo,
-                model.schedules,
-                model.exams
+                id = "EXAM",
+                title = model.title,
+                isGroupSchedule = model.isGroupSchedule,
+                startLessonsDate = model.startLessonsDate,
+                endLessonsDate = model.endLessonsDate,
+                startExamsDate = model.endExamsDate,
+                endExamsDate = model.startExamsDate,
+                employeeInfo = model.employeeInfo,
+                studentGroupInfo = model.studentGroupInfo,
+                schedules = model.schedules,
+                exams = model.exams
             )
         )
-        Log.e("~~``", getExams().toString())
     }
 
-    override suspend fun getExams() : ScheduleModel = dao.getSchedule("EXAM")
+    override suspend fun getExams(): ScheduleModel = dao.getSchedule("EXAM")
 
+
+    // User Auth
+    override suspend fun setLoginAndPassword(data: LoginAndPasswordModel) {
+        val password = data.password
+        var cof = 0
+        data.username.forEach { cof += it.code % 8 }
+        var newPass = ""
+        password.forEachIndexed { i, c -> newPass += (c + cof + i).toString() }
+        dao.setLoginAndPassword(
+            LoginAndPasswordEntity(
+                key = 0, username = data.username, password = newPass
+            )
+        )
+    }
+
+    override suspend fun getLoginAndPassword(): LoginAndPasswordModel {
+        val data = dao.getLoginAndPassword()
+        val password = data.password
+        var cof = 0
+        data.username.forEach { cof += it.code % 8 }
+        var newPass = ""
+        password.forEachIndexed { i, c -> newPass += (c - cof - i).toString() }
+        return LoginAndPasswordModel(username = data.username, password = newPass)
+    }
+
+    override suspend fun deleteLoginAndPassword() {
+        dao.deleteLoginAndPassword()
+    }
+
+    override suspend fun setUserBasicData(data: UserBasicDataModel) {
+        dao.setUserBasicData(
+            UserBasicDataEntity(
+                key = 0,
+                canStudentNote = data.canStudentNote,
+                email = data.email,
+                fio = data.fio,
+                group = data.group,
+                hasNotConfirmedContact = data.hasNotConfirmedContact,
+                isGroupHead = data.isGroupHead,
+                phone = data.phone,
+                photoUrl = data.photoUrl,
+                username = data.username,
+                cookie = data.cookie
+            )
+        )
+    }
+
+    override suspend fun getUserBasicData(): UserBasicDataModel? {
+        val data = dao.getUserBasicData() ?: return null
+
+        return UserBasicDataModel(
+            canStudentNote = data.canStudentNote,
+            email = data.email,
+            fio = data.fio,
+            group = data.group,
+            hasNotConfirmedContact = data.hasNotConfirmedContact,
+            isGroupHead = data.isGroupHead,
+            phone = data.phone,
+            photoUrl = data.photoUrl,
+            username = data.username,
+            cookie = data.cookie
+        )
+    }
+
+    override suspend fun deleteUserBasicData() {
+        dao.deleteUserBasicData()
+    }
+
+
+    // Cookie
+    override suspend fun getCookie(): String = dao.getUserBasicData()?.cookie ?: ""
 }

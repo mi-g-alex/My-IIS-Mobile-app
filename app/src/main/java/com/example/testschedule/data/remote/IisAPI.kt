@@ -1,13 +1,22 @@
 package com.example.testschedule.data.remote
 
-import com.example.testschedule.data.remote.dto.schedule_view.ScheduleDto
+import com.example.testschedule.data.remote.dto.account.profile.AccountProfileDto
+import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
+import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.data.remote.dto.schedule_view.ListOfEmployeesDto
 import com.example.testschedule.data.remote.dto.schedule_view.ListOfGroupsDto
+import com.example.testschedule.data.remote.dto.schedule_view.ScheduleDto
+import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface IisAPI {
+
+    // Расписание
 
     @GET("student-groups") // Получение списка группы
     suspend fun getListOfGroups(): List<ListOfGroupsDto>
@@ -23,5 +32,18 @@ interface IisAPI {
 
     @GET("schedule/current-week")
     suspend fun getCurrentWeek(): Int
+
+
+    // Авторизация
+    @POST("auth/login")
+    fun loginToAccount(@Body request: LoginAndPasswordDto): Call<UserBasicDataDto?>
+
+
+    // Работа с профилем
+
+    // Получение данных об аккаунте
+    @GET("profiles/personal-cv")
+    suspend fun getAccountProfile(@Header("Cookie") cookies: String): AccountProfileDto
+
 }
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="days_of_week">
+        <item>Вс</item>
+        <item>Пн</item>
+        <item>Вт</item>
+        <item>Ср</item>
+        <item>Чт</item>
+        <item>Пт</item>
+        <item>Сб</item>
+    </string-array>
+    <string-array name="months">
+        <item>января</item>
+        <item>февраля</item>
+        <item>марта</item>
+        <item>апреля</item>
+        <item>мая</item>
+        <item>июня</item>
+        <item>июля</item>
+        <item>августа</item>
+        <item>сентября</item>
+        <item>октября</item>
+        <item>ноября</item>
+        <item>декабря</item>
+    </string-array>
+    <string-array name="welcome_time">
+        <item>Доброе утро</item>
+        <item>Добрый день</item>
+        <item>Добрый вечер</item>
+        <item>Доброй ночи</item>
+    </string-array>
+    <string-array name="subgroups">
+        <item>Все</item>
+        <item>Подгруппа 1</item>
+        <item>Подгруппа 2</item>
+    </string-array>
+</resources>

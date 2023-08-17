@@ -53,6 +53,8 @@ fun ViewScheduleScreen(
     titleLink: String? = null,
     goToAddSchedule: () -> Unit,
     navToExams: () -> Unit,
+    navToLogin: () -> Unit,
+    navToProfile: () -> Unit,
     viewModel: ViewScheduleViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -65,6 +67,7 @@ fun ViewScheduleScreen(
 
     LaunchedEffect(null) {
         viewModel.getSaved()
+        viewModel.getProfile()
         viewModel.title.value = titleLink ?: ""
         if (scheduleId != null)
             viewModel.getSchedule(scheduleId)
@@ -91,8 +94,11 @@ fun ViewScheduleScreen(
         topBar = {
             MyTopAppBar(
                 titleText = viewModel.title.value,
-                { showBottomSheet = true },
-                { }
+                navIconClicked = { showBottomSheet = true },
+                goToAuth = navToLogin,
+                isOfflineResult = vm.isLoading || (vm.error?.isNotEmpty() == true),
+                userData = viewModel.userData,
+                goToProfile = { viewModel.getProfile(); navToProfile() }
             )
         },
         floatingActionButton = {
@@ -100,10 +106,11 @@ fun ViewScheduleScreen(
                 if ((vm.schedule.endExamsDate ?: 0) > Calendar.getInstance().timeInMillis)
                     ExamsFAB(
                         goToExams = {
-                        viewModel.setExamsToDB()
-                        goBackSet(vm.schedule.id, viewModel.title.value)
-                        navToExams()
-                    }, state)
+                            viewModel.setExamsToDB()
+                            goBackSet(vm.schedule.id, viewModel.title.value)
+                            navToExams()
+                        }, state
+                    )
         }
     ) { pv ->
         if (scheduleId == null && openScheduleId == null) {
@@ -128,14 +135,6 @@ fun ViewScheduleScreen(
                 modifier = Modifier
                     .padding(pv)
                     .fillMaxWidth()
-            )
-        }
-
-        if (!vm.error.isNullOrBlank()) {
-            Text(
-                vm.error.toString(),
-                modifier = Modifier
-                    .padding(pv)
             )
         }
 
@@ -184,6 +183,8 @@ fun ShowSchedule(
     val openDialog = remember { mutableStateOf(false) }
     var dialogLesson by remember { mutableStateOf<ScheduleModel.WeeksSchedule.Lesson?>(null) }
 
+    val selectedSub = a.getInt(Constants.SELECTED_SUBGROUP, 0)
+
     val day = GregorianCalendar(
         inst.get(Calendar.YEAR),
         inst.get(Calendar.MONTH),
@@ -209,13 +210,18 @@ fun ShowSchedule(
                             StickySchedule(lesson = lesson)
                         }
                         lesson.lessons.forEach { les ->
-                            item {
-                                if (!les.announcement)
-                                    LessonCard(lesson = les, isGroup = it.isGroupSchedule, click = {
-                                        openDialog.value = true
-                                        dialogLesson = les
-                                    })
-                            }
+                            if (les.numSubgroup == 0 || les.numSubgroup == selectedSub || selectedSub == 0)
+                                item {
+                                    if (!les.announcement)
+                                        LessonCard(
+                                            lesson = les,
+                                            isGroup = it.isGroupSchedule,
+                                            click = {
+                                                openDialog.value = true
+                                                dialogLesson = les
+                                            }
+                                        )
+                                }
                         }
                     }
                 }
@@ -242,7 +248,7 @@ fun ShowSchedule(
 fun NoLessonsLeft() {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(
-            text = stringResource(id = R.string.no_lessons),
+            text = stringResource(id = R.string.schedule_no_lessons),
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
@@ -256,7 +262,7 @@ fun NoScheduleAdded() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(id = R.string.no_schedule_added_start_screen),
+            text = stringResource(id = R.string.schedule_no_added_start_screen),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.titleMedium
         )

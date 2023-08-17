@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
-import com.example.testschedule.data.local.entity.ListOfSavedEntity
+import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository

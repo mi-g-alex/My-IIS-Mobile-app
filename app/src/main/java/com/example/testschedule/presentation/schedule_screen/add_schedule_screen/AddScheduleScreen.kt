@@ -49,6 +49,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,7 +59,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.testschedule.R
 import com.example.testschedule.common.Constants
-import com.example.testschedule.data.local.entity.ListOfSavedEntity
+import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import kotlinx.coroutines.launch
@@ -74,28 +75,34 @@ fun AddScheduleScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            MySearchBar(
-                goBack,
-                { item, deleting ->
-                    val tmp = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
-                    if (deleting) {
-                        if (tmp == item.id) {
-                            sharedPref.edit()
-                                .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
-                                .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, null)
-                                .apply()
+            if (vm.groups.value?.isNotEmpty() == true && vm.employees.value?.isNotEmpty() == true)
+                MySearchBar(
+                    goBack,
+                    { item, deleting ->
+                        val tmp = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
+                        if (deleting) {
+                            if (tmp == item.id) {
+                                sharedPref.edit()
+                                    .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
+                                    .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, null)
+                                    .apply()
+                            }
+                        } else {
+                            if (tmp == null) {
+                                sharedPref.edit()
+                                    .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, item.id)
+                                    .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, item.title)
+                                    .apply()
+                            }
                         }
-                    } else {
-                        if (tmp == null) {
-                            sharedPref.edit()
-                                .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, item.id)
-                                .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, item.title)
-                                .apply()
-                        }
-                    }
-                    vm.saveOrRemoveFromSaved(item)
-                }, goBackWhenSelect, vm.groups, vm.employees, vm.savedSchedule
-            )
+                        vm.saveOrRemoveFromSaved(item)
+                    }, goBackWhenSelect, vm.groups, vm.employees, vm.savedSchedule
+                )
+            if (vm.state.value.isLoading) {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     ) {
         Box(Modifier.padding(it)) {
@@ -152,13 +159,7 @@ fun AddScheduleScreen(
             }
         }
     }
-    if (vm.state.value.isLoading) {
-        LinearProgressIndicator(
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
 }
-
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -172,7 +173,10 @@ fun TabScreen(
     savedGroups: MutableState<List<ListOfGroupsModel>>,
     savedEmployees: MutableState<List<ListOfEmployeesModel>>
 ) {
-    val pagerState = rememberPagerState(if (saved.value?.size == 0) 1 else 0)
+    val pagerState = rememberPagerState(
+        initialPage = if (saved.value?.size == 0) 1 else 0,
+        pageCount = { 3 }
+    )
 
     Column(
         modifier = Modifier.background(MaterialTheme.colorScheme.background)
@@ -195,9 +199,9 @@ fun TabScreen(
 @Composable
 fun Tabs(pagerState: PagerState) {
     val listOfTabs = listOf(
-        stringResource(id = R.string.add_schedule_saved_title),
-        stringResource(id = R.string.add_schedule_group_title),
-        stringResource(id = R.string.add_schedule_staff_title)
+        stringResource(id = R.string.schedule_add_saved_title),
+        stringResource(id = R.string.schedule_add_groups_title),
+        stringResource(id = R.string.schedule_add_employees_title)
     )
     val scope = rememberCoroutineScope()
 
@@ -231,8 +235,7 @@ fun TabsContent(
     savedEmployees: MutableState<List<ListOfEmployeesModel>>
 ) {
     HorizontalPager(
-        state = pagerState,
-        pageCount = 3
+        state = pagerState
     ) { page ->
         when (page) {
             0 -> {
@@ -276,11 +279,12 @@ fun SavedListView(
 ) {
     val sharedPref =
         LocalContext.current.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
-    val openDialog = remember { mutableStateOf(false) }
+    var openDialog by remember { mutableStateOf(false) }
+    var openSubgroupSettingsDialog by remember { mutableStateOf(false) }
     saved.value?.let {
-        if (openDialog.value) {
+        if (openDialog) {
             OpenByDefaultScheduleDialog(
-                closeDialog = { openDialog.value = false },
+                closeDialog = { openDialog = false },
                 clickOk = { item ->
                     if (item != null) {
                         sharedPref.edit()
@@ -288,11 +292,16 @@ fun SavedListView(
                             .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, item.title)
                             .apply()
                     }
-                    openDialog.value = false
+                    openDialog = false
                 },
                 saved = it,
                 selected = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, "") ?: ""
             )
+        }
+    }
+    if (openSubgroupSettingsDialog) {
+        SelectSubgroupDialog {
+            openSubgroupSettingsDialog = false
         }
     }
     if (saved.value?.isNotEmpty() == true)
@@ -300,7 +309,7 @@ fun SavedListView(
             item {
                 ElevatedCard(
                     onClick = {
-                        openDialog.value = true
+                        openDialog = true
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -317,20 +326,56 @@ fun SavedListView(
                             Modifier.weight(1f)
                         ) {
                             Text(
-                                text = stringResource(id = R.string.select_default_schedule_text),
+                                text = stringResource(id = R.string.schedule_select_default_text),
                                 style = MaterialTheme.typography.titleLarge
                             )
                             Text(
                                 text = sharedPref.getString(
                                     Constants.PREF_OPEN_BY_DEFAULT_TITLE,
                                     null
-                                ) ?: stringResource(id = R.string.nothing_selected_schedule),
+                                ) ?: stringResource(id = R.string.schedule_nothing_selected),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
                         Icon(
                             Icons.Outlined.KeyboardArrowRight,
-                            stringResource(id = R.string.add_schedule_saved_title)
+                            stringResource(id = R.string.schedule_add_saved_title)
+                        )
+                    }
+                }
+            }
+            item {
+                ElevatedCard(
+                    onClick = {
+                        openSubgroupSettingsDialog = true
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp, start = 8.dp, end = 8.dp, bottom = 4.dp)
+                ) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.schedule_select_subgroup),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            val sub = sharedPref.getInt(Constants.SELECTED_SUBGROUP, 0)
+                            Text(
+                                text = stringArrayResource(id = R.array.subgroups)[sub],
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        Icon(
+                            Icons.Outlined.KeyboardArrowRight,
+                            stringResource(id = R.string.schedule_select_subgroup_title)
                         )
                     }
                 }
@@ -364,7 +409,7 @@ fun SavedListView(
                                 goBackWhenSelect = goBackWhenSelect,
                                 item = ListOfGroupsModel(
                                     0,
-                                    stringResource(id = R.string.removed_from_server_schedules_list),
+                                    stringResource(id = R.string.schedule_removed_from_server_schedules_list),
                                     it.title,
                                     "",
                                     ""
@@ -391,7 +436,7 @@ fun SavedListView(
                                 onAddRemoveButtonClicked = onAddRemoveButtonClicked,
                                 goBackWhenSelect = goBackWhenSelect,
                                 item = ListOfEmployeesModel(
-                                    listOf(stringResource(id = R.string.removed_from_server_schedules_list)),
+                                    listOf(stringResource(id = R.string.schedule_removed_from_server_schedules_list)),
                                     it.title,
                                     it.title,
                                     "",
@@ -410,7 +455,7 @@ fun SavedListView(
     else {
         Box(Modifier.fillMaxSize()) {
             Text(
-                stringResource(id = R.string.no_schedule_saved_title),
+                stringResource(id = R.string.schedule_no_saved_title),
                 modifier = Modifier.align(Alignment.Center),
                 style = MaterialTheme.typography.titleLarge
             )
@@ -524,16 +569,18 @@ fun MySearchBar(
             active = active,
             onActiveChange = { active = !(active); if (!active) text = "" },
             placeholder = {
-                Text(stringResource(id = R.string.search_schedule_hint))
+                Text(stringResource(id = R.string.schedule_search_hint))
             },
             trailingIcon = {
                 Icon(
                     Icons.Default.Search,
-                    stringResource(id = R.string.search_schedule_hint)
+                    stringResource(id = R.string.schedule_search_hint)
                 )
             },
             leadingIcon = {
-                IconButton(onClick = { if(active) active = false else goBack() }) {
+                IconButton(onClick = {
+                    if (active) active = false else goBack(); if (!active) text = ""
+                }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Back"
@@ -645,8 +692,8 @@ fun GroupItemCard(
             ) {
                 Icon(
                     if (isSaved) Icons.Outlined.Delete else Icons.Outlined.Add,
-                    if (isSaved) stringResource(id = R.string.remove_schedule_desc)
-                    else stringResource(id = R.string.save_schedule_desc),
+                    if (isSaved) stringResource(id = R.string.schedule_remove_desc)
+                    else stringResource(id = R.string.schedule_save_desc),
                     Modifier,
                     tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -703,7 +750,7 @@ fun EmployeeItemCard(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(item.photoLink)
                                 .crossfade(true).build(),
-                            contentDescription = null,
+                            contentDescription = item.fio,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .size(40.dp)
@@ -753,8 +800,8 @@ fun EmployeeItemCard(
                 Column {
                     Icon(
                         if (isSaved) Icons.Outlined.Delete else Icons.Outlined.Add,
-                        if (isSaved) stringResource(id = R.string.remove_schedule_desc)
-                        else stringResource(id = R.string.save_schedule_desc),
+                        if (isSaved) stringResource(id = R.string.schedule_remove_desc)
+                        else stringResource(id = R.string.schedule_save_desc),
                         Modifier,
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )

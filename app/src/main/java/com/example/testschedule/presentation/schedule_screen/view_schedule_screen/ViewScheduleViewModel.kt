@@ -1,13 +1,15 @@
 package com.example.testschedule.presentation.schedule_screen.view_schedule_screen
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
-import com.example.testschedule.data.local.entity.ListOfSavedEntity
+import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.di.AppModule
+import com.example.testschedule.domain.model.auth.UserBasicDataModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
@@ -37,6 +39,7 @@ class ViewScheduleViewModel @Inject constructor(
     var savedSchedule: MutableState<List<ListOfSavedEntity>?> = mutableStateOf(listOf())
     var savedGroups: MutableState<List<ListOfGroupsModel>> = mutableStateOf(listOf())
     var savedEmployees: MutableState<List<ListOfEmployeesModel>> = mutableStateOf(listOf())
+    var userData: MutableState<UserBasicDataModel?> = mutableStateOf(null)
 
     init {
         getSaved()
@@ -61,7 +64,8 @@ class ViewScheduleViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    _state.value = ViewScheduleState(error = result.message)
+                    val a = db.getSchedule(id)
+                    _state.value = ViewScheduleState(error = result.message, schedule = a)
                 }
             }
         }.launchIn(viewModelScope)
@@ -122,4 +126,10 @@ class ViewScheduleViewModel @Inject constructor(
         viewModelScope.launch { state.value.schedule?.let { db.setExams(it) } }
     }
 
+    fun getProfile() {
+        viewModelScope.launch {
+            userData.value = db.getUserBasicData()
+            Log.e("~~~", userData.value.toString())
+        }
+    }
 }

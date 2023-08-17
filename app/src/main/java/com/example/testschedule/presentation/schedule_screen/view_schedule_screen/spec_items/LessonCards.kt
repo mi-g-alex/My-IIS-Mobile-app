@@ -60,7 +60,7 @@ fun StickySchedule(lesson: LessonDay): Unit = Row(
             stringArrayResource(id = R.array.months)[lesson.month] +
             ", " +
             stringArrayResource(id = R.array.days_of_week)[lesson.dayOfWeek - 1]
-    val curWeek = stringResource(id = R.string.week, lesson.week)
+    val curWeek = stringResource(id = R.string.schedule_week, lesson.week)
     Text(
         text = date,
         style = MaterialTheme.typography.headlineMedium
@@ -177,7 +177,7 @@ fun LessonCard(
                         if (lesson.numSubgroup != 0) {
                             Text(
                                 text = stringResource(
-                                    id = R.string.subgroup_text,
+                                    id = R.string.schedule_subgroup_text,
                                     lesson.numSubgroup
                                 ),
                                 style = MaterialTheme.typography.bodyMedium
@@ -366,29 +366,29 @@ fun MoreDetailCard(
                 val dateStart = Date(lesson.startLessonDate ?: lesson.dateLesson ?: 0)
                 val dateEnd = Date(lesson.endLessonDate ?: lesson.dateLesson ?: 0)
                 val format = SimpleDateFormat(
-                    stringResource(id = R.string.date_pattern),
+                    stringResource(id = R.string.schedule_dialog_date_pattern),
                     Locale.getDefault()
                 )
                 Text(
                     stringResource(
-                        id = R.string.type_of_lesson,
+                        id = R.string.schedule_dialog_type_of_lesson,
                         lesson.lessonTypeAbbrev
                     ),
                     style = MaterialTheme.typography.titleLarge
                 )
-                if (dateStart.toInstant().toEpochMilli() != dateEnd.toInstant().toEpochMilli())
+                if ((lesson.startLessonDate ?: lesson.dateLesson ?: 0) != (lesson.endLessonDate ?: lesson.dateLesson ?: 0))
                     Text(
                         stringResource(
-                            id = R.string.dates,
+                            id = R.string.schedule_dialog_dates,
                             format.format(dateStart),
                             format.format(dateEnd)
                         ),
                         style = MaterialTheme.typography.titleLarge
                     )
-                else if (dateStart.toInstant().toEpochMilli() != 0L) {
+                else if ((lesson.startLessonDate ?: lesson.dateLesson ?: 0) != 0L) {
                     Text(
                         stringResource(
-                            id = R.string.date,
+                            id = R.string.schedule_dialog_date,
                             format.format(dateStart)
                         ),
                         style = MaterialTheme.typography.titleLarge
@@ -396,7 +396,7 @@ fun MoreDetailCard(
                 }
                 Text(
                     stringResource(
-                        id = R.string.times,
+                        id = R.string.schedule_dialog_times,
                         getTimeInString(lesson.startLessonTime),
                         getTimeInString(lesson.endLessonTime),
                     ),
@@ -407,7 +407,7 @@ fun MoreDetailCard(
                         lesson.weekNumber.toString().removeSuffix("]").removePrefix("[")
                     Text(
                         stringResource(
-                            id = R.string.weeks,
+                            id = R.string.schedule_dialog_weeks,
                             weeksString,
                         ),
                         style = MaterialTheme.typography.titleLarge
@@ -418,7 +418,7 @@ fun MoreDetailCard(
                         lesson.auditories.toString().removeSuffix("]").removePrefix("[")
                     Text(
                         stringResource(
-                            id = R.string.auditories,
+                            id = R.string.schedule_dialog_auditories,
                             weeksString,
                         ),
                         style = MaterialTheme.typography.titleLarge
@@ -427,7 +427,7 @@ fun MoreDetailCard(
                 if (lesson.numSubgroup != 0) {
                     Text(
                         stringResource(
-                            id = R.string.sub_group,
+                            id = R.string.schedule_dialog_sub_group,
                             lesson.numSubgroup,
                         ),
                         style = MaterialTheme.typography.titleLarge
@@ -437,7 +437,7 @@ fun MoreDetailCard(
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         stringResource(
-                            id = R.string.add_schedule_staff_title,
+                            id = R.string.schedule_add_employees_title,
                             lesson.numSubgroup,
                         ),
                         style = MaterialTheme.typography.headlineSmall
@@ -471,7 +471,7 @@ fun MoreDetailCard(
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         stringResource(
-                            id = R.string.add_schedule_group_title,
+                            id = R.string.schedule_add_groups_title,
                             lesson.numSubgroup,
                         ),
                         style = MaterialTheme.typography.headlineSmall

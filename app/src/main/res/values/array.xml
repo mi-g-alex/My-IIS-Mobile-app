@@ -1,26 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="days_of_week">
-        <item>Вс</item>
-        <item>Пн</item>
-        <item>Вт</item>
-        <item>Ср</item>
-        <item>Чт</item>
-        <item>Пт</item>
-        <item>Сб</item>
+        <item>Sun</item>
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
     </string-array>
     <string-array name="months">
-        <item>января</item>
-        <item>февраля</item>
-        <item>марта</item>
-        <item>апреля</item>
-        <item>мая</item>
-        <item>июня</item>
-        <item>июля</item>
-        <item>августа</item>
-        <item>сентября</item>
-        <item>октября</item>
-        <item>ноября</item>
-        <item>декабря</item>
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+    <string-array name="welcome_time">
+        <item>Good morning</item>
+        <item>Good afternoon</item>
+        <item>Good evening</item>
+        <item>Good night</item>
+    </string-array>
+    <string-array name="subgroups">
+        <item>All</item>
+        <item>Subgroup 1</item>
+        <item>Subgroup 2</item>
     </string-array>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.testschedule.data.local.entity
+package com.example.testschedule.data.local.entity.schedule
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

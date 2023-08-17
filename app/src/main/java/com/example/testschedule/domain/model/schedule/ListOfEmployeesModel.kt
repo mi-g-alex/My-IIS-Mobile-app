@@ -1,6 +1,6 @@
 package com.example.testschedule.domain.model.schedule
 
-import com.example.testschedule.data.local.entity.ListOfEmployeesEntity
+import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
 
 data class ListOfEmployeesModel(
     val academicDepartment: List<String>, // ["каф. фиб"]

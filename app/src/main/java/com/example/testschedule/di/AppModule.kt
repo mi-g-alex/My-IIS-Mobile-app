@@ -74,13 +74,23 @@ object AppModule {
     class MyPreference @Inject constructor(@ApplicationContext context: Context) {
         private val prefs = context.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
 
+        /*
         fun getLastUpdateCurrentWeek(): Long = prefs.getLong(Constants.LAST_UPDATE_CURRENT_WEEK, 0)
+
         fun getCurrentWeek(): Int = prefs.getInt(Constants.CURRENT_WEEK, 0)
+        */
 
         fun setCurrentWeek(date: Long, week: Int) {
             prefs.edit()
                 .putLong(Constants.LAST_UPDATE_CURRENT_WEEK, date)
                 .putInt(Constants.CURRENT_WEEK, week)
+                .apply()
+        }
+
+        fun setOpenByDefault(id: String, title: String) {
+            prefs.edit()
+                .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, title)
+                .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, id)
                 .apply()
         }
     }

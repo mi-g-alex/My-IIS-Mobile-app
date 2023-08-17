@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.testschedule.R
-import com.example.testschedule.data.local.entity.ListOfSavedEntity
+import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 
@@ -40,7 +40,7 @@ fun BottomSheet(
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(id = R.string.bottom_sheet_title),
+                        text = stringResource(id = R.string.schedule_bottom_sheet_title),
                         modifier = Modifier,
                         style = MaterialTheme.typography.titleLarge,
                     )
@@ -51,7 +51,7 @@ fun BottomSheet(
                     ) {
                         Icon(
                             Icons.Filled.Edit,
-                            stringResource(id = R.string.bottom_sheet_edit_btn_desc)
+                            stringResource(id = R.string.schedule_bottom_sheet_edit_btn_desc)
                         )
                     }
                 }
@@ -65,20 +65,53 @@ fun BottomSheet(
         ) {
             saved.value?.forEach {
                 if (it.isGroup) {
-                    savedGroups.value.find { item -> item.name == it.id }?.let { it1 ->
+                    if (savedGroups.value.any { item -> item.name == it.id }) {
+                        savedGroups.value.find { item -> item.name == it.id }?.let { it1 ->
+                            item {
+                                GroupItemCard(
+                                    selectScheduleClicked,
+                                    item = it1
+                                )
+                            }
+                        }
+                    } else {
                         item {
                             GroupItemCard(
                                 selectScheduleClicked,
-                                item = it1
+                                item = ListOfGroupsModel(
+                                    0,
+                                    stringResource(id = R.string.schedule_removed_from_server_schedules_list),
+                                    it.title,
+                                    "",
+                                    ""
+                                )
                             )
                         }
                     }
                 } else {
-                    savedEmployees.value.find { item -> item.urlId == it.id }?.let { it1 ->
+                    if (savedEmployees.value.any { item -> item.urlId == it.id }) {
+                        savedEmployees.value.find { item -> item.urlId == it.id }?.let { it1 ->
+                            item {
+                                EmployeeItemCard(
+                                    selectScheduleClicked = selectScheduleClicked,
+                                    item = it1
+                                )
+                            }
+                        }
+                    } else {
                         item {
                             EmployeeItemCard(
-                                selectScheduleClicked,
-                                item = it1
+                                selectScheduleClicked = selectScheduleClicked,
+                                item = ListOfEmployeesModel(
+                                    listOf(stringResource(id = R.string.schedule_removed_from_server_schedules_list)),
+                                    it.title,
+                                    it.title,
+                                    "",
+                                    null,
+                                    null,
+                                    null,
+                                    it.id
+                                )
                             )
                         }
                     }

@@ -1,6 +1,6 @@
 package com.example.testschedule.domain.model.schedule
 
-import com.example.testschedule.data.local.entity.ListOfGroupsEntity
+import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
 
 data class ListOfGroupsModel(
     val course: Int, // 3

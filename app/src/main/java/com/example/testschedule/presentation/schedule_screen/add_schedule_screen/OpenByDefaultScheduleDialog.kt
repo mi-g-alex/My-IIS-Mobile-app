@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.testschedule.R
-import com.example.testschedule.data.local.entity.ListOfSavedEntity
+import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 
 @Composable
 fun OpenByDefaultScheduleDialog(
@@ -29,7 +29,7 @@ fun OpenByDefaultScheduleDialog(
     selected: String
 ) {
     var selectedId by remember { mutableStateOf(selected) }
-        var selectedItem by remember { mutableStateOf<ListOfSavedEntity?>(null) }
+    var selectedItem by remember { mutableStateOf<ListOfSavedEntity?>(null) }
 
     AlertDialog(
         onDismissRequest = {
@@ -42,18 +42,18 @@ fun OpenByDefaultScheduleDialog(
                 },
                 enabled = selectedItem?.id != selected
             ) {
-                Text(stringResource(id = R.string.select_default_schedule_ok))
+                Text(stringResource(id = R.string.save))
             }
         },
         dismissButton = {
             TextButton(onClick = {
                 closeDialog()
             }) {
-                Text(stringResource(id = R.string.select_default_schedule_cancel))
+                Text(stringResource(id = R.string.cancel))
             }
         },
         title = {
-            Text(stringResource(id = R.string.select_default_schedule_text))
+            Text(stringResource(id = R.string.schedule_select_default_text))
         },
         text = {
             LazyColumn {

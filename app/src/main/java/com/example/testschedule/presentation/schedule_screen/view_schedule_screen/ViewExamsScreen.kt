@@ -46,7 +46,7 @@ fun ViewExamsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(id = R.string.exams_fab))
+                    Text(stringResource(id = R.string.schedule_exams_fab))
                 },
                 navigationIcon = {
                     IconButton(
