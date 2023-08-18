@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Person
@@ -362,136 +363,140 @@ fun MoreDetailCard(
             Text(lesson.subjectFullName)
         },
         text = {
-            Column {
-                val dateStart = Date(lesson.startLessonDate ?: lesson.dateLesson ?: 0)
-                val dateEnd = Date(lesson.endLessonDate ?: lesson.dateLesson ?: 0)
-                val format = SimpleDateFormat(
-                    stringResource(id = R.string.schedule_dialog_date_pattern),
-                    Locale.getDefault()
-                )
-                Text(
-                    stringResource(
-                        id = R.string.schedule_dialog_type_of_lesson,
-                        lesson.lessonTypeAbbrev
-                    ),
-                    style = MaterialTheme.typography.titleLarge
-                )
-                if ((lesson.startLessonDate ?: lesson.dateLesson ?: 0) != (lesson.endLessonDate ?: lesson.dateLesson ?: 0))
+            LazyColumn {
+                item {
+                    val dateStart = Date(lesson.startLessonDate ?: lesson.dateLesson ?: 0)
+                    val dateEnd = Date(lesson.endLessonDate ?: lesson.dateLesson ?: 0)
+                    val format = SimpleDateFormat(
+                        stringResource(id = R.string.schedule_dialog_date_pattern),
+                        Locale.getDefault()
+                    )
                     Text(
                         stringResource(
-                            id = R.string.schedule_dialog_dates,
-                            format.format(dateStart),
-                            format.format(dateEnd)
+                            id = R.string.schedule_dialog_type_of_lesson,
+                            lesson.lessonTypeAbbrev
                         ),
                         style = MaterialTheme.typography.titleLarge
                     )
-                else if ((lesson.startLessonDate ?: lesson.dateLesson ?: 0) != 0L) {
+                    if ((lesson.startLessonDate ?: lesson.dateLesson ?: 0) != (lesson.endLessonDate
+                            ?: lesson.dateLesson ?: 0)
+                    )
+                        Text(
+                            stringResource(
+                                id = R.string.schedule_dialog_dates,
+                                format.format(dateStart),
+                                format.format(dateEnd)
+                            ),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    else if ((lesson.startLessonDate ?: lesson.dateLesson ?: 0) != 0L) {
+                        Text(
+                            stringResource(
+                                id = R.string.schedule_dialog_date,
+                                format.format(dateStart)
+                            ),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
                     Text(
                         stringResource(
-                            id = R.string.schedule_dialog_date,
-                            format.format(dateStart)
+                            id = R.string.schedule_dialog_times,
+                            getTimeInString(lesson.startLessonTime),
+                            getTimeInString(lesson.endLessonTime),
                         ),
                         style = MaterialTheme.typography.titleLarge
                     )
-                }
-                Text(
-                    stringResource(
-                        id = R.string.schedule_dialog_times,
-                        getTimeInString(lesson.startLessonTime),
-                        getTimeInString(lesson.endLessonTime),
-                    ),
-                    style = MaterialTheme.typography.titleLarge
-                )
-                if (lesson.weekNumber.isNotEmpty()) {
-                    val weeksString =
-                        lesson.weekNumber.toString().removeSuffix("]").removePrefix("[")
-                    Text(
-                        stringResource(
-                            id = R.string.schedule_dialog_weeks,
-                            weeksString,
-                        ),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-                if (lesson.auditories.isNotEmpty()) {
-                    val weeksString =
-                        lesson.auditories.toString().removeSuffix("]").removePrefix("[")
-                    Text(
-                        stringResource(
-                            id = R.string.schedule_dialog_auditories,
-                            weeksString,
-                        ),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-                if (lesson.numSubgroup != 0) {
-                    Text(
-                        stringResource(
-                            id = R.string.schedule_dialog_sub_group,
-                            lesson.numSubgroup,
-                        ),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-                if (lesson.employees?.isNotEmpty() == true) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        stringResource(
-                            id = R.string.schedule_add_employees_title,
-                            lesson.numSubgroup,
-                        ),
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                    FlowRow(
-                        mainAxisSpacing = 8.dp,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        lesson.employees.forEach { employee ->
-                            val fio = employee.lastName + " " +
-                                    employee.firstName[0] + "." +
-                                    employee.middleName?.let { " ${it[0]}." } +
-                                    (employee.rank?.let { " (${it})" } ?: "")
-                            AssistChip(
-                                onClick = {
-                                    selectScheduleClicked(employee.urlId, fio)
-                                    onDismissRequest()
-                                },
-                                label = {
-                                    Text(
-                                        text = employee.lastName + " " +
-                                                employee.firstName +
-                                                (employee.middleName?.let { " $it" } ?: "")
-                                    )
-                                }
-                            )
+                    if (lesson.weekNumber.isNotEmpty()) {
+                        val weeksString =
+                            lesson.weekNumber.toString().removeSuffix("]").removePrefix("[")
+                        Text(
+                            stringResource(
+                                id = R.string.schedule_dialog_weeks,
+                                weeksString,
+                            ),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                    if (lesson.auditories.isNotEmpty()) {
+                        val weeksString =
+                            lesson.auditories.toString().removeSuffix("]").removePrefix("[")
+                        Text(
+                            stringResource(
+                                id = R.string.schedule_dialog_auditories,
+                                weeksString,
+                            ),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                    if (lesson.numSubgroup != 0) {
+                        Text(
+                            stringResource(
+                                id = R.string.schedule_dialog_sub_group,
+                                lesson.numSubgroup,
+                            ),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                    if (lesson.employees?.isNotEmpty() == true) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            stringResource(
+                                id = R.string.schedule_add_employees_title,
+                                lesson.numSubgroup,
+                            ),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        FlowRow(
+                            mainAxisSpacing = 8.dp,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            lesson.employees.forEach { employee ->
+                                val fio = employee.lastName + " " +
+                                        employee.firstName[0] + "." +
+                                        employee.middleName?.let { " ${it[0]}." } +
+                                        (employee.rank?.let { " (${it})" } ?: "")
+                                AssistChip(
+                                    onClick = {
+                                        selectScheduleClicked(employee.urlId, fio)
+                                        onDismissRequest()
+                                    },
+                                    label = {
+                                        Text(
+                                            text = employee.lastName + " " +
+                                                    employee.firstName +
+                                                    (employee.middleName?.let { " $it" } ?: "")
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
-                }
-                if (lesson.studentGroups.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        stringResource(
-                            id = R.string.schedule_add_groups_title,
-                            lesson.numSubgroup,
-                        ),
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                    FlowRow(
-                        mainAxisSpacing = 8.dp,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        lesson.studentGroups.forEach { group ->
-                            AssistChip(
-                                onClick = {
-                                    selectScheduleClicked(group.name, group.name)
-                                    onDismissRequest()
-                                },
-                                label = {
-                                    Text(
-                                        text = group.name
-                                    )
-                                }
-                            )
+                    if (lesson.studentGroups.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            stringResource(
+                                id = R.string.schedule_add_groups_title,
+                                lesson.numSubgroup,
+                            ),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        FlowRow(
+                            mainAxisSpacing = 8.dp,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            lesson.studentGroups.forEach { group ->
+                                AssistChip(
+                                    onClick = {
+                                        selectScheduleClicked(group.name, group.name)
+                                        onDismissRequest()
+                                    },
+                                    label = {
+                                        Text(
+                                            text = group.name
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }

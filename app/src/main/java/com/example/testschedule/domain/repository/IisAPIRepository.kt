@@ -1,6 +1,7 @@
 package com.example.testschedule.domain.repository
 
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
+import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
@@ -26,6 +27,8 @@ interface IisAPIRepository {
     // Работа с профилем
 
     // Получение данных об аккаунте
-
     suspend fun getAccountProfile(cookies: String) : AccountProfileModel
+
+    // Получение уведомлений
+    suspend fun getNotifications(cookies: String): List<NotificationModel>
 }

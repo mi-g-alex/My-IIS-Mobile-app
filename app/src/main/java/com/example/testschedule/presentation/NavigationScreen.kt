@@ -28,10 +28,11 @@ object Routes {
 fun NavigationScreen(
     navController: NavHostController = rememberNavController()
 ) {
-    
+
     fun popNav() {
-        if(navController.currentBackStack.value.size > 3) navController.popBackStack()
+        if (navController.currentBackStack.value.size > 3) navController.popBackStack()
     }
+
     NavHost(
         navController = navController,
         startDestination = Routes.SCHEDULE_ROUTE
@@ -41,10 +42,10 @@ fun NavigationScreen(
             startDestination = Routes.SCHEDULE_HOME_ROUTE
         ) {
             composable(
-                route = Routes.SCHEDULE_HOME_ROUTE
+                route = Routes.SCHEDULE_HOME_ROUTE,
             ) { entry ->
                 val id = entry.savedStateHandle.get<String>("id")
-                val title = entry.savedStateHandle.get<String>("title")
+                val title = entry.savedStateHandle.get<String>("title") ?: id
                 ViewScheduleScreen(
                     goBackSet = { i, t ->
                         navController.currentBackStackEntry

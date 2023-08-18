@@ -2,6 +2,7 @@ package com.example.testschedule.data.local
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
+import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.util.JsonParser
 import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.google.gson.reflect.TypeToken
@@ -80,6 +81,34 @@ class Converters(
         jsonParser.fromJson<ArrayList<String>>(
             json,
             object : TypeToken<ArrayList<String>>() {}.type
+        )
+
+    @TypeConverter
+    fun listOfReferenceToJson(meaning: List<AccountProfileEntity.Reference>): String =
+        jsonParser.toJson(
+            meaning,
+            object : TypeToken<ArrayList<AccountProfileEntity.Reference>>() {}.type
+        ) ?: ""
+
+    @TypeConverter
+    fun listOfReferenceFromJson(json: String): List<AccountProfileEntity.Reference>? =
+        jsonParser.fromJson<ArrayList<AccountProfileEntity.Reference>>(
+            json,
+            object : TypeToken<ArrayList<AccountProfileEntity.Reference>>() {}.type
+        )
+
+    @TypeConverter
+    fun listOfSkillToJson(meaning: List<AccountProfileEntity.Skill>): String =
+        jsonParser.toJson(
+            meaning,
+            object : TypeToken<ArrayList<AccountProfileEntity.Skill>>() {}.type
+        ) ?: ""
+
+    @TypeConverter
+    fun listOfSkillFromJson(json: String): List<AccountProfileEntity.Skill>? =
+        jsonParser.fromJson<ArrayList<AccountProfileEntity.Skill>>(
+            json,
+            object : TypeToken<ArrayList<AccountProfileEntity.Skill>>() {}.type
         )
 
 }

@@ -126,9 +126,7 @@ fun AuthScreen(
                         OutlinedTextField(
                             value = loginText,
                             onValueChange = { text ->
-                                if (text.isEmpty() || text.last() in ('0'..'9')) {
-                                    loginText = text
-                                }
+                                loginText = text.filter { c -> c in ('0'..'9') }
                             },
                             modifier = Modifier
                                 .fillMaxWidth(),
@@ -244,7 +242,7 @@ fun AuthScreen(
                                 }
                             },
                             keyboardOptions = KeyboardOptions(
-                                capitalization = KeyboardCapitalization.Words,
+                                capitalization = KeyboardCapitalization.None,
                                 autoCorrect = false,
                                 keyboardType = KeyboardType.Password,
                                 imeAction = ImeAction.Done
@@ -252,6 +250,10 @@ fun AuthScreen(
                             keyboardActions = KeyboardActions(
                                 onDone = {
                                     keyboardController?.hide()
+                                    viewModel.loginToAccount(
+                                        username = loginText,
+                                        password = passwordText
+                                    )
                                 }
                             ),
                             singleLine = true,

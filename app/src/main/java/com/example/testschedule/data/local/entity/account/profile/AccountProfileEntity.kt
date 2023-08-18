@@ -1,8 +1,13 @@
-package com.example.testschedule.domain.model.account.profile
+package com.example.testschedule.data.local.entity.account.profile
 
-import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 
-data class AccountProfileModel(
+@Entity
+data class AccountProfileEntity(
+    @PrimaryKey
+    val key: Int,
     val id: Int?, // 152xx
     val lastName: String?, // Иванов
     val firstName: String?, // Иван
@@ -15,38 +20,37 @@ data class AccountProfileModel(
     val course: Int?, // 2
     val rating: Int?, // 5
     val bio: String?, // Text
-    val references: List<ReferenceModel>,
-    val skills: List<SkillModel>,
+    val references: List<Reference>,
+    val skills: List<Skill>,
     val settingPublished: Boolean?, // true
     val settingSearchJob: Boolean?, // false
     val settingShowRating: Boolean?, // true
     val outlookLogin: String?, // emailhere@study.bsuir.by
     val outlookPassword: String? // password here
 ) {
-    data class ReferenceModel(
+    data class Reference(
         val id: Int, // 4371xxxx
         val name: String, // TG
         val reference: String // t.me/xxxxx
     ) {
-        fun toEntity() = AccountProfileEntity.Reference(
+        fun toModel() = AccountProfileModel.ReferenceModel(
             id = this.id,
             name = this.name,
             reference = this.reference
         )
     }
 
-    data class SkillModel(
+    data class Skill(
         val id: Int, // 154
         val name: String // C/C++
     ) {
-        fun toEntity() = AccountProfileEntity.Skill(
+        fun toModel() = AccountProfileModel.SkillModel(
             id = this.id,
             name = this.name
         )
     }
 
-    fun toEntity()  = AccountProfileEntity(
-        key = 0,
+    fun toModel() = AccountProfileModel(
         birthDate = this.birthDate,
         course = this.course,
         faculty = this.faculty,
@@ -58,13 +62,14 @@ data class AccountProfileModel(
         outlookPassword = this.outlookPassword,
         photoUrl = this.photoUrl,
         rating = this.rating,
-        references = this.references.map { it.toEntity() },
+        references = this.references.map { it.toModel() },
         settingPublished = this.settingPublished,
         settingSearchJob = this.settingSearchJob,
         settingShowRating = this.settingShowRating,
-        skills = this.skills.map { it.toEntity() },
+        skills = this.skills.map { it.toModel() },
         speciality = this.speciality,
         group = this.group,
         bio = this.bio,
     )
+
 }

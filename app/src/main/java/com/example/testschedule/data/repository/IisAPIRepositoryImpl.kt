@@ -1,8 +1,10 @@
 package com.example.testschedule.data.repository
 
 import com.example.testschedule.data.remote.IisAPI
+import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
+import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
@@ -49,4 +51,20 @@ class IisAPIRepositoryImpl @Inject constructor(
     override suspend fun getAccountProfile(cookies: String): AccountProfileModel =
         api.getAccountProfile(cookies).toModel()
 
+    // Уведомления
+    override suspend fun getNotifications(cookies: String): List<NotificationModel> {
+        val pageSize = 300
+        var crnPage = 0
+        var last: NotificationsDto
+        val list: MutableList<NotificationModel> = mutableListOf()
+        do {
+            last =
+                api.getNotifications(cookies = cookies, pagerNumber = crnPage, pagerSize = pageSize)
+            last.notifications.forEach {
+                list.add(it.toModel())
+            }
+            crnPage++
+        } while (last.hasNext)
+        return list.toList()
+    }
 }

@@ -4,11 +4,15 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -34,8 +38,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -51,7 +57,7 @@ fun AccountMenuScreen(
     val cnt = LocalContext.current
     val errorText = stringResource(id = R.string.error_to_login)
     LaunchedEffect(viewModel.errorText.value) {
-        if(viewModel.errorText.value == "WrongPassword") {
+        if (viewModel.errorText.value == "WrongPassword") {
             Toast.makeText(cnt, errorText, Toast.LENGTH_LONG).show()
             goBack()
         }
@@ -60,7 +66,10 @@ fun AccountMenuScreen(
     Scaffold(
         topBar = {
             AccountMenuTopAppBar(
-                onCloseClicked = { goBack() }, onSettingsClicked = {}, onExitClicked = {}
+                onCloseClicked = { goBack() },
+                onSettingsClicked = {},
+                onExitClicked = { viewModel.exit(); goBack() },
+                isOfflineResult = viewModel.isLoading.value || viewModel.errorText.value.isNotEmpty(),
             )
             if (viewModel.isLoading.value) {
                 LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -68,12 +77,83 @@ fun AccountMenuScreen(
         }
     ) {
         if (viewModel.userInfo.value != null)
-            Row(
+            LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(it)
+                    .padding(it),
+                contentPadding = PaddingValues(horizontal = 8.dp)
             ) {
-                AccountMenuProfileCard(user = viewModel.userInfo.value!!)
+                item { AccountMenuProfileCard(user = viewModel.userInfo.value!!) }
+                item {
+                    MenuNotificationItem(
+                        icon = R.drawable.acc_menu_notifications,
+                        title = stringResource(id = R.string.account_menu_card_notifications),
+                        number = viewModel.notificationsCount.intValue,
+                        {})
+                }
+                item { Spacer(modifier = Modifier.height(15.dp)) }
+                item {
+                    MenuItem(
+                        R.drawable.acc_menu_markbook,
+                        stringResource(id = R.string.account_menu_card_markbook),
+                        {})
+                }
+                item {
+                    MenuItem(
+                        R.drawable.acc_menu_study,
+                        stringResource(id = R.string.account_menu_card_study),
+                        {})
+                }
+                if (viewModel.basicInfo.value?.isGroupHead == true) {
+                    item {
+                        MenuItem(
+                            R.drawable.acc_menu_headman,
+                            stringResource(id = R.string.account_menu_card_headman),
+                            {})
+                    }
+                }
+                item {
+                    MenuItem(
+                        R.drawable.acc_menu_rating,
+                        stringResource(id = R.string.account_menu_card_rating),
+                        {})
+                }
+                item {
+                    MenuItem(
+                        R.drawable.acc_menu_omissions,
+                        stringResource(id = R.string.account_menu_card_omissions),
+                        {})
+                }
+                item {
+                    MenuItem(
+                        R.drawable.acc_menu_group,
+                        stringResource(id = R.string.account_menu_card_group),
+                        {})
+                }
+                item {
+                    MenuItem(
+                        R.drawable.acc_menu_announcements,
+                        stringResource(id = R.string.account_menu_card_announcements),
+                        {})
+                }
+                item {
+                    MenuItem(
+                        R.drawable.acc_menu_graduate,
+                        stringResource(id = R.string.account_menu_card_graduate),
+                        {})
+                }
+                item {
+                    MenuItem(
+                        R.drawable.acc_menu_dormitory,
+                        stringResource(id = R.string.account_menu_card_dormitory),
+                        {})
+                }
+                item {
+                    MenuItem(
+                        R.drawable.acc_menu_penalty,
+                        stringResource(id = R.string.account_menu_card_penalty),
+                        {})
+                }
             }
     }
 }
@@ -82,8 +162,11 @@ fun AccountMenuScreen(
 fun AccountMenuTopAppBar(
     onCloseClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
-    onExitClicked: () -> Unit
+    onExitClicked: () -> Unit,
+    isOfflineResult: Boolean
 ) {
+    val cnt = LocalContext.current
+    val toastText = stringResource(id = R.string.offline_mode_desc)
     TopAppBar(
         title = { Text(stringResource(id = R.string.account_menu_title)) },
         navigationIcon = {
@@ -95,10 +178,20 @@ fun AccountMenuTopAppBar(
             }
         },
         actions = {
+            if (isOfflineResult) {
+                IconButton(onClick = {
+                    Toast.makeText(cnt, toastText, Toast.LENGTH_LONG).show()
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.offline_mode),
+                        contentDescription = stringResource(id = R.string.offline_mode_desc)
+                    )
+                }
+            }
             IconButton(onClick = { onSettingsClicked() }) {
                 Icon(
-                    Icons.Outlined.Settings,
-                    stringResource(id = R.string.account_menu_settings_desc)
+                    imageVector = Icons.Outlined.Settings,
+                    contentDescription = stringResource(id = R.string.account_menu_settings_desc),
                 )
             }
             IconButton(onClick = { onExitClicked() }) {
@@ -117,7 +210,6 @@ fun AccountMenuProfileCard(user: AccountProfileModel) {
         onClick = {},
         modifier = Modifier
             .fillMaxWidth()
-            .padding(25.dp)
     ) {
         Row(
             Modifier.fillMaxWidth(),
@@ -172,30 +264,69 @@ fun AccountMenuProfileCard(user: AccountProfileModel) {
     }
 }
 
-@Preview
 @Composable
-fun Prev() {
-    AccountMenuProfileCard(
-        user = AccountProfileModel(
-            id = 1,
-            lastName = "Gorgun",
-            firstName = "Alexander",
-            middleName = "Vitalievich",
-            photoUrl = null,
-            birthDate = "21.12.2004",
-            group = "253501",
-            faculty = "ФКСиС",
-            speciality = "ИиТП",
-            course = 2,
-            rating = 5,
-            bio = " ",
-            references = emptyList(),
-            skills = emptyList(),
-            settingPublished = false,
-            settingSearchJob = false,
-            settingShowRating = false,
-            outlookLogin = "23",
-            outlookPassword = "23"
-        )
-    )
+fun MenuItem(
+    icon: Int,
+    title: String,
+    navTo: () -> Unit
+) {
+    OutlinedCard(
+        onClick = { navTo() },
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = title,
+                modifier = Modifier.padding(8.dp)
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Composable
+fun MenuNotificationItem(
+    icon: Int,
+    title: String,
+    number: Int,
+    navTo: () -> Unit
+) {
+    OutlinedCard(
+        onClick = { navTo() },
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                Icon(
+                    painter = painterResource(id = icon),
+                    contentDescription = title,
+                    modifier = Modifier.padding(8.dp)
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            Text(
+                text = number.toString(),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(end = 16.dp, start = 8.dp)
+            )
+        }
+    }
 }

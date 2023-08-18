@@ -65,7 +65,8 @@ fun MyTopAppBar(
     goToAuth: () -> Unit,
     isOfflineResult: Boolean,
     userData: MutableState<UserBasicDataModel?>,
-    goToProfile: () -> Unit
+    goToProfile: () -> Unit,
+    isPrev: Boolean = false
 ) {
     val cnt = LocalContext.current
     val toastText = stringResource(id = R.string.offline_mode_desc)
@@ -78,7 +79,7 @@ fun MyTopAppBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = navIconClicked) {
+            if(!isPrev) IconButton(onClick = navIconClicked) {
                 Icon(
                     Icons.Outlined.Menu,
                     stringResource(id = R.string.schedule_open_list_of_saved_desc)
@@ -97,7 +98,7 @@ fun MyTopAppBar(
                     )
                 }
             }
-            IconButton(onClick = {
+            if(!isPrev) IconButton(onClick = {
                 if(userData.value != null) {
                     goToProfile()
                 } else {

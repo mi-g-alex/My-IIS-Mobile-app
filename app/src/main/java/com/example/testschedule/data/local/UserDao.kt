@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
@@ -73,10 +74,23 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setUserBasicData(data: UserBasicDataEntity)
 
-    @Query("SELECT * FROM UserBasicDataEntity LIMIT 1")
+    @Query("SELECT * FROM UserBasicDataEntity WHERE `key`=0")
     suspend fun getUserBasicData() : UserBasicDataEntity?
 
     @Query("DELETE FROM UserBasicDataEntity WHERE `key`=0")
     suspend fun deleteUserBasicData()
+
+
+    // Account
+
+    // Profile
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setAccountProfile(data: AccountProfileEntity)
+
+    @Query("SELECT * FROM AccountProfileEntity WHERE `key`=0")
+    suspend fun getAccountProfile() : AccountProfileEntity?
+
+    @Query("DELETE FROM AccountProfileEntity WHERE `key`=0")
+    suspend fun deleteAccountProfile()
 
 }

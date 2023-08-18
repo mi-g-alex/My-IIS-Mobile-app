@@ -1,5 +1,6 @@
 package com.example.testschedule.data.remote
 
+import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.account.profile.AccountProfileDto
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
@@ -44,6 +45,14 @@ interface IisAPI {
     // Получение данных об аккаунте
     @GET("profiles/personal-cv")
     suspend fun getAccountProfile(@Header("Cookie") cookies: String): AccountProfileDto
+
+    // Получение уведомлений
+    @GET("notifications")
+    suspend fun getNotifications(
+        @Header("Cookie") cookies: String,
+        @Query("pageNumber") pagerNumber: Int,
+        @Query("pageSize") pagerSize: Int
+    ): NotificationsDto
 
 }
 

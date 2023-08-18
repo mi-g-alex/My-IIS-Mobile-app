@@ -55,6 +55,7 @@ fun ViewScheduleScreen(
     navToExams: () -> Unit,
     navToLogin: () -> Unit,
     navToProfile: () -> Unit,
+    isPrev: Boolean = false,
     viewModel: ViewScheduleViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -98,7 +99,8 @@ fun ViewScheduleScreen(
                 goToAuth = navToLogin,
                 isOfflineResult = vm.isLoading || (vm.error?.isNotEmpty() == true),
                 userData = viewModel.userData,
-                goToProfile = { viewModel.getProfile(); navToProfile() }
+                goToProfile = { viewModel.getProfile(); navToProfile() },
+                isPrev
             )
         },
         floatingActionButton = {

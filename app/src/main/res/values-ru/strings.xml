@@ -19,7 +19,7 @@
     <string name="login_title">Введите логин</string>
     <string name="login_to_account_button">Войти в аккаунт</string>
     <string name="login_welcome_text">%s, %s</string>
-    <string name="offline_mode_desc">Сохраненные данные\nДля обновления, откройте эту страницу еще раз</string>
+    <string name="offline_mode_desc">Сохраненные данные</string>
     <string name="ok">Ок</string>
     <string name="password_hide_title">Спрятать пароль</string>
     <string name="password_show_title">Показать пароль</string>
@@ -59,4 +59,15 @@
     <string name="account_menu_main_card_spec">%s %s, %s курс</string>
     <string name="account_menu_main_card_desc">Перейти в профиль</string>
     <string name="error_to_login">Не удалось войти в аккаунт</string>
+    <string name="account_menu_card_notifications">Notifications</string>
+    <string name="account_menu_card_markbook">Зачётка</string>
+    <string name="account_menu_card_study">Учёба</string>
+    <string name="account_menu_card_headman">Староста</string>
+    <string name="account_menu_card_rating">Рэйтинг</string>
+    <string name="account_menu_card_omissions">Пропуски</string>
+    <string name="account_menu_card_group">Группа</string>
+    <string name="account_menu_card_announcements">Объявления</string>
+    <string name="account_menu_card_graduate">Диплом</string>
+    <string name="account_menu_card_dormitory">Общежитие</string>
+    <string name="account_menu_card_penalty">Взыскания</string>
 </resources>

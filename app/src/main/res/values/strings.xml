@@ -20,7 +20,7 @@
     <string name="login_title">Input Login</string>
     <string name="login_to_account_button">Login to account</string>
     <string name="login_welcome_text">%s %s</string>
-    <string name="offline_mode_desc">Saved data\nOpen page again to update</string>
+    <string name="offline_mode_desc">Saved data</string>
     <string name="ok">OK</string>
     <string name="password_hide_title">Hide password</string>
     <string name="password_show_title">Show password</string>
@@ -60,4 +60,15 @@
     <string name="account_menu_main_card_spec">%s %s, %s course</string>
     <string name="account_menu_main_card_desc">Go to profile</string>
     <string name="error_to_login">Couldn\'t login to account</string>
+    <string name="account_menu_card_notifications">Notifications</string>
+    <string name="account_menu_card_markbook">Markbook</string>
+    <string name="account_menu_card_study">Study</string>
+    <string name="account_menu_card_headman">Headman</string>
+    <string name="account_menu_card_rating">Rating</string>
+    <string name="account_menu_card_omissions">Omissions</string>
+    <string name="account_menu_card_group">Group</string>
+    <string name="account_menu_card_announcements">Announcements</string>
+    <string name="account_menu_card_graduate">Diploma</string>
+    <string name="account_menu_card_dormitory">Dormitory</string>
+    <string name="account_menu_card_penalty">Penalty</string>
 </resources>
