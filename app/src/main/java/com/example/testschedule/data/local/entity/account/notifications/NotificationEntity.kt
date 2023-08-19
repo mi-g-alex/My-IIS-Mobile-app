@@ -1,15 +1,19 @@
-package com.example.testschedule.domain.model.account.notifications
+package com.example.testschedule.data.local.entity.account.notifications
 
-import com.example.testschedule.data.local.entity.account.notifications.NotificationEntity
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.example.testschedule.domain.model.account.notifications.NotificationModel
 
-data class NotificationModel(
-    val date: String, // 14.07.2023 15:21:55
+@Entity
+data class NotificationEntity(
+    @PrimaryKey
     val id: Int, // 1943
+    val date: String, // 14.07.2023 15:21:55
     val isViewed: Boolean, // true
     val message: String, // Ваша заявка на заселение в общежитие была одобрена.
     val type: String // SUCCESS | FAILURE | INFO
 ) {
-    fun toEntity() = NotificationEntity(
+    fun toModel() = NotificationModel(
         date = this.date,
         id = this.id,
         isViewed = this.isViewed,

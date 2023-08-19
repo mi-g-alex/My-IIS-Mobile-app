@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.testschedule.data.local.entity.account.notifications.NotificationEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
@@ -92,5 +93,16 @@ interface UserDao {
 
     @Query("DELETE FROM AccountProfileEntity WHERE `key`=0")
     suspend fun deleteAccountProfile()
+
+    // Notification
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addNotification(data: NotificationEntity)
+
+    @Query("SELECT * FROM NotificationEntity")
+    suspend fun getNotifications() : List<NotificationEntity>
+
+    @Query("DELETE FROM NotificationEntity")
+    suspend fun deleteNotifications()
 
 }

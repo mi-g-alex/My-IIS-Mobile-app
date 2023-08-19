@@ -76,11 +76,17 @@ class AccountProfileViewModel @Inject constructor(
     }
 
     private fun getNotifications() {
+        viewModelScope.launch {
+            notificationsCount.intValue = db.getNotifications().size
+        }
         getNotificationsUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {
                     isLoadingNotifications.value = false
                     isLoading.value = isLoadingAccount.value || isLoadingNotifications.value
+                    viewModelScope.launch {
+                        db.addNotifications(res.data ?: emptyList())
+                    }
                     res.data?.let { notificationsCount.intValue = it.size }
                     errorText.value = ""
                 }

@@ -71,4 +71,10 @@
     <string name="account_menu_card_graduate">Diploma</string>
     <string name="account_menu_card_dormitory">Dormitory</string>
     <string name="account_menu_card_penalty">Penalty</string>
+    <string name="account_notification_title">Notifications</string>
+    <string name="account_notification_icon_success">Success</string>
+    <string name="account_notification_icon_failure">Failure</string>
+    <string name="account_notification_icon_info">Info</string>
+    <string name="account_notification_icon_other">Unknown status</string>
+    <string name="account_notification_no_notifications">No notifications</string>
 </resources>

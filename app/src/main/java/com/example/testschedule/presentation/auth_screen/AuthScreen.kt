@@ -250,10 +250,11 @@ fun AuthScreen(
                             keyboardActions = KeyboardActions(
                                 onDone = {
                                     keyboardController?.hide()
-                                    viewModel.loginToAccount(
-                                        username = loginText,
-                                        password = passwordText
-                                    )
+                                    if (isValidPassword && !viewModel.isLoading.value)
+                                        viewModel.loginToAccount(
+                                            username = loginText,
+                                            password = passwordText
+                                        )
                                 }
                             ),
                             singleLine = true,

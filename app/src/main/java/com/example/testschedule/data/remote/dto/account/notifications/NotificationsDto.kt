@@ -12,7 +12,7 @@ data class NotificationsDto(
         val id: Int, // 1943
         val isViewed: Boolean, // true
         val message: String, // Ваша заявка на заселение в общежитие была одобрена.
-        val type: String // SUCCESS | FAILURE
+        val type: String // SUCCESS | FAILURE | INFO
     ) {
         fun toModel() = NotificationModel(
             date = this.date,

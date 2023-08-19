@@ -5,6 +5,7 @@ import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
+import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
@@ -176,6 +177,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
     override suspend fun deleteUserBasicData() {
         dao.deleteUserBasicData()
         dao.deleteAccountProfile()
+        dao.deleteNotifications()
     }
 
 
@@ -192,5 +194,20 @@ class UserDatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAccountProfile() {
         dao.deleteAccountProfile()
+    }
+
+    // Notifications
+    override suspend fun addNotifications(data: List<NotificationModel>) {
+        dao.deleteNotifications()
+        data.forEach {
+            dao.addNotification(it.toEntity())
+        }
+    }
+
+    override suspend fun getNotifications(): List<NotificationModel> =
+        dao.getNotifications().map { it.toModel() }
+
+    override suspend fun deleteNotifications() {
+        dao.deleteNotifications()
     }
 }

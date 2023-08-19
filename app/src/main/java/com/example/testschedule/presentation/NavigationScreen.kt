@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.testschedule.presentation.account.menu_screen.AccountMenuScreen
+import com.example.testschedule.presentation.account.notifications_screen.NotificationsScreen
 import com.example.testschedule.presentation.auth_screen.AuthScreen
 import com.example.testschedule.presentation.schedule_screen.add_schedule_screen.AddScheduleScreen
 import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.ViewExamsScreen
@@ -22,6 +23,7 @@ object Routes {
 
     const val ACCOUNT_ROUTE = "ACCOUNT_ROUTE"
     const val ACCOUNT_MENU_ROUTE = "ACCOUNT_MENU_ROUTE"
+    const val ACCOUNT_NOTIFICATIONS_ROUTE = "ACCOUNT_NOTIFICATIONS_ROUTE"
 }
 
 @Composable
@@ -128,10 +130,26 @@ fun NavigationScreen(
             composable(
                 route = Routes.ACCOUNT_MENU_ROUTE
             ) {
-                AccountMenuScreen({
+                AccountMenuScreen(
+                    goBack = {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                    },
+                    goToNotifications = {
+                        navController.navigate(Routes.ACCOUNT_NOTIFICATIONS_ROUTE)
+                    }
+                )
+            }
+
+            composable(
+                route = Routes.ACCOUNT_NOTIFICATIONS_ROUTE
+            ) {
+                NotificationsScreen(onBackPressed = {
+                    navController.popBackStack()
+                }, onLogOut = {
                     navController.popBackStack()
                     navController.popBackStack()
-                    navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
                 })
             }
         }

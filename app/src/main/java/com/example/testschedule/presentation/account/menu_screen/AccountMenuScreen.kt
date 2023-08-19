@@ -52,6 +52,7 @@ import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 @Composable
 fun AccountMenuScreen(
     goBack: () -> Unit,
+    goToNotifications: () -> Unit,
     viewModel: AccountProfileViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -88,8 +89,8 @@ fun AccountMenuScreen(
                     MenuNotificationItem(
                         icon = R.drawable.acc_menu_notifications,
                         title = stringResource(id = R.string.account_menu_card_notifications),
-                        number = viewModel.notificationsCount.intValue,
-                        {})
+                        number = viewModel.notificationsCount.intValue
+                    ) { goToNotifications() }
                 }
                 item { Spacer(modifier = Modifier.height(15.dp)) }
                 item {

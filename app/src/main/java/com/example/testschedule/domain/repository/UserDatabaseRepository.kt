@@ -1,6 +1,7 @@
 package com.example.testschedule.domain.repository
 
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
+import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
@@ -69,4 +70,10 @@ interface UserDatabaseRepository {
 
     suspend fun deleteAccountProfile()
 
+    // Notification
+    suspend fun addNotifications(data: List<NotificationModel>)
+
+    suspend fun getNotifications() : List<NotificationModel>
+
+    suspend fun deleteNotifications()
 }

@@ -70,4 +70,10 @@
     <string name="account_menu_card_graduate">Диплом</string>
     <string name="account_menu_card_dormitory">Общежитие</string>
     <string name="account_menu_card_penalty">Взыскания</string>
+    <string name="account_notification_title">Уведомления</string>
+    <string name="account_notification_icon_success">Успешно</string>
+    <string name="account_notification_icon_failure">Неудачно</string>
+    <string name="account_notification_icon_info">Информация</string>
+    <string name="account_notification_icon_other">Неизвестный статус</string>
+    <string name="account_notification_no_notifications">Нет уведомлений</string>
 </resources>
