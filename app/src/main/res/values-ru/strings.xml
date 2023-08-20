@@ -76,4 +76,27 @@
     <string name="account_notification_icon_info">Информация</string>
     <string name="account_notification_icon_other">Неизвестный статус</string>
     <string name="account_notification_no_notifications">Нет уведомлений</string>
+    <string name="account_dormitory_title">Общежитие и Льготы</string>
+    <string name="account_dormitory_dormitory_title">Общежитие</string>
+    <string name="account_dormitory_dormitory_card_request_number">Заявка %d</string>
+    <string name="account_dormitory_dormitory_card_status_pending">Ожидание</string>
+    <string name="account_dormitory_dormitory_card_status_doc_accepted">Документы приняты</string>
+    <string name="account_dormitory_dormitory_card_status_await_settlement">К заселению</string>
+    <string name="account_dormitory_dormitory_card_status_settled">Заселён</string>
+    <string name="account_dormitory_dormitory_card_status_rejection">Заявка отклонена</string>
+    <string name="account_dormitory_dormitory_card_status_unknown">Неизвестный статус</string>
+    <string name="account_dormitory_dormitory_card_status_evicted">Выселен</string>
+    <string name="account_dormitory_dormitory_card_request_time">Время подачи: %s</string>
+    <string name="account_dormitory_dormitory_card_accepted_time">В очереди с %s</string>
+    <string name="account_dormitory_dormitory_card_settled_time">Время заселения: %s</string>
+    <string name="account_dormitory_dormitory_card_room_info">Комната: %s</string>
+    <string name="account_dormitory_dormitory_card_rejection_reason">Причина отказа: %s</string>
+    <string name="account_dormitory_dormitory_no_requests">Нет заявок</string>
+    <string name="account_dormitory_dormitory_date_format">dd.MM.yyyy</string>
+    <string name="account_dormitory_privileges_title">Льготы</string>
+    <string name="account_dormitory_privileges_type_0">Внеочередное</string>
+    <string name="account_dormitory_privileges_type_1">Первоочередное</string>
+    <string name="account_dormitory_privileges_type_2">Приоритетное</string>
+    <string name="account_dormitory_privileges_note">Заметка: %s</string>
+    <string name="account_dormitory_privileges_no_privileges">Нет льгот</string>
 </resources>

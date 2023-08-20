@@ -77,4 +77,27 @@
     <string name="account_notification_icon_info">Info</string>
     <string name="account_notification_icon_other">Unknown status</string>
     <string name="account_notification_no_notifications">No notifications</string>
+    <string name="account_dormitory_title">Dormitory &amp; Privileges</string>
+    <string name="account_dormitory_dormitory_title">Dormitory</string>
+    <string name="account_dormitory_dormitory_card_request_number">Request %d</string>
+    <string name="account_dormitory_dormitory_card_status_pending">Pending</string>
+    <string name="account_dormitory_dormitory_card_status_doc_accepted">Documents accepted</string>
+    <string name="account_dormitory_dormitory_card_status_await_settlement">Await settlement</string>
+    <string name="account_dormitory_dormitory_card_status_settled">Settled</string>
+    <string name="account_dormitory_dormitory_card_status_rejection">Rejection</string>
+    <string name="account_dormitory_dormitory_card_status_evicted">Evicted</string>
+    <string name="account_dormitory_dormitory_card_status_unknown">Unknown status</string>
+    <string name="account_dormitory_dormitory_card_request_time">Request time: %s</string>
+    <string name="account_dormitory_dormitory_card_accepted_time">Accepted time: %s</string>
+    <string name="account_dormitory_dormitory_card_settled_time">Settled time: %s</string>
+    <string name="account_dormitory_dormitory_card_room_info">Room: %s</string>
+    <string name="account_dormitory_dormitory_card_rejection_reason">\nRejection reason: %s</string>
+    <string name="account_dormitory_dormitory_no_requests">No requests yet</string>
+    <string name="account_dormitory_dormitory_date_format">MM/dd/yyyy</string>
+    <string name="account_dormitory_privileges_title">Privileges</string>
+    <string name="account_dormitory_privileges_type_0">Extraordinary</string>
+    <string name="account_dormitory_privileges_type_1">Primary</string>
+    <string name="account_dormitory_privileges_type_2">Priority</string>
+    <string name="account_dormitory_privileges_note">\nNote: %s</string>
+    <string name="account_dormitory_privileges_no_privileges">No privileges yet</string>
 </resources>

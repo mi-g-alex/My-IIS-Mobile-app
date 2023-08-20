@@ -53,6 +53,7 @@ import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 fun AccountMenuScreen(
     goBack: () -> Unit,
     goToNotifications: () -> Unit,
+    goToDormitory: () -> Unit,
     viewModel: AccountProfileViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -147,7 +148,7 @@ fun AccountMenuScreen(
                     MenuItem(
                         R.drawable.acc_menu_dormitory,
                         stringResource(id = R.string.account_menu_card_dormitory),
-                        {})
+                    ) { goToDormitory() }
                 }
                 item {
                     MenuItem(

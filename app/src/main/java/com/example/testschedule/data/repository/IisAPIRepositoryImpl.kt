@@ -4,6 +4,8 @@ import com.example.testschedule.data.remote.IisAPI
 import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
+import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
+import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
@@ -67,4 +69,11 @@ class IisAPIRepositoryImpl @Inject constructor(
         } while (last.hasNext)
         return list.toList()
     }
+
+    // Общага и льготы
+    override suspend fun getDormitory(cookies: String): List<DormitoryModel> =
+        api.getDormitory(cookies).map { it.toModel() }
+
+    override suspend fun getPrivileges(cookies: String): List<PrivilegesModel> =
+        api.getPrivileges(cookies).map { it.toModel() }
 }

@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.testschedule.presentation.account.dormitory_screen.DormitoryScreen
 import com.example.testschedule.presentation.account.menu_screen.AccountMenuScreen
 import com.example.testschedule.presentation.account.notifications_screen.NotificationsScreen
 import com.example.testschedule.presentation.auth_screen.AuthScreen
@@ -24,6 +25,7 @@ object Routes {
     const val ACCOUNT_ROUTE = "ACCOUNT_ROUTE"
     const val ACCOUNT_MENU_ROUTE = "ACCOUNT_MENU_ROUTE"
     const val ACCOUNT_NOTIFICATIONS_ROUTE = "ACCOUNT_NOTIFICATIONS_ROUTE"
+    const val ACCOUNT_DORMITORY_ROUTE = "ACCOUNT_DORMITORY_ROUTE"
 }
 
 @Composable
@@ -138,6 +140,9 @@ fun NavigationScreen(
                     },
                     goToNotifications = {
                         navController.navigate(Routes.ACCOUNT_NOTIFICATIONS_ROUTE)
+                    },
+                    goToDormitory = {
+                        navController.navigate(Routes.ACCOUNT_DORMITORY_ROUTE)
                     }
                 )
             }
@@ -145,12 +150,32 @@ fun NavigationScreen(
             composable(
                 route = Routes.ACCOUNT_NOTIFICATIONS_ROUTE
             ) {
-                NotificationsScreen(onBackPressed = {
-                    navController.popBackStack()
-                }, onLogOut = {
-                    navController.popBackStack()
-                    navController.popBackStack()
-                })
+                NotificationsScreen(
+                    onBackPressed = {
+                        popNav()
+                    },
+                    onLogOut = {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                    }
+                )
+            }
+
+            composable(
+                route = Routes.ACCOUNT_DORMITORY_ROUTE
+            ) {
+                DormitoryScreen(
+                    onBackPressed = {
+                        popNav()
+                    },
+                    onLogOut = {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                    }
+                )
             }
         }
     }

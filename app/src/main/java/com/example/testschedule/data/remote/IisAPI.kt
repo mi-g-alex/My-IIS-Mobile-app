@@ -1,5 +1,7 @@
 package com.example.testschedule.data.remote
 
+import com.example.testschedule.data.remote.dto.account.dormitory.DormitoryDto
+import com.example.testschedule.data.remote.dto.account.dormitory.PrivilegesDto
 import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.account.profile.AccountProfileDto
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
@@ -54,5 +56,11 @@ interface IisAPI {
         @Query("pageSize") pagerSize: Int
     ): NotificationsDto
 
+    // Получение донных о заселение (общежитие + льготы)
+    @GET("dormitory-queue-application")
+    suspend fun getDormitory(@Header("Cookie") cookies: String): List<DormitoryDto>
+
+    @GET("dormitory-queue-application/privileges")
+    suspend fun getPrivileges(@Header("Cookie") cookies: String): List<PrivilegesDto>
 }
 

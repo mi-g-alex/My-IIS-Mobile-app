@@ -1,6 +1,8 @@
 package com.example.testschedule.domain.repository
 
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
+import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
+import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
@@ -31,4 +33,9 @@ interface IisAPIRepository {
 
     // Получение уведомлений
     suspend fun getNotifications(cookies: String): List<NotificationModel>
+
+    // Общежитие и льготы
+    suspend fun getDormitory(cookies: String): List<DormitoryModel>
+
+    suspend fun getPrivileges(cookies: String): List<PrivilegesModel>
 }
