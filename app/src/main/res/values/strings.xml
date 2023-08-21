@@ -100,4 +100,12 @@
     <string name="account_dormitory_privileges_type_2">Priority</string>
     <string name="account_dormitory_privileges_note">\nNote: %s</string>
     <string name="account_dormitory_privileges_no_privileges">No privileges yet</string>
+    <string name="account_group_title">Group</string>
+    <string name="account_group_title_with_number">Group %s</string>
+    <string name="account_group_curator">Curator</string>
+    <string name="account_group_monitor">Monitor</string>
+    <string name="account_group_deputy_monitor">Deputy monitor</string>
+    <string name="account_group_curator_schedule">Schedule</string>
+    <string name="copy">Copy</string>
+    <string name="copy_success">%s copied</string>
 </resources>

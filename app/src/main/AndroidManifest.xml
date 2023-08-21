@@ -38,6 +38,16 @@
                 <data android:host="iis.bsuir.by" />
                 <data android:pathAdvancedPattern="/schedule/[0-9a-z\-]+/*" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:host="iis.bsuir.by" />
+                <data android:pathAdvancedPattern="/schedule/[0-9a-z\-]+/*" />
+            </intent-filter>
         </activity>
     </application>
 

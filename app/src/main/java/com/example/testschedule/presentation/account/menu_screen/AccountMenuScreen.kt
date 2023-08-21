@@ -54,6 +54,7 @@ fun AccountMenuScreen(
     goBack: () -> Unit,
     goToNotifications: () -> Unit,
     goToDormitory: () -> Unit,
+    goToGroup: () -> Unit,
     viewModel: AccountProfileViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -130,7 +131,7 @@ fun AccountMenuScreen(
                     MenuItem(
                         R.drawable.acc_menu_group,
                         stringResource(id = R.string.account_menu_card_group),
-                        {})
+                        ) { goToGroup() }
                 }
                 item {
                     MenuItem(

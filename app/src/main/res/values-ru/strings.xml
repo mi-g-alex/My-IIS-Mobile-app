@@ -63,7 +63,7 @@
     <string name="account_menu_card_markbook">Зачётка</string>
     <string name="account_menu_card_study">Учёба</string>
     <string name="account_menu_card_headman">Староста</string>
-    <string name="account_menu_card_rating">Рэйтинг</string>
+    <string name="account_menu_card_rating">Рейтинг</string>
     <string name="account_menu_card_omissions">Пропуски</string>
     <string name="account_menu_card_group">Группа</string>
     <string name="account_menu_card_announcements">Объявления</string>
@@ -99,4 +99,12 @@
     <string name="account_dormitory_privileges_type_2">Приоритетное</string>
     <string name="account_dormitory_privileges_note">Заметка: %s</string>
     <string name="account_dormitory_privileges_no_privileges">Нет льгот</string>
+    <string name="account_group_title">Группа</string>
+    <string name="account_group_title_with_number">Группа %s</string>
+    <string name="account_group_curator">Куратор</string>
+    <string name="account_group_curator_schedule">Расписание</string>
+    <string name="account_group_deputy_monitor">Зам. старосты</string>
+    <string name="account_group_monitor">Староста</string>
+    <string name="copy">Скопировать</string>
+    <string name="copy_success">%s скопировано</string>
 </resources>

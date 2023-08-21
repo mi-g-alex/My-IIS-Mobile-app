@@ -6,6 +6,7 @@ import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
 import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
+import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
@@ -76,4 +77,8 @@ class IisAPIRepositoryImpl @Inject constructor(
 
     override suspend fun getPrivileges(cookies: String): List<PrivilegesModel> =
         api.getPrivileges(cookies).map { it.toModel() }
+
+    // Группа
+    override suspend fun getUserGroup(cookies: String): GroupModel =
+        api.getGroupList(cookies).toModel()
 }

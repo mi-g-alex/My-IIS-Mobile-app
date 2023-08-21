@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.LinearProgressIndicator
@@ -80,7 +82,6 @@ fun DormitoryScreen(
                         Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.background)
-                            .padding(horizontal = 8.dp)
                     ) {
                         Text(
                             stringResource(id = R.string.account_dormitory_dormitory_title),
@@ -109,6 +110,9 @@ fun DormitoryScreen(
                             DormitoryCard(item = it)
                         }
                     }
+                    item {
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
                 }
             }
             if (viewModel.privileges.value != null) {
@@ -117,7 +121,6 @@ fun DormitoryScreen(
                         Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.background)
-                            .padding(horizontal = 8.dp)
                     ) {
                         Text(
                             stringResource(id = R.string.account_dormitory_privileges_title),
@@ -320,7 +323,7 @@ fun timeLongToString(time: Long, format: String): String {
     var day = cal.get(Calendar.DAY_OF_MONTH).toString()
     if (day.length == 1) day = "0$day"
 
-    var month = cal.get(Calendar.MONTH).toString()
+    var month = (cal.get(Calendar.MONTH) + 1).toString()
     if (month.length == 1) month = "0$month"
 
     val year = cal.get(Calendar.YEAR).toString()

@@ -1,6 +1,8 @@
 package com.example.testschedule.domain.repository
 
+import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
+import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
@@ -76,4 +78,12 @@ interface UserDatabaseRepository {
     suspend fun getNotifications() : List<NotificationModel>
 
     suspend fun deleteNotifications()
+
+    // Group
+
+    suspend fun setUserGroup(data: GroupModel)
+
+    suspend fun getUserGroup(): GroupModel?
+
+    suspend fun deleteUserGroup()
 }

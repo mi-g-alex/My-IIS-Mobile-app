@@ -3,6 +3,7 @@ package com.example.testschedule.domain.repository
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
 import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
+import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
@@ -38,4 +39,7 @@ interface IisAPIRepository {
     suspend fun getDormitory(cookies: String): List<DormitoryModel>
 
     suspend fun getPrivileges(cookies: String): List<PrivilegesModel>
+
+    // Группа
+    suspend fun getUserGroup(cookies: String): GroupModel
 }

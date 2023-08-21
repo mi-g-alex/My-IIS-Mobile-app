@@ -2,6 +2,7 @@ package com.example.testschedule.data.local
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
+import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.util.JsonParser
 import com.example.testschedule.domain.model.schedule.ScheduleModel
@@ -110,5 +111,35 @@ class Converters(
             json,
             object : TypeToken<ArrayList<AccountProfileEntity.Skill>>() {}.type
         )
+
+    @TypeConverter
+    fun listOfGroupInfoToJson(meaning: List<GroupEntity.GroupInfoStudent>): String =
+        jsonParser.toJson(
+            meaning,
+            object : TypeToken<ArrayList<GroupEntity.GroupInfoStudent>>() {}.type
+        ) ?: ""
+
+    @TypeConverter
+    fun listOfGroupInfoFromJson(json: String): List<GroupEntity.GroupInfoStudent>? =
+        jsonParser.fromJson<ArrayList<GroupEntity.GroupInfoStudent>>(
+            json,
+            object : TypeToken<ArrayList<GroupEntity.GroupInfoStudent>>() {}.type
+        )
+
+    @TypeConverter
+    fun studentGroupCuratorToJson(meaning: GroupEntity.StudentGroupCurator?): String =
+        jsonParser.toJson(
+            meaning,
+            object : TypeToken<GroupEntity.StudentGroupCurator?>() {}.type
+        ) ?: ""
+
+    @TypeConverter
+    fun studentGroupCuratorFromJson(json: String): GroupEntity.StudentGroupCurator? =
+        jsonParser.fromJson<GroupEntity.StudentGroupCurator?>(
+            json,
+            object : TypeToken<GroupEntity.StudentGroupCurator?>() {}.type
+        )
+
+
 
 }

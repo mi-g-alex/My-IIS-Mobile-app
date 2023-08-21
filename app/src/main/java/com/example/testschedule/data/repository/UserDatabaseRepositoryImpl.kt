@@ -5,6 +5,7 @@ import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
+import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
@@ -178,6 +179,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         dao.deleteUserBasicData()
         dao.deleteAccountProfile()
         dao.deleteNotifications()
+        dao.deleteUserGroup()
     }
 
 
@@ -209,5 +211,17 @@ class UserDatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun deleteNotifications() {
         dao.deleteNotifications()
+    }
+
+    // Group
+    override suspend fun setUserGroup(data: GroupModel) {
+        dao.setUserGroup(data.toEntity())
+    }
+
+    override suspend fun getUserGroup(): GroupModel? =
+        dao.getUserGroup()?.toModel()
+
+    override suspend fun deleteUserGroup() {
+        dao.deleteUserGroup()
     }
 }

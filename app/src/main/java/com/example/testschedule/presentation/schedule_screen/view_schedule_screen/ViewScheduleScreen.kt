@@ -119,7 +119,7 @@ fun ViewScheduleScreen(
             NoScheduleAdded()
         } else
             if (vm.schedule != null) {
-                ShowSchedule(vm.schedule, Modifier.padding(pv), state) { id, t ->
+                ShowSchedule(vm.schedule, Modifier.padding(pv), state, isPrev) { id, t ->
                     viewModel.getSchedule(id)
                     viewModel.title.value = t
                     scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
@@ -178,6 +178,7 @@ fun ShowSchedule(
     it: ScheduleModel,
     modifier: Modifier,
     state: LazyListState,
+    isPrev: Boolean,
     selectScheduleClicked: (id: String, title: String) -> Unit
 ) {
     val a = LocalContext.current.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
@@ -207,23 +208,24 @@ fun ShowSchedule(
         if (lessons.isNotEmpty()) {
             LazyColumn(modifier = modifier, state = state) {
                 lessons.forEach { lesson ->
-                    if (lesson.lessons.isNotEmpty()) {
+                    val filtLes =
+                        lesson.lessons.filter { it.numSubgroup == 0 || it.numSubgroup == selectedSub || selectedSub == 0 || isPrev }
+                    if (filtLes.isNotEmpty()) {
                         stickyHeader {
                             StickySchedule(lesson = lesson)
                         }
-                        lesson.lessons.forEach { les ->
-                            if (les.numSubgroup == 0 || les.numSubgroup == selectedSub || selectedSub == 0)
-                                item {
-                                    if (!les.announcement)
-                                        LessonCard(
-                                            lesson = les,
-                                            isGroup = it.isGroupSchedule,
-                                            click = {
-                                                openDialog.value = true
-                                                dialogLesson = les
-                                            }
-                                        )
-                                }
+                        filtLes.forEach { les ->
+                            item {
+                                if (!les.announcement)
+                                    LessonCard(
+                                        lesson = les,
+                                        isGroup = it.isGroupSchedule,
+                                        click = {
+                                            openDialog.value = true
+                                            dialogLesson = les
+                                        }
+                                    )
+                            }
                         }
                     }
                 }

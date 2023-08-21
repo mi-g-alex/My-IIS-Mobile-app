@@ -1,5 +1,6 @@
 package com.example.testschedule.presentation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -7,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.testschedule.presentation.account.dormitory_screen.DormitoryScreen
+import com.example.testschedule.presentation.account.group_screen.GroupScreen
 import com.example.testschedule.presentation.account.menu_screen.AccountMenuScreen
 import com.example.testschedule.presentation.account.notifications_screen.NotificationsScreen
 import com.example.testschedule.presentation.auth_screen.AuthScreen
@@ -16,7 +18,7 @@ import com.example.testschedule.presentation.schedule_screen.view_schedule_scree
 
 object Routes {
     const val SCHEDULE_ROUTE = "SCHEDULE_ROUTE"
-    const val SCHEDULE_HOME_ROUTE = "SCHEDULE_HOME_ROUTE/{id}/{title}"
+    const val SCHEDULE_HOME_ROUTE = "SCHEDULE_HOME_ROUTE/{id}/{title}/{isPreview}"
     const val SCHEDULE_EDIT_LIST_ROUTE = "SCHEDULE_EDIT_LIST_ROUTE"
     const val SCHEDULE_EXAMS_VIEW_ROUTE = "SCHEDULE_EXAMS_VIEW"
 
@@ -26,6 +28,7 @@ object Routes {
     const val ACCOUNT_MENU_ROUTE = "ACCOUNT_MENU_ROUTE"
     const val ACCOUNT_NOTIFICATIONS_ROUTE = "ACCOUNT_NOTIFICATIONS_ROUTE"
     const val ACCOUNT_DORMITORY_ROUTE = "ACCOUNT_DORMITORY_ROUTE"
+    const val ACCOUNT_GROUP_ROUTE = "ACCOUNT_GROUP_ROUTE"
 }
 
 @Composable
@@ -48,8 +51,15 @@ fun NavigationScreen(
             composable(
                 route = Routes.SCHEDULE_HOME_ROUTE,
             ) { entry ->
-                val id = entry.savedStateHandle.get<String>("id")
-                val title = entry.savedStateHandle.get<String>("title") ?: id
+                var id = entry.savedStateHandle.get<String>("id")
+                var title = entry.savedStateHandle.get<String>("title") ?: id
+
+                val isPreview = entry.arguments?.getString("isPreview") ?: "false"
+                Log.e("```", isPreview.toString())
+                if (isPreview == "true") {
+                    id = entry.arguments?.getString("id") ?: id
+                    title = entry.arguments?.getString("title") ?: title
+                }
                 ViewScheduleScreen(
                     goBackSet = { i, t ->
                         navController.currentBackStackEntry
@@ -72,7 +82,8 @@ fun NavigationScreen(
                     },
                     navToProfile = {
                         navController.navigate(Routes.ACCOUNT_ROUTE)
-                    }
+                    },
+                    isPrev = isPreview == "true"
                 )
             }
             composable(
@@ -143,6 +154,9 @@ fun NavigationScreen(
                     },
                     goToDormitory = {
                         navController.navigate(Routes.ACCOUNT_DORMITORY_ROUTE)
+                    },
+                    goToGroup = {
+                        navController.navigate(Routes.ACCOUNT_GROUP_ROUTE)
                     }
                 )
             }
@@ -173,7 +187,23 @@ fun NavigationScreen(
                     onLogOut = {
                         navController.popBackStack()
                         navController.popBackStack()
+                        navController.popBackStack()
                         navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                    }
+                )
+            }
+
+            composable(
+                route = Routes.ACCOUNT_GROUP_ROUTE
+            ) {
+                GroupScreen(onBackPressed = { popNav() },
+                    onLogOut = {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                    }, goToSchedule = { urlId, title ->
+                        navController.navigate("SCHEDULE_HOME_ROUTE/${urlId}/${title}/${true}")
                     }
                 )
             }
