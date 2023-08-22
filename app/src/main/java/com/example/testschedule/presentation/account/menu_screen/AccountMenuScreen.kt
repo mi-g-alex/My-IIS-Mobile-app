@@ -55,6 +55,8 @@ fun AccountMenuScreen(
     goToNotifications: () -> Unit,
     goToDormitory: () -> Unit,
     goToGroup: () -> Unit,
+    goToMarkBook: () -> Unit,
+    goToOmissions: () -> Unit,
     viewModel: AccountProfileViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -64,6 +66,10 @@ fun AccountMenuScreen(
             Toast.makeText(cnt, errorText, Toast.LENGTH_LONG).show()
             goBack()
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getNotifications()
     }
 
     Scaffold(
@@ -99,7 +105,7 @@ fun AccountMenuScreen(
                     MenuItem(
                         R.drawable.acc_menu_markbook,
                         stringResource(id = R.string.account_menu_card_markbook),
-                        {})
+                    ) { goToMarkBook() }
                 }
                 item {
                     MenuItem(
@@ -125,13 +131,13 @@ fun AccountMenuScreen(
                     MenuItem(
                         R.drawable.acc_menu_omissions,
                         stringResource(id = R.string.account_menu_card_omissions),
-                        {})
+                    ) { goToOmissions() }
                 }
                 item {
                     MenuItem(
                         R.drawable.acc_menu_group,
                         stringResource(id = R.string.account_menu_card_group),
-                        ) { goToGroup() }
+                    ) { goToGroup() }
                 }
                 item {
                     MenuItem(
@@ -324,12 +330,13 @@ fun MenuNotificationItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Text(
-                text = number.toString(),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(end = 16.dp, start = 8.dp)
-            )
+            if (number != 0)
+                Text(
+                    text = number.toString(),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    modifier = Modifier.padding(end = 16.dp, start = 8.dp)
+                )
         }
     }
 }

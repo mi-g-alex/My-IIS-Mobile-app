@@ -178,9 +178,7 @@ fun TabScreen(
         pageCount = { 3 }
     )
 
-    Column(
-        modifier = Modifier.background(MaterialTheme.colorScheme.background)
-    ) {
+    Column() {
         Tabs(pagerState = pagerState)
         TabsContent(
             onAddRemoveButtonClicked = onAddRemoveButtonClicked,
@@ -207,7 +205,6 @@ fun Tabs(pagerState: PagerState) {
 
     TabRow(
         selectedTabIndex = pagerState.currentPage,
-        modifier = Modifier.background(MaterialTheme.colorScheme.background),
     ) {
         listOfTabs.forEachIndexed { index, title ->
             Tab(
@@ -651,7 +648,8 @@ fun GroupItemCard(
                     Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.primary),
+                    contentAlignment = Alignment.Center
 
                 ) {
                     Text(
@@ -735,7 +733,8 @@ fun EmployeeItemCard(
                     Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.primary),
+                    contentAlignment = Alignment.Center
 
                 ) {
                     Icon(

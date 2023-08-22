@@ -6,9 +6,11 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.account.notifications.NotificationEntity
+import com.example.testschedule.data.local.entity.account.omissions.OmissionsEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
+import com.example.testschedule.data.local.entity.mark_book.MarkBookEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
@@ -97,8 +99,11 @@ interface UserDao {
 
     // Notification
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addNotification(data: NotificationEntity)
+
+    @Query("UPDATE NotificationEntity SET isViewed=:status WHERE id=:id")
+    suspend fun updateNotificationStatus(id: Int, status: Boolean = true)
 
     @Query("SELECT * FROM NotificationEntity")
     suspend fun getNotifications() : List<NotificationEntity>
@@ -107,7 +112,6 @@ interface UserDao {
     suspend fun deleteNotifications()
 
     // Group
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setUserGroup(data: GroupEntity)
 
@@ -116,5 +120,25 @@ interface UserDao {
 
     @Query("DELETE FROM GroupEntity")
     suspend fun deleteUserGroup()
+
+    // Mark book
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setMarkBook(data: MarkBookEntity)
+
+    @Query("SELECT * FROM MarkBookEntity WHERE `key`=0")
+    suspend fun getMarkBook(): MarkBookEntity?
+
+    @Query("DELETE FROM MarkBookEntity")
+    suspend fun deleteMarkBook()
+
+    // Omissions
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setOmissions(data: OmissionsEntity)
+
+    @Query("SELECT * FROM OmissionsEntity")
+    suspend fun getOmissions(): List<OmissionsEntity>?
+
+    @Query("DELETE FROM MarkBookEntity")
+    suspend fun deleteOmissions()
 
 }

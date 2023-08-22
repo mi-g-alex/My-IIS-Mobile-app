@@ -50,11 +50,6 @@ class AddScheduleViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     groupsTmp = result.data?.sortedBy { it.course }?.filter { it.course > 0 }
-                    viewModelScope.launch {
-                        groupsTmp?.let {
-                            db.insertAllGroupsList(it)
-                        }
-                    }
                     if (employeesTmp?.isNotEmpty() == true) {
                         groups.value = groupsTmp
                         employees.value = employeesTmp
@@ -76,11 +71,6 @@ class AddScheduleViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     employeesTmp = result.data
-                    viewModelScope.launch {
-                        employeesTmp?.let {
-                            db.insertAllEmployeesList(it)
-                        }
-                    }
                     if (groupsTmp?.isNotEmpty() == true) {
                         groups.value = groupsTmp
                         employees.value = employeesTmp

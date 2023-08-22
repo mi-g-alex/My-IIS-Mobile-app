@@ -6,16 +6,18 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.account.notifications.NotificationEntity
+import com.example.testschedule.data.local.entity.account.omissions.OmissionsEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
+import com.example.testschedule.data.local.entity.mark_book.MarkBookEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
 
 @Database(
-    version = 7,
+    version = 9,
     entities = [
         // Schedules
         ScheduleEntity::class,
@@ -30,7 +32,12 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
         // Notifications
         NotificationEntity::class,
         // Group
-        GroupEntity::class
+        GroupEntity::class,
+        // Mark book
+        MarkBookEntity::class,
+        // Omissions
+        OmissionsEntity::class,
+
     ],
     exportSchema = true,
     autoMigrations = [
@@ -40,6 +47,8 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
         AutoMigration(from = 4, to = 5),
         AutoMigration(from = 5, to = 6),
         AutoMigration(from = 6, to = 7),
+        AutoMigration(from = 7, to = 8),
+        AutoMigration(from = 8, to = 9),
     ],
 )
 @TypeConverters(Converters::class)

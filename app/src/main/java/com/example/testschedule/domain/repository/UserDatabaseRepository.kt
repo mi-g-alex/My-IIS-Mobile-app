@@ -1,9 +1,10 @@
 package com.example.testschedule.domain.repository
 
-import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.domain.model.account.group.GroupModel
+import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
+import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
@@ -75,6 +76,8 @@ interface UserDatabaseRepository {
     // Notification
     suspend fun addNotifications(data: List<NotificationModel>)
 
+    suspend fun updateNotificationStatus(id: List<Int>)
+
     suspend fun getNotifications() : List<NotificationModel>
 
     suspend fun deleteNotifications()
@@ -86,4 +89,19 @@ interface UserDatabaseRepository {
     suspend fun getUserGroup(): GroupModel?
 
     suspend fun deleteUserGroup()
+
+    // Mark book
+    suspend fun setMarkBook(data: MarkBookModel)
+
+    suspend fun getMarkBook(): MarkBookModel?
+
+    suspend fun deleteMarkBook()
+
+    // Omissions
+
+    suspend fun setOmissions(data: List<OmissionsModel>)
+
+    suspend fun getOmissions(): List<OmissionsModel>
+
+    suspend fun deleteOmissions()
 }

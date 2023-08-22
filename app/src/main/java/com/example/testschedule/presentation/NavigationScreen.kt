@@ -1,6 +1,5 @@
 package com.example.testschedule.presentation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -9,8 +8,10 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.testschedule.presentation.account.dormitory_screen.DormitoryScreen
 import com.example.testschedule.presentation.account.group_screen.GroupScreen
+import com.example.testschedule.presentation.account.mark_book_screen.MarkBookScreen
 import com.example.testschedule.presentation.account.menu_screen.AccountMenuScreen
 import com.example.testschedule.presentation.account.notifications_screen.NotificationsScreen
+import com.example.testschedule.presentation.account.omissions_screen.OmissionsScreen
 import com.example.testschedule.presentation.auth_screen.AuthScreen
 import com.example.testschedule.presentation.schedule_screen.add_schedule_screen.AddScheduleScreen
 import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.ViewExamsScreen
@@ -29,6 +30,8 @@ object Routes {
     const val ACCOUNT_NOTIFICATIONS_ROUTE = "ACCOUNT_NOTIFICATIONS_ROUTE"
     const val ACCOUNT_DORMITORY_ROUTE = "ACCOUNT_DORMITORY_ROUTE"
     const val ACCOUNT_GROUP_ROUTE = "ACCOUNT_GROUP_ROUTE"
+    const val ACCOUNT_MARK_BOOK_ROUTE = "ACCOUNT_MARK_BOOK_ROUTE"
+    const val ACCOUNT_OMISSIONS_ROUTE = "ACCOUNT_OMISSIONS_ROUTE"
 }
 
 @Composable
@@ -55,7 +58,6 @@ fun NavigationScreen(
                 var title = entry.savedStateHandle.get<String>("title") ?: id
 
                 val isPreview = entry.arguments?.getString("isPreview") ?: "false"
-                Log.e("```", isPreview.toString())
                 if (isPreview == "true") {
                     id = entry.arguments?.getString("id") ?: id
                     title = entry.arguments?.getString("title") ?: title
@@ -136,6 +138,9 @@ fun NavigationScreen(
             )
         }
 
+
+
+        // MENU -----------------------------------------------------------------------------------
         navigation(
             route = Routes.ACCOUNT_ROUTE,
             startDestination = Routes.ACCOUNT_MENU_ROUTE
@@ -157,6 +162,12 @@ fun NavigationScreen(
                     },
                     goToGroup = {
                         navController.navigate(Routes.ACCOUNT_GROUP_ROUTE)
+                    },
+                    goToMarkBook = {
+                        navController.navigate(Routes.ACCOUNT_MARK_BOOK_ROUTE)
+                    },
+                    goToOmissions = {
+                        navController.navigate(Routes.ACCOUNT_OMISSIONS_ROUTE)
                     }
                 )
             }
@@ -204,6 +215,34 @@ fun NavigationScreen(
                         navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
                     }, goToSchedule = { urlId, title ->
                         navController.navigate("SCHEDULE_HOME_ROUTE/${urlId}/${title}/${true}")
+                    }
+                )
+            }
+
+            composable(
+                route = Routes.ACCOUNT_MARK_BOOK_ROUTE
+            ) {
+                MarkBookScreen(
+                    onBackPressed = { popNav() },
+                    onLogOut = {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                    }
+                )
+            }
+
+            composable(
+                route = Routes.ACCOUNT_OMISSIONS_ROUTE
+            ) {
+                OmissionsScreen(
+                    onBackPressed = { popNav() },
+                    onLogOut = {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
                     }
                 )
             }

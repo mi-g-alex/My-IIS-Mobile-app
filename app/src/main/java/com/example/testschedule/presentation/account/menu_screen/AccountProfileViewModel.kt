@@ -24,8 +24,8 @@ class AccountProfileViewModel @Inject constructor(
 ) : ViewModel() {
 
     val isLoading = mutableStateOf(false)
-    val isLoadingAccount = mutableStateOf(false)
-    val isLoadingNotifications = mutableStateOf(false)
+    private val isLoadingAccount = mutableStateOf(false)
+    private val isLoadingNotifications = mutableStateOf(false)
 
     val errorText = mutableStateOf("")
     val userInfo = mutableStateOf<AccountProfileModel?>(null)
@@ -59,7 +59,7 @@ class AccountProfileViewModel @Inject constructor(
                     isLoadingAccount.value = false
                     isLoading.value = isLoadingAccount.value || isLoadingNotifications.value
                     errorText.value = res.message.toString()
-                    if(errorText.value == "WrongPassword") {
+                    if (errorText.value == "WrongPassword") {
                         viewModelScope.launch {
                             db.deleteUserBasicData()
                         }
@@ -75,19 +75,18 @@ class AccountProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getNotifications() {
+    fun getNotifications() {
         viewModelScope.launch {
-            notificationsCount.intValue = db.getNotifications().size
+            notificationsCount.intValue = db.getNotifications().filter { i -> !i.isViewed }.size
         }
         getNotificationsUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {
                     isLoadingNotifications.value = false
                     isLoading.value = isLoadingAccount.value || isLoadingNotifications.value
-                    viewModelScope.launch {
-                        db.addNotifications(res.data ?: emptyList())
+                    res.data?.let {
+                        notificationsCount.intValue = it.filter { i -> !i.isViewed }.size
                     }
-                    res.data?.let { notificationsCount.intValue = it.size }
                     errorText.value = ""
                 }
 
@@ -95,7 +94,7 @@ class AccountProfileViewModel @Inject constructor(
                     isLoadingNotifications.value = false
                     isLoading.value = isLoadingAccount.value || isLoadingNotifications.value
                     errorText.value = res.message.toString()
-                    if(errorText.value == "WrongPassword") {
+                    if (errorText.value == "WrongPassword") {
                         viewModelScope.launch {
                             db.deleteUserBasicData()
                         }

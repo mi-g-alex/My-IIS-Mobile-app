@@ -6,7 +6,9 @@ import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
 import com.example.testschedule.domain.model.account.group.GroupModel
+import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
+import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
@@ -180,6 +182,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         dao.deleteAccountProfile()
         dao.deleteNotifications()
         dao.deleteUserGroup()
+        dao.deleteMarkBook()
     }
 
 
@@ -206,6 +209,10 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateNotificationStatus(id: List<Int>) {
+        id.forEach { dao.updateNotificationStatus(it, true) }
+    }
+
     override suspend fun getNotifications(): List<NotificationModel> =
         dao.getNotifications().map { it.toModel() }
 
@@ -223,5 +230,29 @@ class UserDatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun deleteUserGroup() {
         dao.deleteUserGroup()
+    }
+
+    // Mark book
+    override suspend fun setMarkBook(data: MarkBookModel) {
+        dao.setMarkBook(data.toEntity())
+    }
+
+    override suspend fun getMarkBook(): MarkBookModel? =
+        dao.getMarkBook()?.toModel()
+
+    override suspend fun deleteMarkBook() {
+        dao.deleteMarkBook()
+    }
+
+    // Omissions
+    override suspend fun setOmissions(data: List<OmissionsModel>) {
+        data.forEach { dao.setOmissions(it.toEntity()) }
+    }
+
+    override suspend fun getOmissions(): List<OmissionsModel> =
+        dao.getOmissions()?.map { it.toModel() } ?: emptyList()
+
+    override suspend fun deleteOmissions() {
+        dao.deleteOmissions()
     }
 }

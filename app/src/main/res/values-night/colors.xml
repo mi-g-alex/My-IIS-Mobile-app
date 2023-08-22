@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="lecture">#FF4AAF1D</color>
-    <color name="practice">#FF471098</color>
-    <color name="labs">#FFA24705</color>
+    <color name="lecture">#FF33DB24</color>
+    <color name="practice">#FF8E4FEC</color>
+    <color name="labs">#FFF98F43</color>
     <color name="exams">#FF840C96</color>
     <color name="consultation">#FF960C56</color>
     <color name="other">#FFAAAAAA</color>

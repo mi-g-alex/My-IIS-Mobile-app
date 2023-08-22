@@ -4,6 +4,7 @@ import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
+import com.example.testschedule.data.local.entity.mark_book.MarkBookEntity
 import com.example.testschedule.data.util.JsonParser
 import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.google.gson.reflect.TypeToken
@@ -138,6 +139,19 @@ class Converters(
         jsonParser.fromJson<GroupEntity.StudentGroupCurator?>(
             json,
             object : TypeToken<GroupEntity.StudentGroupCurator?>() {}.type
+        )
+    @TypeConverter
+    fun markBookMapToJson(meaning: Map<Int, MarkBookEntity.Semester>): String =
+        jsonParser.toJson(
+            meaning,
+            object : TypeToken<Map<Int, MarkBookEntity.Semester>>() {}.type
+        ) ?: ""
+
+    @TypeConverter
+    fun markBookMapFromJson(json: String): Map<Int, MarkBookEntity.Semester>? =
+        jsonParser.fromJson<Map<Int, MarkBookEntity.Semester>>(
+            json,
+            object : TypeToken<Map<Int, MarkBookEntity.Semester>>() {}.type
         )
 
 
