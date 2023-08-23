@@ -75,7 +75,7 @@ fun AddScheduleScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            if (vm.groups.value?.isNotEmpty() == true && vm.employees.value?.isNotEmpty() == true)
+            /*if ((vm.groups.value?.isNotEmpty() == true && vm.employees.value?.isNotEmpty() == true) || vm.savedSchedule.value?.isNotEmpty() == true)*/
                 MySearchBar(
                     goBack,
                     { item, deleting ->
@@ -106,7 +106,7 @@ fun AddScheduleScreen(
         }
     ) {
         Box(Modifier.padding(it)) {
-            if (vm.groups.value?.isNotEmpty() == true && vm.employees.value?.isNotEmpty() == true) {
+            if ((vm.groups.value?.isNotEmpty() == true && vm.employees.value?.isNotEmpty() == true) || vm.savedSchedule.value?.isNotEmpty() == true) {
                 TabScreen(
                     { item, deleting ->
                         var saved = vm.savedSchedule.value?.toMutableList()

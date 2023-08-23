@@ -398,7 +398,7 @@ fun AuthScreen(
                             Checkbox(
                                 checked = setGroupByDefaultBox,
                                 onCheckedChange = { setGroupByDefaultBox = !setGroupByDefaultBox },
-                                enabled = addGroupToSchedulesBox && !isAlreadySavedGroup.value && isAlreadySetDefault.value
+                                enabled = addGroupToSchedulesBox && !isAlreadySetDefault.value
                             )
                             Text(
                                 text = stringResource(

@@ -17,7 +17,6 @@ class ReadNotificationsUseCase @Inject constructor(
     private val db: UserDatabaseRepository,
 ) {
     operator fun invoke(list: List<Int>)  : Flow<Resource<Any>> = flow {
-        Log.e("READ ALL", list.toString())
         try {
             emit(Resource.Loading<Any>())
             val cookie = db.getCookie()

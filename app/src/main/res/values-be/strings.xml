@@ -64,7 +64,7 @@
     <string name="account_notification_no_notifications">Нет уведомлений</string>
     <string name="account_notification_title">Уведомления</string>
     <string name="account_omissions_title">Пропуски</string>
-    <string name="account_omissions_no_omissions">Проски не найдены</string>
+    <string name="account_omissions_no_omissions">Пропуски не найдены</string>
     <string name="account_omissions_semester_number">%s семестр</string>
     <string name="account_omissions_dates">Даты: %s – %s</string>
     <string name="account_omissions_date">Дата: %s</string>

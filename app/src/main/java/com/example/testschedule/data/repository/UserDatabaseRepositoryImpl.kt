@@ -183,6 +183,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         dao.deleteNotifications()
         dao.deleteUserGroup()
         dao.deleteMarkBook()
+        dao.deleteOmissions()
     }
 
 

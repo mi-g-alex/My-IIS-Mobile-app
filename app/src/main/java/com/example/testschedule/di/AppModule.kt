@@ -93,6 +93,9 @@ object AppModule {
                 .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, id)
                 .apply()
         }
+
+
+        fun getOpenByDefault() = prefs.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, "")
     }
 
 }

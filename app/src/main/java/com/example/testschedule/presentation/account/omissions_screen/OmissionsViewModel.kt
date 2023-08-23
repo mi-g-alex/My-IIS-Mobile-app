@@ -30,6 +30,9 @@ class OmissionsViewModel @Inject constructor(
 
 
     private fun getOmissions() {
+        viewModelScope.launch {
+            omissions.value = db.getOmissions()
+        }
         getOmissionsUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {

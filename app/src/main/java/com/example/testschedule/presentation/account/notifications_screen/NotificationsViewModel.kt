@@ -46,7 +46,7 @@ class NotificationsViewModel @Inject constructor(
                     viewModelScope.launch {
                         db.updateNotificationStatus(listOfUnread)
                     }
-                    readNotificationsUseCase(listOfUnread)
+                    readNotificationsUseCase(listOfUnread).launchIn(viewModelScope)
                     errorText.value = ""
                 }
 
