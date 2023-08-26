@@ -65,7 +65,7 @@ interface IisAPI {
     @PATCH("notifications")
     suspend fun readNotifications(
         @Header("Cookie") cookies: String,
-        data: List<ReadNotificationDto>
+        @Body data: List<ReadNotificationDto>
     )
 
     // Получение донных о заселение (общежитие + льготы)

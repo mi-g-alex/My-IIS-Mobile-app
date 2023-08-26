@@ -100,7 +100,7 @@ interface UserDao {
 
     // Notification
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.NONE)
     suspend fun addNotification(data: NotificationEntity)
 
     @Query("UPDATE NotificationEntity SET isViewed=:status WHERE id=:id")

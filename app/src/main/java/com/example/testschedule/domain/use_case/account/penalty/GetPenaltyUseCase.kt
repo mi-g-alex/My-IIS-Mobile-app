@@ -3,7 +3,6 @@ package com.example.testschedule.domain.use_case.account.penalty
 import android.util.Log
 import com.example.testschedule.common.Resource
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
-import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.repository.IisAPIRepository
 import com.example.testschedule.domain.repository.UserDatabaseRepository

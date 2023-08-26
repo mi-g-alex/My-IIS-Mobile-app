@@ -1,7 +1,5 @@
 package com.example.testschedule.domain.model.schedule
 
-import androidx.compose.ui.res.stringResource
-import com.example.testschedule.R
 import com.example.testschedule.data.remote.dto.schedule_view.ScheduleDto
 import java.text.SimpleDateFormat
 import java.util.Locale
