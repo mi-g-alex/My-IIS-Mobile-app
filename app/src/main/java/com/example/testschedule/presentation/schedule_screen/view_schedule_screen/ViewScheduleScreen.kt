@@ -216,7 +216,7 @@ fun ShowSchedule(
                         }
                         filtLes.forEach { les ->
                             item {
-                                if (!les.announcement)
+                                if (!les.announcement) {
                                     LessonCard(
                                         lesson = les,
                                         isGroup = it.isGroupSchedule,
@@ -225,6 +225,34 @@ fun ShowSchedule(
                                             dialogLesson = les
                                         }
                                     )
+                                } else {
+                                    val l = les.copy(
+                                        auditories = les.auditories,
+                                        startLessonTime = les.startLessonTime,
+                                        endLessonTime = les.endLessonTime,
+                                        startLessonDate = les.startLessonDate,
+                                        endLessonDate = les.endLessonDate,
+                                        dateLesson = les.dateLesson,
+                                        lessonTypeAbbrev = stringResource(id = R.string.schedule_announcement),
+                                        note = les.note,
+                                        numSubgroup = les.numSubgroup,
+                                        studentGroups = les.studentGroups,
+                                        subject = les.subject,
+                                        subjectFullName = les.subjectFullName,
+                                        weekNumber = les.weekNumber,
+                                        employees = les.employees,
+                                        announcement = les.announcement,
+                                        split = les.split,
+                                    )
+                                    LessonCard(
+                                        lesson = l,
+                                        isGroup = it.isGroupSchedule,
+                                        click = {
+                                            openDialog.value = true
+                                            dialogLesson = l
+                                        }
+                                    )
+                                }
                             }
                         }
                     }

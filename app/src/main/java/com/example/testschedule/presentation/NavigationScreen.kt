@@ -12,6 +12,7 @@ import com.example.testschedule.presentation.account.mark_book_screen.MarkBookSc
 import com.example.testschedule.presentation.account.menu_screen.AccountMenuScreen
 import com.example.testschedule.presentation.account.notifications_screen.NotificationsScreen
 import com.example.testschedule.presentation.account.omissions_screen.OmissionsScreen
+import com.example.testschedule.presentation.account.penalty_screen.PenaltyScreen
 import com.example.testschedule.presentation.auth_screen.AuthScreen
 import com.example.testschedule.presentation.schedule_screen.add_schedule_screen.AddScheduleScreen
 import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.ViewExamsScreen
@@ -32,6 +33,7 @@ object Routes {
     const val ACCOUNT_GROUP_ROUTE = "ACCOUNT_GROUP_ROUTE"
     const val ACCOUNT_MARK_BOOK_ROUTE = "ACCOUNT_MARK_BOOK_ROUTE"
     const val ACCOUNT_OMISSIONS_ROUTE = "ACCOUNT_OMISSIONS_ROUTE"
+    const val ACCOUNT_PENALTY_ROUTE = "ACCOUNT_PENALTY_ROUTE"
 }
 
 @Composable
@@ -168,6 +170,9 @@ fun NavigationScreen(
                     },
                     goToOmissions = {
                         navController.navigate(Routes.ACCOUNT_OMISSIONS_ROUTE)
+                    },
+                    goToPenalty = {
+                        navController.navigate(Routes.ACCOUNT_PENALTY_ROUTE)
                     }
                 )
             }
@@ -237,6 +242,20 @@ fun NavigationScreen(
                 route = Routes.ACCOUNT_OMISSIONS_ROUTE
             ) {
                 OmissionsScreen(
+                    onBackPressed = { popNav() },
+                    onLogOut = {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                    }
+                )
+            }
+
+            composable(
+                route = Routes.ACCOUNT_PENALTY_ROUTE
+            ) {
+                PenaltyScreen(
                     onBackPressed = { popNav() },
                     onLogOut = {
                         navController.popBackStack()

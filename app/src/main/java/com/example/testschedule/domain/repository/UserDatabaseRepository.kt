@@ -1,10 +1,12 @@
 package com.example.testschedule.domain.repository
 
+import com.example.testschedule.data.local.entity.account.penalty.PenaltyEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.omissions.OmissionsModel
+import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
@@ -98,10 +100,16 @@ interface UserDatabaseRepository {
     suspend fun deleteMarkBook()
 
     // Omissions
-
     suspend fun setOmissions(data: List<OmissionsModel>)
 
     suspend fun getOmissions(): List<OmissionsModel>
 
     suspend fun deleteOmissions()
+
+    // Penalty
+    suspend fun setPenalty(data: List<PenaltyModel>)
+
+    suspend fun getPenalty() : List<PenaltyModel>
+
+    suspend fun deletePenalty()
 }

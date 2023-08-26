@@ -417,7 +417,7 @@ fun AuthScreen(
                                 onClick = {
                                     if (addGroupToSchedulesBox && !isAlreadySavedGroup.value)
                                         viewModel.addGroupToSaved(res.group)
-                                    if (setGroupByDefaultBox && !isAlreadySavedGroup.value && addGroupToSchedulesBox)
+                                    if (setGroupByDefaultBox && addGroupToSchedulesBox && !isAlreadySetDefault.value)
                                         viewModel.setOpenByDefault(res.group)
                                     goToProfile()
                                 },

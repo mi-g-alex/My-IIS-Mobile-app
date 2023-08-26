@@ -1,5 +1,7 @@
 package com.example.testschedule.domain.model.schedule
 
+import androidx.compose.ui.res.stringResource
+import com.example.testschedule.R
 import com.example.testschedule.data.remote.dto.schedule_view.ScheduleDto
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -156,43 +158,85 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
 
     schedule.schedules?.monday?.forEach { day ->
         val tmp = convertDay(day)
-        day.weekNumber.forEach { week ->
-            listOfWeeks[week - 1].monday.add(tmp)
+        if (day.weekNumber != null) {
+            day.weekNumber.forEach { week ->
+                listOfWeeks[week - 1].monday.add(tmp)
+            }
+        } else {
+            listOfWeeks[0].monday.add(tmp)
+            listOfWeeks[1].monday.add(tmp)
+            listOfWeeks[2].monday.add(tmp)
+            listOfWeeks[3].monday.add(tmp)
         }
     }
 
     schedule.schedules?.tuesday?.forEach { day ->
         val tmp = convertDay(day)
-        day.weekNumber.forEach { week ->
-            listOfWeeks[week - 1].tuesday.add(tmp)
+        if (day.weekNumber != null) {
+            day.weekNumber.forEach { week ->
+                listOfWeeks[week - 1].tuesday.add(tmp)
+            }
+        } else {
+            listOfWeeks[0].tuesday.add(tmp)
+            listOfWeeks[1].tuesday.add(tmp)
+            listOfWeeks[2].tuesday.add(tmp)
+            listOfWeeks[3].tuesday.add(tmp)
         }
     }
 
     schedule.schedules?.wednesday?.forEach { day ->
         val tmp = convertDay(day)
-        day.weekNumber.forEach { week ->
-            listOfWeeks[week - 1].wednesday.add(tmp)
+        if (day.weekNumber != null) {
+            day.weekNumber.forEach { week ->
+                listOfWeeks[week - 1].wednesday.add(tmp)
+            }
+        } else {
+            listOfWeeks[0].wednesday.add(tmp)
+            listOfWeeks[1].wednesday.add(tmp)
+            listOfWeeks[2].wednesday.add(tmp)
+            listOfWeeks[3].wednesday.add(tmp)
         }
     }
 
     schedule.schedules?.thursday?.forEach { day ->
         val tmp = convertDay(day)
-        day.weekNumber.forEach { week ->
-            listOfWeeks[week - 1].thursday.add(tmp)
+        if (day.weekNumber != null) {
+            day.weekNumber.forEach { week ->
+                listOfWeeks[week - 1].thursday.add(tmp)
+            }
+        } else {
+            listOfWeeks[0].thursday.add(tmp)
+            listOfWeeks[1].thursday.add(tmp)
+            listOfWeeks[2].thursday.add(tmp)
+            listOfWeeks[3].thursday.add(tmp)
         }
     }
 
     schedule.schedules?.friday?.forEach { day ->
         val tmp = convertDay(day)
-        day.weekNumber.forEach { week ->
-            listOfWeeks[week - 1].friday.add(tmp)
+        if (day.weekNumber != null) {
+            day.weekNumber.forEach { week ->
+                listOfWeeks[week - 1].friday.add(tmp)
+            }
+        } else {
+            listOfWeeks[0].friday.add(tmp)
+            listOfWeeks[1].friday.add(tmp)
+            listOfWeeks[2].friday.add(tmp)
+            listOfWeeks[3].friday.add(tmp)
         }
     }
 
     schedule.schedules?.saturday?.forEach { day ->
         val tmp = convertDay(day)
-        day.weekNumber.forEach { week ->
-            listOfWeeks[week - 1].saturday.add(tmp)
+        if (day.weekNumber != null) {
+            day.weekNumber.forEach { week ->
+                listOfWeeks[week - 1].saturday.add(tmp)
+            }
+        } else {
+            listOfWeeks[0].saturday.add(tmp)
+            listOfWeeks[1].saturday.add(tmp)
+            listOfWeeks[2].saturday.add(tmp)
+            listOfWeeks[3].saturday.add(tmp)
         }
     }
 
@@ -293,13 +337,13 @@ fun convertDay(
         startLessonDate = startLessonDate,
         endLessonDate = endLessonDate,
         dateLesson = dateLesson,
-        lessonTypeAbbrev = day.lessonTypeAbbrev,
+        lessonTypeAbbrev = day.lessonTypeAbbrev ?: "",
         note = day.note,
         numSubgroup = day.numSubgroup,
         studentGroups = studentGroups,
-        subject = day.subject,
-        subjectFullName = day.subjectFullName,
-        weekNumber = day.weekNumber,
+        subject = day.subject ?: "",
+        subjectFullName = day.subjectFullName ?: "",
+        weekNumber = day.weekNumber ?: emptyList(),
         employees = employees,
         announcement = day.announcement,
         split = day.split,

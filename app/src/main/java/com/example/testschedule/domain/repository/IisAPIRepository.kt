@@ -7,6 +7,7 @@ import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.omissions.OmissionsModel
+import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
@@ -52,4 +53,7 @@ interface IisAPIRepository {
 
     // Пропуски
     suspend fun getOmissions(cookies: String): List<OmissionsModel>
+
+    // Взыскания
+    suspend fun getPenalty(cookies: String): List<PenaltyModel>
 }

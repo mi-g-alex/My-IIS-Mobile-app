@@ -33,6 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -97,8 +99,11 @@ fun LessonCard(
 ) {
     val color = when (lesson.lessonTypeAbbrev) {
         "ЛК" -> colorResource(id = R.color.lecture)
+        "УЛк" -> colorResource(id = R.color.lecture)
         "ЛР" -> colorResource(id = R.color.labs)
+        "УЛр" -> colorResource(id = R.color.labs)
         "ПЗ" -> colorResource(id = R.color.practice)
+        "УПз" -> colorResource(id = R.color.practice)
         "Экзамен" -> colorResource(id = R.color.exams)
         "Консультация" -> colorResource(id = R.color.consultation)
         else -> colorResource(id = R.color.other)
@@ -110,24 +115,28 @@ fun LessonCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
-            Modifier.width(60.dp),
+            Modifier,
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
                 getTimeInString(lesson.startLessonTime),
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold
             )
             Text(
                 getTimeInString(lesson.endLessonTime),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold
             )
         }
         Card(
             onClick = { click() },
             modifier = Modifier
-                .fillMaxSize()
                 .weight(1f)
+                .fillMaxSize()
                 .padding(start = 8.dp),
         ) {
             Row(
@@ -142,7 +151,7 @@ fun LessonCard(
                         Alignment.CenterVertically
                     ) {
                         Text(
-                            text = lesson.subject + " (${lesson.lessonTypeAbbrev})",
+                            text = lesson.subject + if(lesson.lessonTypeAbbrev.isNotEmpty()) " (${lesson.lessonTypeAbbrev})" else "",
                             style = MaterialTheme.typography.titleMedium
                         )
                         if (lesson.auditories.isNotEmpty())
@@ -371,13 +380,15 @@ fun MoreDetailCard(
                         stringResource(id = R.string.schedule_dialog_date_pattern),
                         Locale.getDefault()
                     )
-                    Text(
-                        stringResource(
-                            id = R.string.schedule_dialog_type_of_lesson,
-                            lesson.lessonTypeAbbrev
-                        ),
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                    if(lesson.lessonTypeAbbrev.isNotEmpty()) {
+                        Text(
+                            stringResource(
+                                id = R.string.schedule_dialog_type_of_lesson,
+                                lesson.lessonTypeAbbrev
+                            ),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
                     if ((lesson.startLessonDate ?: lesson.dateLesson ?: 0) != (lesson.endLessonDate
                             ?: lesson.dateLesson ?: 0)
                     )

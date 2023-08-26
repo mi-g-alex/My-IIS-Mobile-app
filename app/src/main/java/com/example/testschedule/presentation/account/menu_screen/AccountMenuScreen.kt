@@ -1,10 +1,10 @@
 package com.example.testschedule.presentation.account.menu_screen
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ListItem
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.ExitToApp
@@ -40,7 +43,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -57,6 +59,7 @@ fun AccountMenuScreen(
     goToGroup: () -> Unit,
     goToMarkBook: () -> Unit,
     goToOmissions: () -> Unit,
+    goToPenalty: () -> Unit,
     viewModel: AccountProfileViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -79,6 +82,8 @@ fun AccountMenuScreen(
                 onSettingsClicked = {},
                 onExitClicked = { viewModel.exit(); goBack() },
                 isOfflineResult = viewModel.isLoading.value || viewModel.errorText.value.isNotEmpty(),
+                onNotificationClicked = goToNotifications,
+                notificationCount = viewModel.notificationsCount.intValue
             )
             if (viewModel.isLoading.value) {
                 LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -89,18 +94,17 @@ fun AccountMenuScreen(
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(it),
-                contentPadding = PaddingValues(horizontal = 8.dp)
+                    .padding(it)
             ) {
                 item { AccountMenuProfileCard(user = viewModel.userInfo.value!!) }
-                item {
+                /*item {
                     MenuNotificationItem(
                         icon = R.drawable.acc_menu_notifications,
                         title = stringResource(id = R.string.account_menu_card_notifications),
                         number = viewModel.notificationsCount.intValue
                     ) { goToNotifications() }
-                }
-                item { Spacer(modifier = Modifier.height(15.dp)) }
+                }*/
+                item { Spacer(modifier = Modifier.height(10.dp)) }
                 item {
                     MenuItem(
                         R.drawable.acc_menu_markbook,
@@ -161,7 +165,7 @@ fun AccountMenuScreen(
                     MenuItem(
                         R.drawable.acc_menu_penalty,
                         stringResource(id = R.string.account_menu_card_penalty),
-                        {})
+                    ) { goToPenalty() }
                 }
             }
     }
@@ -172,6 +176,8 @@ fun AccountMenuTopAppBar(
     onCloseClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
     onExitClicked: () -> Unit,
+    onNotificationClicked: () -> Unit,
+    notificationCount: Int,
     isOfflineResult: Boolean
 ) {
     val cnt = LocalContext.current
@@ -197,17 +203,30 @@ fun AccountMenuTopAppBar(
                     )
                 }
             }
+            IconButton(onClick = { onExitClicked() }) {
+                Icon(
+                    Icons.Outlined.ExitToApp,
+                    stringResource(id = R.string.account_menu_exit_desc)
+                )
+            }
             IconButton(onClick = { onSettingsClicked() }) {
                 Icon(
                     imageVector = Icons.Outlined.Settings,
                     contentDescription = stringResource(id = R.string.account_menu_settings_desc),
                 )
             }
-            IconButton(onClick = { onExitClicked() }) {
-                Icon(
-                    Icons.Outlined.ExitToApp,
-                    stringResource(id = R.string.account_menu_exit_desc)
-                )
+            IconButton(onClick = { onNotificationClicked() }) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.acc_menu_notifications),
+                        contentDescription = stringResource(id = R.string.account_menu_card_notifications)
+                    )
+                    if (notificationCount != 0)
+                        Text(
+                            notificationCount.toString(),
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                }
             }
         }
     )
@@ -219,6 +238,7 @@ fun AccountMenuProfileCard(user: AccountProfileModel) {
         onClick = {},
         modifier = Modifier
             .fillMaxWidth()
+            .padding(8.dp)
     ) {
         Row(
             Modifier.fillMaxWidth(),
@@ -273,34 +293,44 @@ fun AccountMenuProfileCard(user: AccountProfileModel) {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MenuItem(
     icon: Int,
     title: String,
     navTo: () -> Unit
 ) {
-    OutlinedCard(
-        onClick = { navTo() },
+    ListItem(
         modifier = Modifier
             .fillMaxWidth()
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+            .clickable {
+                navTo()
+            },
+        icon = {
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = title,
                 modifier = Modifier.padding(8.dp)
             )
+        },
+        text = {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+        },
+        trailing = {
+            Icon(
+                Icons.Default.KeyboardArrowRight,
+                contentDescription = title,
+            )
         }
-    }
+    )
 }
 
-@Composable
+/*@Composable
 fun MenuNotificationItem(
     icon: Int,
     title: String,
@@ -339,4 +369,4 @@ fun MenuNotificationItem(
                 )
         }
     }
-}
+}*/

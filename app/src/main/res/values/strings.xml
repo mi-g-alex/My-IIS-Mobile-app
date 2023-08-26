@@ -70,6 +70,12 @@
     <string name="account_omissions_date">Date: %s</string>
     <string name="account_omissions_date_fromat">dd.MM.yyyy</string>
     <string name="account_omissions_note">Note: %s</string>
+    <string name="account_penalty_title">Incentives &amp; Penalty</string>
+    <string name="account_penalty_status">Status: %s</string>
+    <string name="account_penalty_note">Note: %s</string>
+    <string name="account_penalty_date">Date: %s</string>
+    <string name="account_penalty_type">Type: %s</string>
+    <string name="account_penalty_no_penalty">No Penalties or Incentives</string>
     <string name="back">Back</string>
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
@@ -126,4 +132,5 @@
     <string name="schedule_select_subgroup_title">Select your subgroup</string>
     <string name="schedule_subgroup_text">Subgr\. %d</string>
     <string name="schedule_week">Week %d</string>
+    <string name="schedule_announcement">Announcement</string>
 </resources>

@@ -75,12 +75,41 @@ fun ViewExamsScreen(
                         }
                     }
                     item {
-                        LessonCard(
-                            lesson = exams[i].exam,
-                            isGroup = viewModel.schedule.value!!.isGroupSchedule
-                        ) {
-                            openDialog.value = true
-                            dialogLesson = exams[i].exam
+                        if (!exams[i].exam.announcement) {
+                            LessonCard(
+                                lesson = exams[i].exam,
+                                isGroup = viewModel.schedule.value!!.isGroupSchedule
+                            ) {
+                                openDialog.value = true
+                                dialogLesson = exams[i].exam
+                            }
+                        } else {
+                            val les = exams[i].exam.copy(
+                                auditories = exams[i].exam.auditories,
+                                startLessonTime = exams[i].exam.startLessonTime,
+                                endLessonTime = exams[i].exam.endLessonTime,
+                                startLessonDate = exams[i].exam.startLessonDate,
+                                endLessonDate = exams[i].exam.endLessonDate,
+                                dateLesson = exams[i].exam.dateLesson,
+                                lessonTypeAbbrev = exams[i].exam.lessonTypeAbbrev,
+                                note = exams[i].exam.note,
+                                numSubgroup = exams[i].exam.numSubgroup,
+                                studentGroups = exams[i].exam.studentGroups,
+                                subject = stringResource(id = R.string.schedule_announcement),
+                                subjectFullName = stringResource(id = R.string.schedule_announcement),
+                                weekNumber = exams[i].exam.weekNumber,
+                                employees = exams[i].exam.employees,
+                                announcement = exams[i].exam.announcement,
+                                split = exams[i].exam.split,
+                            )
+                            LessonCard(
+                                lesson = les,
+                                isGroup = viewModel.schedule.value!!.isGroupSchedule,
+                                click = {
+                                    openDialog.value = true
+                                    dialogLesson = les
+                                }
+                            )
                         }
                     }
                 }

@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Мой IIS</string>
     <string name="account_dormitory_dormitory_card_accepted_time">В очереди с %s</string>
-    <string name="account_dormitory_dormitory_card_rejection_reason">Причина отказа: %s</string>
+    <string name="account_dormitory_dormitory_card_rejection_reason">\\nПричина отказа: %s</string>
     <string name="account_dormitory_dormitory_card_request_number">Заявка %d</string>
     <string name="account_dormitory_dormitory_card_request_time">Время подачи: %s</string>
     <string name="account_dormitory_dormitory_card_room_info">Комната: %s</string>
@@ -70,6 +70,10 @@
     <string name="account_omissions_date">Дата: %s</string>
     <string name="account_omissions_date_fromat">dd.MM.yyyy</string>
     <string name="account_omissions_note">Заметка: %s</string>
+    <string name="account_penalty_title">Поощрения и Взыскания</string>
+    <string name="account_penalty_status">Статус: %s</string>
+    <string name="account_penalty_note">Заметка: %s</string>
+    <string name="account_penalty_date">Дата: %s</string>
     <string name="back">Назад</string>
     <string name="cancel">Отмена</string>
     <string name="close">Закрыть</string>
@@ -126,4 +130,7 @@
     <string name="schedule_select_subgroup_title">Выберите вашу подгруппу</string>
     <string name="schedule_subgroup_text">Подгр\. %d</string>
     <string name="schedule_week">Неделя %d</string>
+    <string name="account_penalty_type">Тип: %s</string>
+    <string name="account_penalty_no_penalty">Не найдено взысканий или привилегий</string>
+    <string name="schedule_announcement">Событие</string>
 </resources>

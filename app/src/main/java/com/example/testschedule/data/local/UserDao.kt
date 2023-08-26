@@ -7,6 +7,7 @@ import androidx.room.Query
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.account.notifications.NotificationEntity
 import com.example.testschedule.data.local.entity.account.omissions.OmissionsEntity
+import com.example.testschedule.data.local.entity.account.penalty.PenaltyEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
@@ -140,5 +141,15 @@ interface UserDao {
 
     @Query("DELETE FROM MarkBookEntity")
     suspend fun deleteOmissions()
+
+    // Penalty
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setPenalty(data: PenaltyEntity)
+
+    @Query("SELECT * FROM PenaltyEntity")
+    suspend fun getPenalty() : List<PenaltyEntity>?
+
+    @Query("DELETE FROM PenaltyEntity")
+    suspend fun deletePenalty()
 
 }

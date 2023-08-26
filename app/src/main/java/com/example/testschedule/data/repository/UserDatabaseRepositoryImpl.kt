@@ -9,6 +9,7 @@ import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.omissions.OmissionsModel
+import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
@@ -184,6 +185,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         dao.deleteUserGroup()
         dao.deleteMarkBook()
         dao.deleteOmissions()
+        dao.deletePenalty()
     }
 
 
@@ -255,5 +257,16 @@ class UserDatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun deleteOmissions() {
         dao.deleteOmissions()
+    }
+
+    // Penalty
+    override suspend fun setPenalty(data: List<PenaltyModel>) =
+        data.forEach { it.toEntity() }
+
+    override suspend fun getPenalty(): List<PenaltyModel> =
+        dao.getPenalty()?.map { it.toModel() } ?: emptyList()
+
+    override suspend fun deletePenalty() {
+        dao.deletePenalty()
     }
 }
