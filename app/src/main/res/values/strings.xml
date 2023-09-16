@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">My IIS</string>
+    <string name="account_announcement_title">Announcements</string>
+    <string name="account_announcement_time">Time: %s - %s</string>
+    <string name="account_announcement_date">Date: %s</string>
+    <string name="account_announcement_place">Place: %s</string>
+    <string name="account_announcement_no_announcement">No announcement found!</string>
     <string name="account_dormitory_dormitory_card_accepted_time">Accepted time: %s</string>
     <string name="account_dormitory_dormitory_card_rejection_reason">\nRejection reason: %s</string>
     <string name="account_dormitory_dormitory_card_request_number">Request %d</string>
@@ -82,6 +87,7 @@
     <string name="copy">Copy</string>
     <string name="copy_success">%s copied</string>
     <string name="error_to_login">Couldn\'t login to account</string>
+    <string name="input_password_title">Input password</string>
     <string name="login_add_schedule_box">Add %s to schedule</string>
     <string name="login_edit_button">Change login</string>
     <string name="login_error_connection_fail">Couldn\'t connect to IIS</string>

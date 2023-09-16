@@ -133,4 +133,10 @@
     <string name="account_penalty_type">Тип: %s</string>
     <string name="account_penalty_no_penalty">Не найдено взысканий или привилегий</string>
     <string name="schedule_announcement">Событие</string>
+    <string name="input_password_title">Введите пароль</string>
+    <string name="account_announcement_title">События</string>
+    <string name="account_announcement_no_announcement">События не найдены</string>
+    <string name="account_announcement_time">Время: %s - %s</string>
+    <string name="account_announcement_date">Дата: %s</string>
+    <string name="account_announcement_place">Место: %s</string>
 </resources>

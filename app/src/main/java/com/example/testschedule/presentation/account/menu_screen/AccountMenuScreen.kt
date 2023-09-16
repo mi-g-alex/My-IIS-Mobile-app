@@ -60,6 +60,7 @@ fun AccountMenuScreen(
     goToMarkBook: () -> Unit,
     goToOmissions: () -> Unit,
     goToPenalty: () -> Unit,
+    goToAnnouncements: () -> Unit,
     viewModel: AccountProfileViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -147,7 +148,7 @@ fun AccountMenuScreen(
                     MenuItem(
                         R.drawable.acc_menu_announcements,
                         stringResource(id = R.string.account_menu_card_announcements),
-                        {})
+                        ) { goToAnnouncements() }
                 }
                 item {
                     MenuItem(

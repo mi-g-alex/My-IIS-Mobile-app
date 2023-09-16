@@ -4,6 +4,7 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.testschedule.data.local.entity.account.announcement.AnnouncementEntity
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.account.notifications.NotificationEntity
 import com.example.testschedule.data.local.entity.account.omissions.OmissionsEntity
@@ -18,7 +19,7 @@ import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
 
 @Database(
-    version = 10,
+    version = 11,
     entities = [
         // Schedules
         ScheduleEntity::class,
@@ -40,6 +41,8 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
         OmissionsEntity::class,
         // Penalty
         PenaltyEntity::class,
+        // Announcements
+        AnnouncementEntity::class,
     ],
     exportSchema = true,
     autoMigrations = [
@@ -52,6 +55,7 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
         AutoMigration(from = 7, to = 8),
         AutoMigration(from = 8, to = 9),
         AutoMigration(from = 9, to = 10),
+        AutoMigration(from = 10, to = 11),
     ],
 )
 @TypeConverters(Converters::class)

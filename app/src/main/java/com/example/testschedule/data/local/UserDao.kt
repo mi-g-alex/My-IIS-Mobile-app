@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.testschedule.data.local.entity.account.announcement.AnnouncementEntity
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.account.notifications.NotificationEntity
 import com.example.testschedule.data.local.entity.account.omissions.OmissionsEntity
@@ -151,5 +152,15 @@ interface UserDao {
 
     @Query("DELETE FROM PenaltyEntity")
     suspend fun deletePenalty()
+
+    // Announcements
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addAnnouncement(data: AnnouncementEntity)
+
+    @Query("SELECT * FROM AnnouncementEntity")
+    suspend fun getAnnouncements() : List<AnnouncementEntity>
+
+    @Query("DELETE FROM AnnouncementEntity")
+    suspend fun deleteAnnouncements()
 
 }

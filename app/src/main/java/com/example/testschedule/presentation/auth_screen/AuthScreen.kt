@@ -229,6 +229,11 @@ fun AuthScreen(
                             enabled = true,
                             readOnly = false,
                             isError = viewModel.errorText.value.isNotEmpty(),
+                            label = {
+                                Text(
+                                    text = stringResource(id = R.string.input_password_title),
+                                )
+                            },
                             supportingText = {
                                 if (viewModel.errorText.value.isNotEmpty()) {
                                     val text = when (viewModel.errorText.value) {

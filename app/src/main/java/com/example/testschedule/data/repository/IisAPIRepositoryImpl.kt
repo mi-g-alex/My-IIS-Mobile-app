@@ -5,6 +5,7 @@ import com.example.testschedule.data.remote.dto.account.notifications.Notificati
 import com.example.testschedule.data.remote.dto.account.notifications.ReadNotificationDto
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
+import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
 import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
 import com.example.testschedule.domain.model.account.group.GroupModel
@@ -102,4 +103,8 @@ class IisAPIRepositoryImpl @Inject constructor(
     // Взыскания
     override suspend fun getPenalty(cookies: String): List<PenaltyModel> =
         api.getPenalty(cookies).map { it.toModel() }
+
+    // События
+    override suspend fun getAnnouncements(cookies: String): List<AnnouncementModel> =
+        api.getAnnouncements(cookies).map { it.toModel() }
 }

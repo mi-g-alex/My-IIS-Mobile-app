@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.testschedule.presentation.account.announcement_screen.AnnouncementsScreen
 import com.example.testschedule.presentation.account.dormitory_screen.DormitoryScreen
 import com.example.testschedule.presentation.account.group_screen.GroupScreen
 import com.example.testschedule.presentation.account.mark_book_screen.MarkBookScreen
@@ -34,6 +35,7 @@ object Routes {
     const val ACCOUNT_MARK_BOOK_ROUTE = "ACCOUNT_MARK_BOOK_ROUTE"
     const val ACCOUNT_OMISSIONS_ROUTE = "ACCOUNT_OMISSIONS_ROUTE"
     const val ACCOUNT_PENALTY_ROUTE = "ACCOUNT_PENALTY_ROUTE"
+    const val ACCOUNT_ANNOUNCEMENT_ROUTE = "ACCOUNT_ANNOUNCEMENT_ROUTE"
 }
 
 @Composable
@@ -118,8 +120,8 @@ fun NavigationScreen(
                     navBack = {
                         popNav()
                     },
-                    selectScheduleClicked = {  urlId, title ->
-                            navController.navigate("SCHEDULE_HOME_ROUTE/${urlId}/${title}/${true}")
+                    selectScheduleClicked = { urlId, title ->
+                        navController.navigate("SCHEDULE_HOME_ROUTE/${urlId}/${title}/${true}")
                     }
                 )
             }
@@ -136,7 +138,6 @@ fun NavigationScreen(
                 }
             )
         }
-
 
 
         // MENU -----------------------------------------------------------------------------------
@@ -170,6 +171,9 @@ fun NavigationScreen(
                     },
                     goToPenalty = {
                         navController.navigate(Routes.ACCOUNT_PENALTY_ROUTE)
+                    },
+                    goToAnnouncements = {
+                        navController.navigate(Routes.ACCOUNT_ANNOUNCEMENT_ROUTE)
                     }
                 )
             }
@@ -209,7 +213,24 @@ fun NavigationScreen(
             composable(
                 route = Routes.ACCOUNT_GROUP_ROUTE
             ) {
-                GroupScreen(onBackPressed = { popNav() },
+                GroupScreen(
+                    onBackPressed = { popNav() },
+                    onLogOut = {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                    }, goToSchedule = { urlId, title ->
+                        navController.navigate("SCHEDULE_HOME_ROUTE/${urlId}/${title}/${true}")
+                    }
+                )
+            }
+
+            composable(
+                route = Routes.ACCOUNT_ANNOUNCEMENT_ROUTE
+            ) {
+                AnnouncementsScreen(
+                    onBackPressed = { popNav() },
                     onLogOut = {
                         navController.popBackStack()
                         navController.popBackStack()

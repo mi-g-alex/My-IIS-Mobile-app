@@ -1,5 +1,6 @@
 package com.example.testschedule.data.remote
 
+import com.example.testschedule.data.remote.dto.account.announcement.AnnouncementDto
 import com.example.testschedule.data.remote.dto.account.dormitory.DormitoryDto
 import com.example.testschedule.data.remote.dto.account.dormitory.PrivilegesDto
 import com.example.testschedule.data.remote.dto.account.group.GroupDto
@@ -89,5 +90,9 @@ interface IisAPI {
 
     @GET("dormitory-queue-application/premium-penalty")
     suspend fun getPenalty(@Header("Cookie") cookies: String): List<PenaltyDto>
+
+    //  Получение списка события для аккаунта
+    @GET("announcements")
+    suspend fun getAnnouncements(@Header("Cookie") cookies: String) : List<AnnouncementDto>
 }
 

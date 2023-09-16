@@ -1,6 +1,7 @@
 package com.example.testschedule.domain.repository
 
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
+import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
 import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
 import com.example.testschedule.domain.model.account.group.GroupModel
@@ -56,4 +57,7 @@ interface IisAPIRepository {
 
     // Взыскания
     suspend fun getPenalty(cookies: String): List<PenaltyModel>
+
+    // События
+    suspend fun getAnnouncements(cookies: String): List<AnnouncementModel>
 }

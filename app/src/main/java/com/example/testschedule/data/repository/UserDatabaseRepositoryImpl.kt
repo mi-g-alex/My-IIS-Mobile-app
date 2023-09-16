@@ -5,6 +5,7 @@ import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
+import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
@@ -268,5 +269,19 @@ class UserDatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun deletePenalty() {
         dao.deletePenalty()
+    }
+
+    // Announcement
+    override suspend fun addAnnouncements(data: List<AnnouncementModel>) {
+        dao.deleteAnnouncements()
+        data.forEach {
+            dao.addAnnouncement(it.toEntity())
+        }
+    }
+    override suspend fun getAnnouncements(): List<AnnouncementModel> =
+        dao.getAnnouncements().map { it.toModel() }
+
+    override suspend fun deleteAnnouncements() {
+        dao.deleteAnnouncements()
     }
 }

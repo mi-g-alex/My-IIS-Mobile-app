@@ -1,6 +1,7 @@
 package com.example.testschedule.domain.repository
 
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
+import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
@@ -111,4 +112,11 @@ interface UserDatabaseRepository {
     suspend fun getPenalty() : List<PenaltyModel>
 
     suspend fun deletePenalty()
+
+    // Announcement
+    suspend fun addAnnouncements(data: List<AnnouncementModel>)
+
+    suspend fun getAnnouncements() : List<AnnouncementModel>
+
+    suspend fun deleteAnnouncements()
 }
