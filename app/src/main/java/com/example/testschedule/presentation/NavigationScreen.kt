@@ -87,7 +87,10 @@ fun NavigationScreen(
                     navToProfile = {
                         navController.navigate(Routes.ACCOUNT_ROUTE)
                     },
-                    isPrev = isPreview == "true"
+                    isPrev = isPreview == "true",
+                    goToPreview = { myId, myTitle ->
+                        navController.navigate("SCHEDULE_HOME_ROUTE/${myId}/${myTitle}/${true}")
+                    }
                 )
             }
             composable(
@@ -115,14 +118,8 @@ fun NavigationScreen(
                     navBack = {
                         popNav()
                     },
-                    selectScheduleClicked = { id, title ->
-                        navController.previousBackStackEntry
-                            ?.savedStateHandle
-                            ?.set("id", id)
-                        navController.previousBackStackEntry
-                            ?.savedStateHandle
-                            ?.set("title", title)
-                        popNav()
+                    selectScheduleClicked = {  urlId, title ->
+                            navController.navigate("SCHEDULE_HOME_ROUTE/${urlId}/${title}/${true}")
                     }
                 )
             }

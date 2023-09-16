@@ -71,7 +71,10 @@ class PreviewActivity : ComponentActivity() {
                                 goToAddSchedule = {},
                                 navToLogin = {},
                                 navToProfile = {},
-                                isPrev = true
+                                isPrev = true,
+                                goToPreview = { urlId, title ->
+                                    navController.navigate("SCHEDULE_HOME_ROUTE/${urlId}/${title}/${true}")
+                                }
                             )
                         }
                         composable(

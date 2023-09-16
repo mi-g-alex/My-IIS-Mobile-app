@@ -41,6 +41,7 @@ import com.example.testschedule.presentation.schedule_screen.view_schedule_scree
 import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items.StickySchedule
 import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items.getLessons
 import kotlinx.coroutines.launch
+import java.lang.Long.max
 import java.util.Calendar
 import java.util.GregorianCalendar
 
@@ -56,6 +57,7 @@ fun ViewScheduleScreen(
     navToLogin: () -> Unit,
     navToProfile: () -> Unit,
     isPrev: Boolean = false,
+    goToPreview: (id: String, title: String) -> Unit,
     viewModel: ViewScheduleViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -105,7 +107,7 @@ fun ViewScheduleScreen(
         },
         floatingActionButton = {
             if (vm.schedule?.exams?.isNotEmpty() == true)
-                if ((vm.schedule.endExamsDate ?: 0) > Calendar.getInstance().timeInMillis)
+                if (((vm.schedule.endExamsDate?.plus(24 * 60 * 60 * 1000 - 1)) ?: 0) >= Calendar.getInstance().timeInMillis)
                     ExamsFAB(
                         goToExams = {
                             viewModel.setExamsToDB()
@@ -119,17 +121,7 @@ fun ViewScheduleScreen(
             NoScheduleAdded()
         } else
             if (vm.schedule != null) {
-                ShowSchedule(vm.schedule, Modifier.padding(pv), state, isPrev) { id, t ->
-                    viewModel.getSchedule(id)
-                    viewModel.title.value = t
-                    scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
-                        if (!bottomSheetState.isVisible) {
-                            showBottomSheet = false
-                        }
-                    }
-                    goBackSet(id, t)
-                    scope.launch { state.animateScrollToItem(0, 0) }
-                }
+                ShowSchedule(vm.schedule, Modifier.padding(pv), state, isPrev, goToPreview)
             }
 
         if (vm.isLoading) {
@@ -198,9 +190,11 @@ fun ShowSchedule(
     val week = a.getInt(Constants.CURRENT_WEEK, 0)
     if (it.startLessonsDate != null && it.endLessonsDate != null) {
         if (day.timeInMillis < it.startLessonsDate) day.timeInMillis = it.startLessonsDate
+        val endDay = max(it.endLessonsDate, it.endExamsDate ?: 0L)
+
         val lessons = getLessons(
             startDay = day,
-            endDay = it.endExamsDate ?: it.endLessonsDate,
+            endDay = endDay,
             all = it.schedules,
             lastUpdate = lastUpdate,
             week = week
