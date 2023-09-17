@@ -10,6 +10,7 @@ import com.example.testschedule.domain.model.account.notifications.NotificationM
 import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
+import com.example.testschedule.domain.model.account.rating.RatingModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
@@ -60,4 +61,7 @@ interface IisAPIRepository {
 
     // События
     suspend fun getAnnouncements(cookies: String): List<AnnouncementModel>
+
+    // Рейтинг
+    suspend fun getRating(cookies: String): RatingModel
 }

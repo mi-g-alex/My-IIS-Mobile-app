@@ -61,6 +61,7 @@ fun AccountMenuScreen(
     goToOmissions: () -> Unit,
     goToPenalty: () -> Unit,
     goToAnnouncements: () -> Unit,
+    goToRating: () -> Unit,
     viewModel: AccountProfileViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -130,7 +131,7 @@ fun AccountMenuScreen(
                     MenuItem(
                         R.drawable.acc_menu_rating,
                         stringResource(id = R.string.account_menu_card_rating),
-                        {})
+                        ) { goToRating() }
                 }
                 item {
                     MenuItem(

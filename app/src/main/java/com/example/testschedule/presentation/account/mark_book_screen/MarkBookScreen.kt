@@ -64,11 +64,7 @@ fun MarkBookScreen(
             onLogOut()
         }
     }
-    /*fun getTitle(it: Double): String {
-        var s = it.toString()
-        if (s.length == 1) s += ".0"
-        return s
-    }*/
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -207,7 +203,8 @@ fun SemesterPage(
                             id = R.string.account_mark_book_semester_average_mark,
                             item.averageMark.toString()
                         ),
-                        style = MaterialTheme.typography.displaySmall
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier.padding(vertical = 4.dp)
                     )
                 }
             }
@@ -330,7 +327,7 @@ fun MarkBookExamCard(item: MarkBookModel.Semester.Mark, onClick: () -> Unit) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .padding(horizontal = 8.dp, vertical = 6.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth(),
@@ -343,13 +340,13 @@ fun MarkBookExamCard(item: MarkBookModel.Semester.Mark, onClick: () -> Unit) {
                 )
                 Text(
                     text = item.mark,
-                    style = MaterialTheme.typography.headlineLarge
+                    style = MaterialTheme.typography.headlineMedium
                 )
             }
             if (item.teacher.isNotEmpty()) {
                 Text(
                     text = item.teacher,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
             if (item.formOfControl.isNotEmpty()) {
@@ -358,13 +355,13 @@ fun MarkBookExamCard(item: MarkBookModel.Semester.Mark, onClick: () -> Unit) {
                         id = R.string.account_mark_book_exam_type,
                         item.formOfControl
                     ),
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
             if (item.date.isNotEmpty()) {
                 Text(
                     text = stringResource(id = R.string.account_mark_book_exam_date, item.date),
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
             if (item.retakesCount > 0) {
@@ -373,7 +370,7 @@ fun MarkBookExamCard(item: MarkBookModel.Semester.Mark, onClick: () -> Unit) {
                         id = R.string.account_mark_book_exam_date,
                         item.retakesCount.toString()
                     ),
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
             }

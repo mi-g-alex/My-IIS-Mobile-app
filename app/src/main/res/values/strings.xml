@@ -81,6 +81,14 @@
     <string name="account_penalty_date">Date: %s</string>
     <string name="account_penalty_type">Type: %s</string>
     <string name="account_penalty_no_penalty">No Penalties or Incentives</string>
+    <string name="account_rating_title">Rating</string>
+    <string name="account_rating_all_point">All</string>
+    <string name="account_rating_other_point">Other</string>
+    <string name="account_rating_average_mark">Average mark: %s</string>
+    <string name="account_rating_omissions">Skipped hours: %d</string>
+    <string name="account_rating_main_info">%s | %sh</string>
+    <string name="account_rating_dialog_marks">\nMarks</string>
+    <string name="account_rating_dialog_omissions">\nOmissions</string>
     <string name="back">Back</string>
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>

@@ -14,6 +14,7 @@ import com.example.testschedule.domain.model.account.notifications.NotificationM
 import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
+import com.example.testschedule.domain.model.account.rating.RatingModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
@@ -98,7 +99,7 @@ class IisAPIRepositoryImpl @Inject constructor(
 
     // Пропуски
     override suspend fun getOmissions(cookies: String): List<OmissionsModel> =
-        api.getOmissions(cookies).map { it.toModel() }
+        api.getOmissions(cookies).omissionDtoList?.map { it.toModel() } ?: emptyList()
 
     // Взыскания
     override suspend fun getPenalty(cookies: String): List<PenaltyModel> =
@@ -107,4 +108,8 @@ class IisAPIRepositoryImpl @Inject constructor(
     // События
     override suspend fun getAnnouncements(cookies: String): List<AnnouncementModel> =
         api.getAnnouncements(cookies).map { it.toModel() }
+
+    // Рейтинг
+    override suspend fun getRating(cookies: String): RatingModel =
+        api.getRatingOfStudent(cookies)[0].toModel()
 }

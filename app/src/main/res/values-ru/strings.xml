@@ -73,6 +73,9 @@
     <string name="account_penalty_status">Статус: %s</string>
     <string name="account_penalty_note">Заметка: %s</string>
     <string name="account_penalty_date">Дата: %s</string>
+    <string name="account_rating_title">Рейтинг</string>
+    <string name="account_rating_all_point">Все</string>
+    <string name="account_rating_other_point">Другие</string>
     <string name="back">Назад</string>
     <string name="cancel">Отмена</string>
     <string name="close">Закрыть</string>
@@ -138,4 +141,9 @@
     <string name="account_announcement_time">Время: %s - %s</string>
     <string name="account_announcement_date">Дата: %s</string>
     <string name="account_announcement_place">Место: %s</string>
+    <string name="account_rating_average_mark">Средний балл: %s</string>
+    <string name="account_rating_omissions">Пропущено часов: %d</string>
+    <string name="account_rating_main_info">%s шт. | %sч</string>
+    <string name="account_rating_dialog_marks">\nОтметки</string>
+    <string name="account_rating_dialog_omissions">\nПропуски</string>
 </resources>

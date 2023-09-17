@@ -10,6 +10,7 @@ import com.example.testschedule.data.remote.dto.account.notifications.ReadNotifi
 import com.example.testschedule.data.remote.dto.account.omissions.OmissionsDto
 import com.example.testschedule.data.remote.dto.account.penalty.PenaltyDto
 import com.example.testschedule.data.remote.dto.account.profile.AccountProfileDto
+import com.example.testschedule.data.remote.dto.account.rating.RatingDto
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.data.remote.dto.schedule_view.ListOfEmployeesDto
@@ -86,7 +87,7 @@ interface IisAPI {
 
     // Получение списка справок и т.п. за пропуски
     @GET("omissions-by-student")
-    suspend fun getOmissions(@Header("Cookie") cookies: String): List<OmissionsDto>
+    suspend fun getOmissions(@Header("Cookie") cookies: String): OmissionsDto
 
     @GET("dormitory-queue-application/premium-penalty")
     suspend fun getPenalty(@Header("Cookie") cookies: String): List<PenaltyDto>
@@ -94,5 +95,9 @@ interface IisAPI {
     //  Получение списка события для аккаунта
     @GET("announcements")
     suspend fun getAnnouncements(@Header("Cookie") cookies: String) : List<AnnouncementDto>
+
+    // Рейтинг
+    @GET("grade-book")
+    suspend fun getRatingOfStudent(@Header("Cookie") cookies: String) : List<RatingDto>
 }
 
