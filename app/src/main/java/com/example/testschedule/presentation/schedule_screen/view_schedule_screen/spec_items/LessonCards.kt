@@ -427,6 +427,7 @@ fun MoreDetailCard(
                             style = MaterialTheme.typography.titleLarge
                         )
                     }
+
                     if (lesson.auditories.isNotEmpty()) {
                         val weeksString =
                             lesson.auditories.toString().removeSuffix("]").removePrefix("[")
@@ -434,6 +435,16 @@ fun MoreDetailCard(
                             stringResource(
                                 id = R.string.schedule_dialog_auditories,
                                 weeksString,
+                            ),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+
+                    if (lesson.note?.isNotEmpty() == true) {
+                        Text(
+                            stringResource(
+                                id = R.string.schedule_dialog_note,
+                                lesson.note,
                             ),
                             style = MaterialTheme.typography.titleLarge
                         )

@@ -329,7 +329,7 @@ fun convertDay(
         )
     }
     return ScheduleModel.WeeksSchedule.Lesson(
-        auditories = day.auditories,
+        auditories = day.auditories ?: emptyList(),
         startLessonTime = startLessonTime,
         endLessonTime = endLessonTime,
         startLessonDate = startLessonDate,

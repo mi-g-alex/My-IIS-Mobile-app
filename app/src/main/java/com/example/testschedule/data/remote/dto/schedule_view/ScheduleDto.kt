@@ -55,7 +55,7 @@ data class ScheduleDto(
         val saturday : List<SchedulesItemDto>?,
     ) {
         data class SchedulesItemDto(
-            val auditories: List<String>,
+            val auditories: List<String>?,
             val endLessonTime: String,
             val lessonTypeAbbrev: String?,
             val note: String?,

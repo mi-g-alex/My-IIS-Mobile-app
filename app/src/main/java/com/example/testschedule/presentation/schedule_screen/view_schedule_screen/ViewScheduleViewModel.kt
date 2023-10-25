@@ -2,7 +2,9 @@ package com.example.testschedule.presentation.schedule_screen.view_schedule_scre
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
@@ -35,6 +37,7 @@ class ViewScheduleViewModel @Inject constructor(
     val state: State<ViewScheduleState> = _state
 
     var title: MutableState<String> = mutableStateOf("")
+    private var lastSelectedSchedule by mutableStateOf("")
     var savedSchedule: MutableState<List<ListOfSavedEntity>?> = mutableStateOf(listOf())
     var savedGroups: MutableState<List<ListOfGroupsModel>> = mutableStateOf(listOf())
     var savedEmployees: MutableState<List<ListOfEmployeesModel>> = mutableStateOf(listOf())
@@ -46,10 +49,14 @@ class ViewScheduleViewModel @Inject constructor(
     }
 
     fun getSchedule(id: String) {
+        lastSelectedSchedule = id
         getScheduleUseCase(id = id).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    _state.value = ViewScheduleState(schedule = result.data)
+                    if (result.data?.id == lastSelectedSchedule) {
+                        _state.value = ViewScheduleState(schedule = result.data)
+                        title.value = result.data.title
+                    }
                     result.data?.let {
                         db.deleteSchedule(id)
                         if (savedSchedule.value?.any { f -> f.id == it.id } == true)

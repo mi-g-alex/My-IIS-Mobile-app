@@ -187,6 +187,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         dao.deleteMarkBook()
         dao.deleteOmissions()
         dao.deletePenalty()
+        dao.deleteAnnouncements()
     }
 
 
@@ -250,6 +251,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
 
     // Omissions
     override suspend fun setOmissions(data: List<OmissionsModel>) {
+        dao.deleteOmissions()
         data.forEach { dao.setOmissions(it.toEntity()) }
     }
 

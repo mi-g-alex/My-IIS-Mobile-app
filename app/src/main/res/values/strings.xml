@@ -126,7 +126,7 @@
     <string name="schedule_dialog_date">Date: %s</string>
     <string name="schedule_dialog_date_pattern">dd.MM</string>
     <string name="schedule_dialog_dates">Dates: %s – %s</string>
-    <string name="schedule_dialog_note">Note</string>
+    <string name="schedule_dialog_note">Note: %s</string>
     <string name="schedule_dialog_sub_group">Subgroup: %d</string>
     <string name="schedule_dialog_times">Time: %s – %s</string>
     <string name="schedule_dialog_type_of_lesson">Type: %s</string>

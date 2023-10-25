@@ -112,7 +112,7 @@
     <string name="schedule_dialog_date">Дата: %s</string>
     <string name="schedule_dialog_date_pattern">dd.MM</string>
     <string name="schedule_dialog_dates">Даты: %s – %s</string>
-    <string name="schedule_dialog_note">Заметка</string>
+    <string name="schedule_dialog_note">Заметка: %s</string>
     <string name="schedule_dialog_sub_group">Подгруппа: %d</string>
     <string name="schedule_dialog_times">Время: %s – %s</string>
     <string name="schedule_dialog_type_of_lesson">Тип: %s</string>
