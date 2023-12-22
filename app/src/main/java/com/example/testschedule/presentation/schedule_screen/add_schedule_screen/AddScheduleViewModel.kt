@@ -27,6 +27,7 @@ class AddScheduleViewModel @Inject constructor(
 
     private val _state = mutableStateOf(AddScheduleState())
     val state: State<AddScheduleState> = _state
+    var showInfoDialog = mutableStateOf(false)
 
     var groups: MutableState<List<ListOfGroupsModel>?> = mutableStateOf(listOf())
     var employees: MutableState<List<ListOfEmployeesModel>?> = mutableStateOf(listOf())
@@ -38,7 +39,7 @@ class AddScheduleViewModel @Inject constructor(
         getLists()
         getSaved()
         viewModelScope.launch {
-            groups.value = db.getAllGroupsList()
+            groups.value = db.getAllGroupsList().sortedBy { it.course }.filter { it.course > 0 }
             employees.value = db.getAllEmployeesList()
         }
     }

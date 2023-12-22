@@ -19,7 +19,7 @@ import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
 
 @Database(
-    version = 11,
+    version = 13,
     entities = [
         // Schedules
         ScheduleEntity::class,
@@ -56,6 +56,8 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
         AutoMigration(from = 8, to = 9),
         AutoMigration(from = 9, to = 10),
         AutoMigration(from = 10, to = 11),
+        AutoMigration(from = 11, to = 12),
+        AutoMigration(from = 12, to = 13),
     ],
 )
 @TypeConverters(Converters::class)

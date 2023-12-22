@@ -51,6 +51,7 @@ class ViewScheduleViewModel @Inject constructor(
     fun getSchedule(id: String) {
         lastSelectedSchedule = id
         getScheduleUseCase(id = id).onEach { result ->
+            setExamsToDB()
             when (result) {
                 is Resource.Success -> {
                     if (result.data?.id == lastSelectedSchedule) {
@@ -61,6 +62,7 @@ class ViewScheduleViewModel @Inject constructor(
                         db.deleteSchedule(id)
                         if (savedSchedule.value?.any { f -> f.id == it.id } == true)
                             db.setSchedule(it)
+                        setExamsToDB()
                     }
                 }
 
@@ -72,6 +74,7 @@ class ViewScheduleViewModel @Inject constructor(
                 is Resource.Error -> {
                     val a = db.getSchedule(id)
                     _state.value = ViewScheduleState(error = result.message, schedule = a)
+                    setExamsToDB()
                 }
             }
         }.launchIn(viewModelScope)

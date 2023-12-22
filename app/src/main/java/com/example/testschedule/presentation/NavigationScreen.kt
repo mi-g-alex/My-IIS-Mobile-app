@@ -14,7 +14,7 @@ import com.example.testschedule.presentation.account.menu_screen.AccountMenuScre
 import com.example.testschedule.presentation.account.notifications_screen.NotificationsScreen
 import com.example.testschedule.presentation.account.omissions_screen.OmissionsScreen
 import com.example.testschedule.presentation.account.penalty_screen.PenaltyScreen
-import com.example.testschedule.presentation.account.rating.RatingScreen
+import com.example.testschedule.presentation.account.rating_screen.RatingScreen
 import com.example.testschedule.presentation.auth_screen.AuthScreen
 import com.example.testschedule.presentation.schedule_screen.add_schedule_screen.AddScheduleScreen
 import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.ViewExamsScreen

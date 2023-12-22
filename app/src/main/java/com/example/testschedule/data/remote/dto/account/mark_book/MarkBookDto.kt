@@ -18,6 +18,7 @@ data class MarkBookDto(
             val canStudyInParallel: Any?, // null
             val commonMark: Double?, // 8.14569536423841
             val commonRetakes: Double?, // 0.006622516556291391
+            val credits: Int?, // 3
             val date: String?, // 24.12.2022
             val formOfControl: String?, // Диф.зачет
             val fullSubject: String?, // Логика
@@ -33,6 +34,7 @@ data class MarkBookDto(
             fun toModel() = MarkBookModel.Semester.Mark(
                 commonMark = this.commonMark,
                 commonRetakes = this.commonRetakes,
+                credits = this.credits ?: 0,
                 date = this.date ?: "",
                 formOfControl = this.formOfControl ?: "",
                 fullSubject = this.fullSubject ?: "",

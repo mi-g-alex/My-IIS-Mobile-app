@@ -144,7 +144,18 @@
     <string name="account_announcement_place">Место: %s</string>
     <string name="account_rating_average_mark">Средний балл: %s</string>
     <string name="account_rating_omissions">Пропущено часов: %d</string>
+    <string name="account_rating_omiisions_detailed">%s - %dч</string>
     <string name="account_rating_main_info">%s шт. | %sч</string>
     <string name="account_rating_dialog_marks">\nОтметки</string>
     <string name="account_rating_dialog_omissions">\nПропуски</string>
+    <string name="account_mark_book_exam_credit">Зач. Единиц: %d</string>
+    <string name="schedule_add_info_dialog_group_title">Группа %s</string>
+    <string name="schedule_add_info_dialog_group_course">Курс: %d</string>
+    <string name="schedule_add_info_dialog_group_full_name">Имя: %s</string>
+    <string name="schedule_add_info_dialog_group_short_name">Аббрев.: %s</string>
+    <string name="schedule_add_info_dialog_group_faculty">Факультет: %s</string>
+    <string name="schedule_add_info_dialog_employee_title">Преподаватель</string>
+    <string name="schedule_add_info_dialog_employee_rank">Ранг: %s</string>
+    <string name="schedule_add_info_dialog_employee_degree">Степень: %s</string>
+    <string name="schedule_add_info_dialog_employee_departments">Кафедры: %s</string>
 </resources>

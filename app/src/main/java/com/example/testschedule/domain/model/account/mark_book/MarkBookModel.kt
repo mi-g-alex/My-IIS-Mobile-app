@@ -14,6 +14,7 @@ data class MarkBookModel(
         data class Mark(
             val commonMark: Double?, // 8.14569536423841 // Средняя оценка по предмету за 4 года
             val commonRetakes: Double?, // 0.006622516556291391 // шанс отлететь на пересдачу
+            val credits: Int, // 3
             val date: String, // 24.12.2022 // Дата проведения экзамена
             val formOfControl: String, // Диф.зачет // Тип экзамаена
             val fullSubject: String, // Логика //
@@ -26,6 +27,7 @@ data class MarkBookModel(
             fun toEntity() = MarkBookEntity.Semester.Mark(
                 commonMark = this.commonMark,
                 commonRetakes = this.commonRetakes,
+                credits = this.credits,
                 date = this.date,
                 formOfControl = this.formOfControl,
                 fullSubject = this.fullSubject,

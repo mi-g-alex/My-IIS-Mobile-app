@@ -274,7 +274,7 @@ fun MarkBookExamDialog(
                 if (item.retakesCount > 0) {
                     Text(
                         text = stringResource(
-                            id = R.string.account_mark_book_exam_date,
+                            id = R.string.account_mark_book_exam_retakes,
                             item.retakesCount.toString()
                         ),
                         style = MaterialTheme.typography.bodyLarge,
@@ -286,6 +286,15 @@ fun MarkBookExamDialog(
                         text = stringResource(
                             id = R.string.account_mark_book_exam_hours,
                             item.hours
+                        ),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                if (item.credits != 0) {
+                    Text(
+                        text = stringResource(
+                            id = R.string.account_mark_book_exam_credit,
+                            item.credits
                         ),
                         style = MaterialTheme.typography.bodyLarge
                     )

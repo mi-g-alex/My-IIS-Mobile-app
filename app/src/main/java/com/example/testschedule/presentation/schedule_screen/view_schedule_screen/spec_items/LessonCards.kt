@@ -103,10 +103,13 @@ fun LessonCard(
         "УЛр" -> colorResource(id = R.color.labs)
         "ПЗ" -> colorResource(id = R.color.practice)
         "УПз" -> colorResource(id = R.color.practice)
-        "Экзамен" -> colorResource(id = R.color.exams)
         "Консультация" -> colorResource(id = R.color.consultation)
+        "Экзамен" -> colorResource(id = R.color.exams)
+        "Зачёт" -> colorResource(id = R.color.exams)
+        "Зачет" -> colorResource(id = R.color.exams)
         else -> colorResource(id = R.color.other)
     }
+
     Row(
         Modifier
             .fillMaxWidth()
@@ -150,7 +153,7 @@ fun LessonCard(
                         Alignment.CenterVertically
                     ) {
                         Text(
-                            text = lesson.subject + if(lesson.lessonTypeAbbrev.isNotEmpty()) " (${lesson.lessonTypeAbbrev})" else "",
+                            text = lesson.subject + if (lesson.lessonTypeAbbrev.isNotEmpty()) " (${lesson.lessonTypeAbbrev})" else "",
                             style = MaterialTheme.typography.titleMedium
                         )
                         if (lesson.auditories.isNotEmpty())
@@ -167,13 +170,16 @@ fun LessonCard(
                         var fio = ""
                         if (isGroup) {
                             if (lesson.employees?.isNotEmpty() == true) {
-                                fio = lesson.employees[0].lastName + " " +
-                                        lesson.employees[0].firstName[0] + "." +
-                                        (lesson.employees[0].middleName?.let { " ${it[0]}." } ?: "")
+                                lesson.employees.sortedBy { it.lastName }.forEach {
+                                    fio += it.lastName + " " +
+                                            it.firstName[0] + "." +
+                                            (it.middleName?.let { " ${it[0]}." } ?: "") + ", "
+                                }
+                                fio = fio.removeSuffix(", ")
                             }
                         } else {
                             if (lesson.studentGroups.isNotEmpty()) {
-                                lesson.studentGroups.forEach {
+                                lesson.studentGroups.sortedBy { it.name }.forEach {
                                     fio += "${it.name}, "
                                 }
                                 fio = fio.removeSuffix(", ")
@@ -379,7 +385,7 @@ fun MoreDetailCard(
                         stringResource(id = R.string.schedule_dialog_date_pattern),
                         Locale.getDefault()
                     )
-                    if(lesson.lessonTypeAbbrev.isNotEmpty()) {
+                    if (lesson.lessonTypeAbbrev.isNotEmpty()) {
                         Text(
                             stringResource(
                                 id = R.string.schedule_dialog_type_of_lesson,
@@ -471,7 +477,7 @@ fun MoreDetailCard(
                             mainAxisSpacing = 8.dp,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            lesson.employees.forEach { employee ->
+                            lesson.employees.sortedBy { it.lastName }.forEach { employee ->
                                 val fio = employee.lastName + " " +
                                         employee.firstName[0] + "." +
                                         employee.middleName?.let { " ${it[0]}." } +
@@ -505,7 +511,7 @@ fun MoreDetailCard(
                             mainAxisSpacing = 8.dp,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            lesson.studentGroups.forEach { group ->
+                            lesson.studentGroups.sortedBy { it.name }.forEach { group ->
                                 AssistChip(
                                     onClick = {
                                         selectScheduleClicked(group.name, group.name)

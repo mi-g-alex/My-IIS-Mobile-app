@@ -24,6 +24,7 @@ data class ListOfEmployeesDto(
             middleName = this.middleName,
             photoLink = this.photoLink,
             rank = this.rank,
+            degree = this.degree,
             urlId = this.urlId
         )
 

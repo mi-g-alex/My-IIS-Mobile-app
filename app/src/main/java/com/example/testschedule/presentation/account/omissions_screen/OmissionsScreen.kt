@@ -71,8 +71,9 @@ fun OmissionsScreen(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 val omissions = viewModel.omissions.value.sortedWith(
-                    compareBy({ i -> i.term.length }, { i -> i.term }, { i -> i.dateFrom * -1L })
-                )
+                    compareBy({ i -> i.term }, { i -> i.dateFrom })
+                ).reversed()
+
                 omissions.forEachIndexed { i, item ->
                     if (i == 0 || omissions[i - 1].term != item.term) {
                         stickyHeader {

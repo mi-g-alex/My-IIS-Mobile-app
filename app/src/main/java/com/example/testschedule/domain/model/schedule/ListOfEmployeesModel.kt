@@ -10,6 +10,7 @@ data class ListOfEmployeesModel(
     val middleName: String?, // Иванович
     val photoLink: String?, // https://iis.bsuir.by/api/v1/employees/photo/500434
     val rank: String?, // профессор
+    val degree: String?, // д.ф.-м.н.
     val urlId: String // i-abramov
 ) {
     fun toEntity() : ListOfEmployeesEntity = ListOfEmployeesEntity(
@@ -20,6 +21,7 @@ data class ListOfEmployeesModel(
         this.middleName,
         this.photoLink,
         this.rank,
+        this.degree,
         this.urlId
     )
 }

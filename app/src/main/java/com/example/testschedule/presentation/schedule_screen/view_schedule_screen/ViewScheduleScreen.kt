@@ -80,6 +80,7 @@ fun ViewScheduleScreen(
                 viewModel.title.value = openScheduleTitle
             }
         }
+        viewModel.setExamsToDB()
     }
 
     LaunchedEffect(viewModel.title.value) {
@@ -110,7 +111,6 @@ fun ViewScheduleScreen(
                 if (((vm.schedule.endExamsDate?.plus(24 * 60 * 60 * 1000 - 1)) ?: 0) >= Calendar.getInstance().timeInMillis)
                     ExamsFAB(
                         goToExams = {
-                            viewModel.setExamsToDB()
                             goBackSet(vm.schedule.id, viewModel.title.value)
                             navToExams()
                         }, state

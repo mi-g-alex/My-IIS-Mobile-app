@@ -3,6 +3,7 @@ package com.example.testschedule.presentation.schedule_screen.add_schedule_scree
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,6 +63,9 @@ import com.example.testschedule.common.Constants
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
+import com.example.testschedule.presentation.schedule_screen.add_schedule_screen.spec_items.MoreDetailsAboutSchedule
+import com.example.testschedule.presentation.schedule_screen.add_schedule_screen.spec_items.OpenByDefaultScheduleDialog
+import com.example.testschedule.presentation.schedule_screen.add_schedule_screen.spec_items.SelectSubgroupDialog
 import kotlinx.coroutines.launch
 
 @Composable
@@ -70,34 +74,52 @@ fun AddScheduleScreen(
     goBackWhenSelect: (id: String, title: String) -> Unit,
     vm: AddScheduleViewModel = hiltViewModel()
 ) {
+
+    var isGroup by remember {
+        mutableStateOf(false)
+    }
+    var group by remember {
+        mutableStateOf<ListOfGroupsModel?>(null)
+    }
+
+    var empl by remember {
+        mutableStateOf<ListOfEmployeesModel?>(null)
+    }
+
     val cnt = LocalContext.current
     val sharedPref = cnt.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             /*if ((vm.groups.value?.isNotEmpty() == true && vm.employees.value?.isNotEmpty() == true) || vm.savedSchedule.value?.isNotEmpty() == true)*/
-                MySearchBar(
-                    goBack,
-                    { item, deleting ->
-                        val tmp = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
-                        if (deleting) {
-                            if (tmp == item.id) {
-                                sharedPref.edit()
-                                    .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
-                                    .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, null)
-                                    .apply()
-                            }
-                        } else {
-                            if (tmp == null) {
-                                sharedPref.edit()
-                                    .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, item.id)
-                                    .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, item.title)
-                                    .apply()
-                            }
+            MySearchBar(
+                goBack,
+                { item, deleting ->
+                    val tmp = sharedPref.getString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
+                    if (deleting) {
+                        if (tmp == item.id) {
+                            sharedPref.edit()
+                                .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, null)
+                                .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, null)
+                                .apply()
                         }
-                        vm.saveOrRemoveFromSaved(item)
-                    }, goBackWhenSelect, vm.groups, vm.employees, vm.savedSchedule
-                )
+                    } else {
+                        if (tmp == null) {
+                            sharedPref.edit()
+                                .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, item.id)
+                                .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, item.title)
+                                .apply()
+                        }
+                    }
+                    vm.saveOrRemoveFromSaved(item)
+                }, goBackWhenSelect, vm.groups, vm.employees, vm.savedSchedule
+            ) { i, g, e ->
+                isGroup = i
+                group = g
+                empl = e
+                vm.showInfoDialog.value = true
+            }
+
             if (vm.state.value.isLoading) {
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth()
@@ -155,8 +177,21 @@ fun AddScheduleScreen(
                     vm.savedSchedule,
                     vm.savedGroups,
                     vm.savedEmployees
-                )
+                ) { i, g, e ->
+                    isGroup = i
+                    group = g
+                    empl = e
+                    vm.showInfoDialog.value = true
+                }
             }
+        }
+        if(vm.showInfoDialog.value) {
+            MoreDetailsAboutSchedule(
+                closeDialog = { vm.showInfoDialog.value = false },
+                isGroup = isGroup,
+                dataOfGroup = group,
+                dataOfEmployee = empl
+            )
         }
     }
 }
@@ -171,14 +206,15 @@ fun TabScreen(
     employees: MutableState<List<ListOfEmployeesModel>?>,
     saved: MutableState<List<ListOfSavedEntity>?>,
     savedGroups: MutableState<List<ListOfGroupsModel>>,
-    savedEmployees: MutableState<List<ListOfEmployeesModel>>
+    savedEmployees: MutableState<List<ListOfEmployeesModel>>,
+    openDialog: (isGroup: Boolean, dataGr: ListOfGroupsModel?, dataEm: ListOfEmployeesModel?) -> Unit
 ) {
     val pagerState = rememberPagerState(
         initialPage = if (saved.value?.size == 0) 1 else 0,
         pageCount = { 3 }
     )
 
-    Column() {
+    Column {
         Tabs(pagerState = pagerState)
         TabsContent(
             onAddRemoveButtonClicked = onAddRemoveButtonClicked,
@@ -188,7 +224,8 @@ fun TabScreen(
             employees = employees,
             saved = saved,
             savedGroups = savedGroups,
-            savedEmployees = savedEmployees
+            savedEmployees = savedEmployees,
+            openDialog = openDialog
         )
     }
 }
@@ -214,7 +251,8 @@ fun Tabs(pagerState: PagerState) {
                     scope.launch {
                         pagerState.animateScrollToPage(index)
                     }
-                })
+                }
+            )
         }
     }
 }
@@ -229,7 +267,8 @@ fun TabsContent(
     employees: MutableState<List<ListOfEmployeesModel>?>,
     saved: MutableState<List<ListOfSavedEntity>?>,
     savedGroups: MutableState<List<ListOfGroupsModel>>,
-    savedEmployees: MutableState<List<ListOfEmployeesModel>>
+    savedEmployees: MutableState<List<ListOfEmployeesModel>>,
+    openDialog: (isGroup: Boolean, dataGr: ListOfGroupsModel?, dataEm: ListOfEmployeesModel?) -> Unit
 ) {
     HorizontalPager(
         state = pagerState
@@ -241,7 +280,8 @@ fun TabsContent(
                     goBackWhenSelect = goBackWhenSelect,
                     saved = saved,
                     savedGroups = savedGroups,
-                    savedEmployees = savedEmployees
+                    savedEmployees = savedEmployees,
+                    openInfoDialog = openDialog
                 )
             }
 
@@ -250,7 +290,8 @@ fun TabsContent(
                     onAddRemoveButtonClicked,
                     goBackWhenSelect,
                     groups,
-                    saved
+                    saved,
+                    openDialog = openDialog
                 )
             }
 
@@ -259,7 +300,8 @@ fun TabsContent(
                     onAddRemoveButtonClicked,
                     goBackWhenSelect,
                     employees,
-                    saved
+                    saved,
+                    openDialog = openDialog
                 )
             }
         }
@@ -272,7 +314,8 @@ fun SavedListView(
     goBackWhenSelect: (id: String, title: String) -> Unit,
     saved: MutableState<List<ListOfSavedEntity>?>,
     savedGroups: MutableState<List<ListOfGroupsModel>>,
-    savedEmployees: MutableState<List<ListOfEmployeesModel>>
+    savedEmployees: MutableState<List<ListOfEmployeesModel>>,
+    openInfoDialog: (isGroup: Boolean, dataGr: ListOfGroupsModel?, dataEm: ListOfEmployeesModel?) -> Unit
 ) {
     val sharedPref =
         LocalContext.current.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
@@ -395,7 +438,8 @@ fun SavedListView(
                                     onAddRemoveButtonClicked = onAddRemoveButtonClicked,
                                     goBackWhenSelect = goBackWhenSelect,
                                     item = it1,
-                                    isSaved = true
+                                    isSaved = true,
+                                    openDialog = openInfoDialog
                                 )
                             }
                         }
@@ -411,7 +455,8 @@ fun SavedListView(
                                     "",
                                     ""
                                 ),
-                                isSaved = true
+                                isSaved = true,
+                                openDialog = openInfoDialog
                             )
                         }
                     }
@@ -423,7 +468,8 @@ fun SavedListView(
                                     onAddRemoveButtonClicked = onAddRemoveButtonClicked,
                                     goBackWhenSelect = goBackWhenSelect,
                                     item = it1,
-                                    isSaved = true
+                                    isSaved = true,
+                                    openDialog = openInfoDialog
                                 )
                             }
                         }
@@ -440,9 +486,11 @@ fun SavedListView(
                                     null,
                                     null,
                                     null,
+                                    null,
                                     it.id
                                 ),
-                                isSaved = true
+                                isSaved = true,
+                                openDialog = openInfoDialog
                             )
                         }
                     }
@@ -466,7 +514,8 @@ fun GroupListView(
     onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     groups: MutableState<List<ListOfGroupsModel>?>,
-    saved: MutableState<List<ListOfSavedEntity>?>
+    saved: MutableState<List<ListOfSavedEntity>?>,
+    openDialog: (isGroup: Boolean, dataGr: ListOfGroupsModel?, dataEm: ListOfEmployeesModel?) -> Unit
 ) {
     LazyColumn {
         groups.value?.forEach {
@@ -477,7 +526,8 @@ fun GroupListView(
                     onAddRemoveButtonClicked = onAddRemoveButtonClicked,
                     goBackWhenSelect = goBackWhenSelect,
                     item = it,
-                    isSaved = isSaved
+                    isSaved = isSaved,
+                    openDialog = openDialog
                 )
             }
         }
@@ -491,7 +541,8 @@ fun SearchListView(
     goBackWhenSelect: (id: String, title: String) -> Unit,
     groups: List<ListOfGroupsModel>,
     employees: List<ListOfEmployeesModel>,
-    saved: MutableState<List<ListOfSavedEntity>?>
+    saved: MutableState<List<ListOfSavedEntity>?>,
+    openDialog: (isGroup: Boolean, dataGr: ListOfGroupsModel?, dataEm: ListOfEmployeesModel?) -> Unit
 ) {
     LazyColumn {
         groups.forEach {
@@ -502,7 +553,8 @@ fun SearchListView(
                     onAddRemoveButtonClicked = onAddRemoveButtonClicked,
                     goBackWhenSelect = goBackWhenSelect,
                     item = it,
-                    isSaved = isSaved
+                    isSaved = isSaved,
+                    openDialog = openDialog
                 )
             }
         }
@@ -514,7 +566,8 @@ fun SearchListView(
                     onAddRemoveButtonClicked = onAddRemoveButtonClicked,
                     goBackWhenSelect = goBackWhenSelect,
                     item = it,
-                    isSaved = isSaved
+                    isSaved = isSaved,
+                    openDialog = openDialog
                 )
             }
         }
@@ -526,7 +579,8 @@ fun EmployeeListView(
     onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     employees: MutableState<List<ListOfEmployeesModel>?>,
-    saved: MutableState<List<ListOfSavedEntity>?>
+    saved: MutableState<List<ListOfSavedEntity>?>,
+    openDialog: (isGroup: Boolean, dataGr: ListOfGroupsModel?, dataEm: ListOfEmployeesModel?) -> Unit
 ) {
     LazyColumn {
         employees.value?.forEach {
@@ -537,7 +591,8 @@ fun EmployeeListView(
                     onAddRemoveButtonClicked = onAddRemoveButtonClicked,
                     goBackWhenSelect = goBackWhenSelect,
                     item = it,
-                    isSaved = isSaved
+                    isSaved = isSaved,
+                    openDialog = openDialog
                 )
             }
         }
@@ -552,7 +607,8 @@ fun MySearchBar(
     goBackWhenSelect: (id: String, title: String) -> Unit,
     groups: MutableState<List<ListOfGroupsModel>?>,
     employees: MutableState<List<ListOfEmployeesModel>?>,
-    saved: MutableState<List<ListOfSavedEntity>?>
+    saved: MutableState<List<ListOfSavedEntity>?>,
+    openDialog: (isGroup: Boolean, dataGr: ListOfGroupsModel?, dataEm: ListOfEmployeesModel?) -> Unit
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
@@ -607,7 +663,8 @@ fun MySearchBar(
                                         )
                                     }
                         } ?: emptyList(),
-                        saved = saved
+                        saved = saved,
+                        openDialog = openDialog
                     )
                 }
             }
@@ -620,7 +677,8 @@ fun GroupItemCard(
     onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     item: ListOfGroupsModel,
-    isSaved: Boolean
+    isSaved: Boolean,
+    openDialog: (isGroup: Boolean, dataGr: ListOfGroupsModel?, dataEm: ListOfEmployeesModel?) -> Unit
 ) {
     ElevatedCard(
         onClick = {
@@ -648,6 +706,9 @@ fun GroupItemCard(
                     Modifier
                         .size(40.dp)
                         .clip(CircleShape)
+                        .clickable {
+                            openDialog(true, item, null)
+                        }
                         .background(MaterialTheme.colorScheme.primary),
                     contentAlignment = Alignment.Center
 
@@ -705,7 +766,8 @@ fun EmployeeItemCard(
     onAddRemoveButtonClicked: (item: ListOfSavedEntity, deleting: Boolean) -> Unit,
     goBackWhenSelect: (id: String, title: String) -> Unit,
     item: ListOfEmployeesModel,
-    isSaved: Boolean
+    isSaved: Boolean,
+    openDialog: (isGroup: Boolean, dataGr: ListOfGroupsModel?, dataEm: ListOfEmployeesModel?) -> Unit
 ) {
     ElevatedCard(
         onClick = {
@@ -733,6 +795,9 @@ fun EmployeeItemCard(
                     Modifier
                         .size(40.dp)
                         .clip(CircleShape)
+                        .clickable {
+                            openDialog(false, null, item)
+                        }
                         .background(MaterialTheme.colorScheme.primary),
                     contentAlignment = Alignment.Center
 
@@ -824,7 +889,7 @@ fun CardPreview() {
             "Информатика и Технологии Программирования"
         ),
         true
-    )
+    ) { _, _, _ -> }
 }
 
 @Preview
@@ -841,8 +906,9 @@ fun EmployeeCardPreview() {
             "Денисович",
             "htttp",
             "доцент",
+            "qerqew",
             "v-vlad",
         ),
         false
-    )
+    ) { _, _, _ -> }
 }

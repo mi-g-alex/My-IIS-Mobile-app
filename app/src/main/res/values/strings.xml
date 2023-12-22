@@ -37,12 +37,13 @@
     <string name="account_group_title_with_number">Group %s</string>
     <string name="account_mark_book_exam_average_mark_four_year">Average mark: %s</string>
     <string name="account_mark_book_exam_average_retakes_four_year">Retake chance: %s%%</string>
+    <string name="account_mark_book_exam_credit">Credits: %s</string>
     <string name="account_mark_book_exam_date">Date: %s</string>
     <string name="account_mark_book_exam_hours">Hours: %s</string>
     <string name="account_mark_book_exam_mark">Mark: %s</string>
     <string name="account_mark_book_exam_retakes">Retakes: %s</string>
     <string name="account_mark_book_exam_type">Type: %s</string>
-    <string name="account_mark_book_no_semesters">Oups…\nNothing here</string>
+    <string name="account_mark_book_no_semesters">Oops…\nNothing here</string>
     <string name="account_mark_book_semester_average_mark">Average mark: %s</string>
     <string name="account_mark_book_title">Mark book</string>
     <string name="account_mark_book_title_with_mark">Mark book | %s</string>
@@ -86,6 +87,7 @@
     <string name="account_rating_other_point">Other</string>
     <string name="account_rating_average_mark">Average mark: %s</string>
     <string name="account_rating_omissions">Skipped hours: %d</string>
+    <string name="account_rating_omiisions_detailed">%s - %dh</string>
     <string name="account_rating_main_info">%s | %sh</string>
     <string name="account_rating_dialog_marks">\nMarks</string>
     <string name="account_rating_dialog_omissions">\nOmissions</string>
@@ -120,6 +122,16 @@
     <string name="schedule_add_employees_title">Lecturers</string>
     <string name="schedule_add_groups_title">Groups</string>
     <string name="schedule_add_saved_title">Saved</string>
+    <string name="schedule_add_info_dialog_group_title">Group %s</string>
+    <string name="schedule_add_info_dialog_group_course">Course: %d</string>
+    <string name="schedule_add_info_dialog_group_full_name">Name: %s</string>
+    <string name="schedule_add_info_dialog_group_short_name">Abbrev: %s</string>
+    <string name="schedule_add_info_dialog_group_faculty">Faculty: %s</string>
+    <string name="schedule_add_info_dialog_employee_title">Employee</string>
+    <string name="schedule_add_info_dialog_employee_fio" translatable="false">%s %s %s</string>
+    <string name="schedule_add_info_dialog_employee_rank">Rank: %s</string>
+    <string name="schedule_add_info_dialog_employee_degree">Degree: %s</string>
+    <string name="schedule_add_info_dialog_employee_departments">Departments: %s</string>
     <string name="schedule_bottom_sheet_edit_btn_desc">Change saved schedules</string>
     <string name="schedule_bottom_sheet_title">Select schedule</string>
     <string name="schedule_dialog_auditories">Auditories: %s</string>

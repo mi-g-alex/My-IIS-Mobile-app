@@ -140,7 +140,7 @@ interface UserDao {
     @Query("SELECT * FROM OmissionsEntity")
     suspend fun getOmissions(): List<OmissionsEntity>?
 
-    @Query("DELETE FROM MarkBookEntity")
+    @Query("DELETE FROM OmissionsEntity")
     suspend fun deleteOmissions()
 
     // Penalty
