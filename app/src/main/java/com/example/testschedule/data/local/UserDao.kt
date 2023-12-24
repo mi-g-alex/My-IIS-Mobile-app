@@ -17,6 +17,7 @@ import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
+import com.example.testschedule.data.local.entity.account.study.certificate.CertificateEntity
 import com.example.testschedule.domain.model.schedule.ScheduleModel
 
 @Dao
@@ -43,13 +44,13 @@ interface UserDao {
     suspend fun deleteFromSavedScheduleList(id: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllGroupsList(group: ListOfGroupsEntity)
+    suspend fun insertAllGroupsList(group: List<ListOfGroupsEntity>)
 
     @Query("SELECT * FROM ListOfGroupsEntity WHERE name= :name")
     suspend fun getGroupById(name: String) : ListOfGroupsEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllEmployeesList(employee: ListOfEmployeesEntity)
+    suspend fun insertAllEmployeesList(employee: List<ListOfEmployeesEntity>)
 
     @Query("SELECT * FROM ListOfEmployeesEntity WHERE urlId= :id")
     suspend fun getEmployeeById(id: String) : ListOfEmployeesEntity?
@@ -102,7 +103,7 @@ interface UserDao {
     // Notification
 
     @Insert(onConflict = OnConflictStrategy.NONE)
-    suspend fun addNotification(data: NotificationEntity)
+    suspend fun addNotification(data: List<NotificationEntity>)
 
     @Query("UPDATE NotificationEntity SET isViewed=:status WHERE id=:id")
     suspend fun updateNotificationStatus(id: Int, status: Boolean = true)
@@ -135,7 +136,7 @@ interface UserDao {
 
     // Omissions
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun setOmissions(data: OmissionsEntity)
+    suspend fun addOmissions(data: List<OmissionsEntity>)
 
     @Query("SELECT * FROM OmissionsEntity")
     suspend fun getOmissions(): List<OmissionsEntity>?
@@ -145,7 +146,7 @@ interface UserDao {
 
     // Penalty
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun setPenalty(data: PenaltyEntity)
+    suspend fun addPenalty(data: List<PenaltyEntity>)
 
     @Query("SELECT * FROM PenaltyEntity")
     suspend fun getPenalty() : List<PenaltyEntity>?
@@ -155,12 +156,22 @@ interface UserDao {
 
     // Announcements
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAnnouncement(data: AnnouncementEntity)
+    suspend fun addAnnouncement(data: List<AnnouncementEntity>)
 
     @Query("SELECT * FROM AnnouncementEntity")
     suspend fun getAnnouncements() : List<AnnouncementEntity>
 
     @Query("DELETE FROM AnnouncementEntity")
     suspend fun deleteAnnouncements()
+
+    // Study
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addCertificate(data: List<CertificateEntity>)
+
+    @Query("SELECT * FROM CertificateEntity")
+    suspend fun getCertificates() : List<CertificateEntity>
+
+    @Query("DELETE FROM CertificateEntity")
+    suspend fun deleteCertificates()
 
 }

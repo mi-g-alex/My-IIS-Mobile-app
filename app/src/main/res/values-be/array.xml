@@ -34,4 +34,10 @@
         <item>Подгруппа 1</item>
         <item>Подгруппа 2</item>
     </string-array>
+    <string-array name="account_study_certificates_status_array">
+        <item>неизвестно</item>
+        <item>распечатано</item>
+        <item>обрабатывается</item>
+        <item>отклонено</item>
+    </string-array>
 </resources>

@@ -8,6 +8,7 @@ import com.example.testschedule.domain.model.account.notifications.NotificationM
 import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
+import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
@@ -100,14 +101,14 @@ interface UserDatabaseRepository {
     suspend fun deleteMarkBook()
 
     // Omissions
-    suspend fun setOmissions(data: List<OmissionsModel>)
+    suspend fun addOmissions(data: List<OmissionsModel>)
 
     suspend fun getOmissions(): List<OmissionsModel>
 
     suspend fun deleteOmissions()
 
     // Penalty
-    suspend fun setPenalty(data: List<PenaltyModel>)
+    suspend fun addPenalty(data: List<PenaltyModel>)
 
     suspend fun getPenalty() : List<PenaltyModel>
 
@@ -119,4 +120,12 @@ interface UserDatabaseRepository {
     suspend fun getAnnouncements() : List<AnnouncementModel>
 
     suspend fun deleteAnnouncements()
+
+    // Study
+    suspend fun addCertificate(data: List<CertificateModel>)
+
+    suspend fun getCertificates() : List<CertificateModel>
+
+    suspend fun deleteCertificates()
+
 }

@@ -1,5 +1,6 @@
 package com.example.testschedule.domain.repository
 
+import com.example.testschedule.data.remote.dto.account.study.certificate.CertificateItemDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
@@ -11,6 +12,9 @@ import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.account.rating.RatingModel
+import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
+import com.example.testschedule.domain.model.account.study.certificate.CreateCertificateModel
+import com.example.testschedule.domain.model.account.study.certificate.NewCertificatePlacesModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
@@ -64,4 +68,14 @@ interface IisAPIRepository {
 
     // Рейтинг
     suspend fun getRating(cookies: String): RatingModel
+
+    // Учёба
+    suspend fun getCertificates(cookies: String): List<CertificateModel>
+
+    suspend fun getNewCertificatePlaces(cookies: String) : List<NewCertificatePlacesModel>
+
+    suspend fun createCertificate(request: CreateCertificateModel, cookies: String) : Call<List<CertificateItemDto>>
+
+    suspend fun closeCertificate(id: Int, cookies: String): Any
+
 }

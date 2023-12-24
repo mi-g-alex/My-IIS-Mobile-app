@@ -12,6 +12,7 @@ import com.example.testschedule.domain.model.account.notifications.NotificationM
 import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
+import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
@@ -34,8 +35,8 @@ class UserDatabaseRepositoryImpl @Inject constructor(
                 isGroupSchedule = model.isGroupSchedule,
                 startLessonsDate = model.startLessonsDate,
                 endLessonsDate = model.endLessonsDate,
-                startExamsDate = model.endExamsDate,
-                endExamsDate = model.startExamsDate,
+                startExamsDate = model.startExamsDate,
+                endExamsDate = model.endExamsDate,
                 employeeInfo = model.employeeInfo,
                 studentGroupInfo = model.studentGroupInfo,
                 schedules = model.schedules,
@@ -61,9 +62,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun insertAllGroupsList(groups: List<ListOfGroupsModel>) {
         dao.deleteAllGroupsList()
-        groups.forEach {
-            dao.insertAllGroupsList(group = it.toEntity())
-        }
+        dao.insertAllGroupsList(groups.map { it.toEntity() })
     }
 
     override suspend fun getGroupById(name: String): ListOfGroupsModel? =
@@ -71,9 +70,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun insertAllEmployeesList(employees: List<ListOfEmployeesModel>) {
         dao.deleteAllEmployeesList()
-        employees.forEach {
-            dao.insertAllEmployeesList(it.toEntity())
-        }
+        dao.insertAllEmployeesList(employees.map { it.toEntity() })
     }
 
     override suspend fun getEmployeeById(id: String): ListOfEmployeesModel? =
@@ -103,8 +100,8 @@ class UserDatabaseRepositoryImpl @Inject constructor(
                 isGroupSchedule = model.isGroupSchedule,
                 startLessonsDate = model.startLessonsDate,
                 endLessonsDate = model.endLessonsDate,
-                startExamsDate = model.endExamsDate,
-                endExamsDate = model.startExamsDate,
+                startExamsDate = model.startExamsDate,
+                endExamsDate = model.endExamsDate,
                 employeeInfo = model.employeeInfo,
                 studentGroupInfo = model.studentGroupInfo,
                 schedules = model.schedules,
@@ -188,6 +185,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         dao.deleteOmissions()
         dao.deletePenalty()
         dao.deleteAnnouncements()
+        dao.deleteCertificates()
     }
 
 
@@ -209,9 +207,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
     // Notifications
     override suspend fun addNotifications(data: List<NotificationModel>) {
         dao.deleteNotifications()
-        data.forEach {
-            dao.addNotification(it.toEntity())
-        }
+        dao.addNotification(data.map { it.toEntity() })
     }
 
     override suspend fun updateNotificationStatus(id: List<Int>) {
@@ -250,9 +246,9 @@ class UserDatabaseRepositoryImpl @Inject constructor(
     }
 
     // Omissions
-    override suspend fun setOmissions(data: List<OmissionsModel>) {
+    override suspend fun addOmissions(data: List<OmissionsModel>) {
         dao.deleteOmissions()
-        data.forEach { dao.setOmissions(it.toEntity()) }
+        dao.addOmissions(data.map { it.toEntity() })
     }
 
     override suspend fun getOmissions(): List<OmissionsModel> =
@@ -263,8 +259,8 @@ class UserDatabaseRepositoryImpl @Inject constructor(
     }
 
     // Penalty
-    override suspend fun setPenalty(data: List<PenaltyModel>) =
-        data.forEach { it.toEntity() }
+    override suspend fun addPenalty(data: List<PenaltyModel>) =
+        dao.addPenalty(data.map { it.toEntity() })
 
     override suspend fun getPenalty(): List<PenaltyModel> =
         dao.getPenalty()?.map { it.toModel() } ?: emptyList()
@@ -276,14 +272,25 @@ class UserDatabaseRepositoryImpl @Inject constructor(
     // Announcement
     override suspend fun addAnnouncements(data: List<AnnouncementModel>) {
         dao.deleteAnnouncements()
-        data.forEach {
-            dao.addAnnouncement(it.toEntity())
-        }
+        dao.addAnnouncement(data.map { it.toEntity() })
     }
+
     override suspend fun getAnnouncements(): List<AnnouncementModel> =
         dao.getAnnouncements().map { it.toModel() }
 
     override suspend fun deleteAnnouncements() {
         dao.deleteAnnouncements()
+    }
+
+    override suspend fun addCertificate(data: List<CertificateModel>) {
+        dao.deleteCertificates()
+        dao.addCertificate(data.map { it.toEntity() })
+    }
+
+    override suspend fun getCertificates(): List<CertificateModel> =
+        dao.getCertificates().map { it.toModel() }
+
+    override suspend fun deleteCertificates() {
+        dao.deleteCertificates()
     }
 }

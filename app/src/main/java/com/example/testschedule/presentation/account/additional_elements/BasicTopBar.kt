@@ -13,6 +13,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.example.testschedule.R
 
+/**
+ * `onBackPressed()` -- функция, которая нажимает при нажатии стрелки назад
+ *
+ * `title` -- заголовок который отображается
+ *
+ * `enabled` -- для защиты от двойного нажатия кнопки назад.
+ * __**Не забыть в onBackPressed пропусать установку на false**__
+ *
+ * `isOfflineMode` -> отображать ли кнопку, что данные из бд
+ */
 @Composable
 fun BasicTopBar(
     onBackPressed: () -> Unit,

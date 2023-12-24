@@ -17,9 +17,10 @@ import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
+import com.example.testschedule.data.local.entity.account.study.certificate.CertificateEntity
 
 @Database(
-    version = 13,
+    version = 14,
     entities = [
         // Schedules
         ScheduleEntity::class,
@@ -43,6 +44,8 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
         PenaltyEntity::class,
         // Announcements
         AnnouncementEntity::class,
+        // Study
+        CertificateEntity::class
     ],
     exportSchema = true,
     autoMigrations = [
@@ -58,6 +61,7 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
         AutoMigration(from = 10, to = 11),
         AutoMigration(from = 11, to = 12),
         AutoMigration(from = 12, to = 13),
+        AutoMigration(from = 13, to = 14),
     ],
 )
 @TypeConverters(Converters::class)

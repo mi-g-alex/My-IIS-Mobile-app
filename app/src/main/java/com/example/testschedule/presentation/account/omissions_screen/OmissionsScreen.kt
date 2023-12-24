@@ -49,6 +49,7 @@ fun OmissionsScreen(
             onLogOut()
         }
     }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {

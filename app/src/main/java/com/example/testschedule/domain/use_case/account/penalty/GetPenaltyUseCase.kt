@@ -22,7 +22,7 @@ class GetPenaltyUseCase @Inject constructor(
             emit(Resource.Loading<List<PenaltyModel>>())
             val cookie = db.getCookie()
             val data = api.getPenalty(cookie)
-            db.setPenalty(data)
+            db.addPenalty(data)
             emit(Resource.Success<List<PenaltyModel>>(data))
         } catch (e: HttpException) {
             Log.e("End Of Season", e.toString())
@@ -38,7 +38,7 @@ class GetPenaltyUseCase @Inject constructor(
                 answerModel?.let { db.setUserBasicData(it) }
 
                 val data = api.getPenalty(cookie)
-                db.setPenalty(data)
+                db.addPenalty(data)
                 emit(Resource.Success<List<PenaltyModel>>(data))
             } catch (e: IOException) {
                 if (e.toString() == "java.io.EOFException: End of input at line 1 column 1 path \$") {

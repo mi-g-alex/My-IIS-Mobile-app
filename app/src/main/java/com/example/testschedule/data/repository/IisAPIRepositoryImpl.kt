@@ -3,6 +3,7 @@ package com.example.testschedule.data.repository
 import com.example.testschedule.data.remote.IisAPI
 import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.account.notifications.ReadNotificationDto
+import com.example.testschedule.data.remote.dto.account.study.certificate.CertificateItemDto
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
@@ -15,6 +16,9 @@ import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.account.rating.RatingModel
+import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
+import com.example.testschedule.domain.model.account.study.certificate.CreateCertificateModel
+import com.example.testschedule.domain.model.account.study.certificate.NewCertificatePlacesModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
@@ -112,4 +116,21 @@ class IisAPIRepositoryImpl @Inject constructor(
     // Рейтинг
     override suspend fun getRating(cookies: String): RatingModel =
         api.getRatingOfStudent(cookies)[0].toModel()
+
+    // Учёба
+
+    override suspend fun getCertificates(cookies: String): List<CertificateModel> =
+        api.getCertificates(cookies).map { it.toModel() }
+
+    override suspend fun getNewCertificatePlaces(cookies: String): List<NewCertificatePlacesModel> =
+        api.getNewCertificatePlaces(cookies).map { it.toModel() }
+
+    override suspend fun createCertificate(
+        request: CreateCertificateModel,
+        cookies: String
+    ): Call<List<CertificateItemDto>> =
+        api.createCertificate(request.toDto(), cookies)
+
+    override suspend fun closeCertificate(id: Int, cookies: String): Any =
+        api.closeCertificate(id, cookies)
 }

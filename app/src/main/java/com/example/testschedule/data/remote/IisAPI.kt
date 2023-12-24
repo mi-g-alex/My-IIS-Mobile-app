@@ -11,6 +11,9 @@ import com.example.testschedule.data.remote.dto.account.omissions.OmissionsDto
 import com.example.testschedule.data.remote.dto.account.penalty.PenaltyDto
 import com.example.testschedule.data.remote.dto.account.profile.AccountProfileDto
 import com.example.testschedule.data.remote.dto.account.rating.RatingDto
+import com.example.testschedule.data.remote.dto.account.study.certificate.CertificateItemDto
+import com.example.testschedule.data.remote.dto.account.study.certificate.CreateCertificateDto
+import com.example.testschedule.data.remote.dto.account.study.certificate.NewCertificatePlacesDto
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.data.remote.dto.schedule_view.ListOfEmployeesDto
@@ -94,10 +97,27 @@ interface IisAPI {
 
     //  Получение списка события для аккаунта
     @GET("announcements")
-    suspend fun getAnnouncements(@Header("Cookie") cookies: String) : List<AnnouncementDto>
+    suspend fun getAnnouncements(@Header("Cookie") cookies: String): List<AnnouncementDto>
 
     // Рейтинг
     @GET("grade-book")
-    suspend fun getRatingOfStudent(@Header("Cookie") cookies: String) : List<RatingDto>
+    suspend fun getRatingOfStudent(@Header("Cookie") cookies: String): List<RatingDto>
+
+    // Учёба | Справки
+    @GET("certificate") // Список справок
+    suspend fun getCertificates(@Header("Cookie") cookies: String): List<CertificateItemDto>
+
+    @GET("certificate/places")
+    suspend fun getNewCertificatePlaces(@Header("Cookie") cookies: String): List<NewCertificatePlacesDto>
+
+    @POST("api/v1/certificate/register") // Заказать справку
+    fun createCertificate(
+        @Body request: CreateCertificateDto,
+        @Header("Cookie") cookieValue: String
+    ): Call<List<CertificateItemDto>>
+
+    @GET("api/v1/certificate/close") // Отменить справку
+    suspend fun closeCertificate(@Query("id") id: Int, @Header("Cookie") cookies: String): Any
+
 }
 

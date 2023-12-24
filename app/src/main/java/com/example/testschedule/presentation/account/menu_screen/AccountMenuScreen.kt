@@ -62,6 +62,7 @@ fun AccountMenuScreen(
     goToPenalty: () -> Unit,
     goToAnnouncements: () -> Unit,
     goToRating: () -> Unit,
+    goToStudy: () -> Unit,
     viewModel: AccountProfileViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -117,21 +118,21 @@ fun AccountMenuScreen(
                     MenuItem(
                         R.drawable.acc_menu_study,
                         stringResource(id = R.string.account_menu_card_study),
-                        {})
+                    ) { goToStudy() }
                 }
                 if (viewModel.basicInfo.value?.isGroupHead == true) {
                     item {
                         MenuItem(
                             R.drawable.acc_menu_headman,
                             stringResource(id = R.string.account_menu_card_headman),
-                            {})
+                        ) { }
                     }
                 }
                 item {
                     MenuItem(
                         R.drawable.acc_menu_rating,
                         stringResource(id = R.string.account_menu_card_rating),
-                        ) { goToRating() }
+                    ) { goToRating() }
                 }
                 item {
                     MenuItem(
@@ -149,7 +150,7 @@ fun AccountMenuScreen(
                     MenuItem(
                         R.drawable.acc_menu_announcements,
                         stringResource(id = R.string.account_menu_card_announcements),
-                        ) { goToAnnouncements() }
+                    ) { goToAnnouncements() }
                 }
                 item {
                     MenuItem(
