@@ -1,5 +1,14 @@
 package com.example.testschedule.presentation
 
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -42,10 +51,26 @@ object Routes {
     const val ACCOUNT_STUDY_ROUTE = "ACCOUNT_STUDY_ROUTE"
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavigationScreen(
     navController: NavHostController = rememberNavController()
 ) {
+    val enter = slideInHorizontally(
+        initialOffsetX = { 450 },
+        animationSpec = tween(
+            durationMillis = 250,
+            easing = FastOutSlowInEasing
+        )
+    ) + fadeIn(animationSpec = tween(250))
+
+    val out = slideOutHorizontally(
+        targetOffsetX = { 450 },
+        animationSpec = tween(
+            durationMillis = 250,
+            easing = FastOutSlowInEasing
+        )
+    ) + fadeOut(animationSpec = tween(250))
 
     fun popNav() {
         if (navController.currentBackStack.value.size > 3) navController.popBackStack()
@@ -60,7 +85,7 @@ fun NavigationScreen(
             startDestination = Routes.SCHEDULE_HOME_ROUTE
         ) {
             composable(
-                route = Routes.SCHEDULE_HOME_ROUTE,
+                route = Routes.SCHEDULE_HOME_ROUTE
             ) { entry ->
                 var id = entry.savedStateHandle.get<String>("id")
                 var title = entry.savedStateHandle.get<String>("title") ?: id
@@ -100,7 +125,11 @@ fun NavigationScreen(
                 )
             }
             composable(
-                route = Routes.SCHEDULE_EDIT_LIST_ROUTE
+                route = Routes.SCHEDULE_EDIT_LIST_ROUTE,
+                enterTransition = {
+                    slideInVertically { pos -> pos }
+                },
+                exitTransition = { slideOutVertically { pos -> pos } }
             ) {
                 AddScheduleScreen(
                     goBack = {
@@ -118,7 +147,9 @@ fun NavigationScreen(
                 )
             }
             composable(
-                route = Routes.SCHEDULE_EXAMS_VIEW_ROUTE
+                route = Routes.SCHEDULE_EXAMS_VIEW_ROUTE,
+                enterTransition = { enter },
+                exitTransition = { out }
             ) {
                 ViewExamsScreen(
                     navBack = {
@@ -132,7 +163,9 @@ fun NavigationScreen(
         }
 
         composable(
-            route = Routes.LOGIN_SCREEN_ROUTE
+            route = Routes.LOGIN_SCREEN_ROUTE,
+            enterTransition = { enter },
+            exitTransition = { out }
         ) {
             AuthScreen(
                 goBack = { popNav() },
@@ -145,12 +178,19 @@ fun NavigationScreen(
 
 
         // MENU -----------------------------------------------------------------------------------
+
         navigation(
             route = Routes.ACCOUNT_ROUTE,
-            startDestination = Routes.ACCOUNT_MENU_ROUTE
+            startDestination = Routes.ACCOUNT_MENU_ROUTE,
         ) {
             composable(
-                route = Routes.ACCOUNT_MENU_ROUTE
+                route = Routes.ACCOUNT_MENU_ROUTE,
+                enterTransition = {
+                    fadeIn(animationSpec = tween(250))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(250))
+                }
             ) {
                 AccountMenuScreen(
                     goBack = {
@@ -182,14 +222,16 @@ fun NavigationScreen(
                     goToRating = {
                         navController.navigate(Routes.ACCOUNT_RATING_ROUTE)
                     },
-                    goToStudy =  {
+                    goToStudy = {
                         navController.navigate(Routes.ACCOUNT_STUDY_ROUTE)
                     }
                 )
             }
 
             composable(
-                route = Routes.ACCOUNT_NOTIFICATIONS_ROUTE
+                route = Routes.ACCOUNT_NOTIFICATIONS_ROUTE,
+                enterTransition = { enter },
+                exitTransition = { out }
             ) {
                 NotificationsScreen(
                     onBackPressed = {
@@ -205,7 +247,9 @@ fun NavigationScreen(
             }
 
             composable(
-                route = Routes.ACCOUNT_DORMITORY_ROUTE
+                route = Routes.ACCOUNT_DORMITORY_ROUTE,
+                enterTransition = { enter },
+                exitTransition = { out }
             ) {
                 DormitoryScreen(
                     onBackPressed = {
@@ -221,7 +265,9 @@ fun NavigationScreen(
             }
 
             composable(
-                route = Routes.ACCOUNT_GROUP_ROUTE
+                route = Routes.ACCOUNT_GROUP_ROUTE,
+                enterTransition = { enter },
+                exitTransition = { out }
             ) {
                 GroupScreen(
                     onBackPressed = { popNav() },
@@ -237,7 +283,9 @@ fun NavigationScreen(
             }
 
             composable(
-                route = Routes.ACCOUNT_ANNOUNCEMENT_ROUTE
+                route = Routes.ACCOUNT_ANNOUNCEMENT_ROUTE,
+                enterTransition = { enter },
+                exitTransition = { out }
             ) {
                 AnnouncementsScreen(
                     onBackPressed = { popNav() },
@@ -253,7 +301,9 @@ fun NavigationScreen(
             }
 
             composable(
-                route = Routes.ACCOUNT_MARK_BOOK_ROUTE
+                route = Routes.ACCOUNT_MARK_BOOK_ROUTE,
+                enterTransition = { enter },
+                exitTransition = { out }
             ) {
                 MarkBookScreen(
                     onBackPressed = { popNav() },
@@ -267,7 +317,9 @@ fun NavigationScreen(
             }
 
             composable(
-                route = Routes.ACCOUNT_OMISSIONS_ROUTE
+                route = Routes.ACCOUNT_OMISSIONS_ROUTE,
+                enterTransition = { enter },
+                exitTransition = { out }
             ) {
                 OmissionsScreen(
                     onBackPressed = { popNav() },
@@ -281,7 +333,9 @@ fun NavigationScreen(
             }
 
             composable(
-                route = Routes.ACCOUNT_PENALTY_ROUTE
+                route = Routes.ACCOUNT_PENALTY_ROUTE,
+                enterTransition = { enter },
+                exitTransition = { out }
             ) {
                 PenaltyScreen(
                     onBackPressed = { popNav() },
@@ -295,8 +349,11 @@ fun NavigationScreen(
             }
 
             composable(
-                route = Routes.ACCOUNT_RATING_ROUTE
+                route = Routes.ACCOUNT_RATING_ROUTE,
+                enterTransition = { enter },
+                exitTransition = { out }
             ) {
+                
                 RatingScreen(
                     onBackPressed = { popNav() },
                     onLogOut = {
@@ -309,8 +366,11 @@ fun NavigationScreen(
             }
 
             composable(
-                route = Routes.ACCOUNT_STUDY_ROUTE
+                route = Routes.ACCOUNT_STUDY_ROUTE,
+                enterTransition = { enter },
+                exitTransition = { out }
             ) {
+                
                 StudyScreen(
                     onBackPressed = { popNav() },
                     onLogOut = {
