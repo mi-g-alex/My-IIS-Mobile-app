@@ -67,7 +67,7 @@
     <string name="account_omissions_semester_number">%s семестр</string>
     <string name="account_omissions_dates">Даты: %s – %s</string>
     <string name="account_omissions_date">Дата: %s</string>
-    <string name="account_omissions_date_fromat">dd.MM.yyyy</string>
+    <string name="account_omissions_date_format">dd.MM.yyyy</string>
     <string name="account_omissions_note">Заметка: %s</string>
     <string name="account_penalty_title">Поощрения и Взыскания</string>
     <string name="account_penalty_status">Статус: %s</string>
@@ -144,7 +144,7 @@
     <string name="account_announcement_place">Место: %s</string>
     <string name="account_rating_average_mark">Средний балл: %s</string>
     <string name="account_rating_omissions">Пропущено часов: %d</string>
-    <string name="account_rating_omiisions_detailed">%s - %dч</string>
+    <string name="account_rating_omissions_detailed">%s - %dч</string>
     <string name="account_rating_main_info">%s шт. | %sч</string>
     <string name="account_rating_dialog_marks">\nОтметки</string>
     <string name="account_rating_dialog_omissions">\nПропуски</string>
@@ -169,4 +169,5 @@
     <string name="account_study_certificates_reject_reason">Причина отказа: %s</string>
     <string name="account_study_certificates_create">Заказать справку</string>
     <string name="available_soon">Скоро будет доступно</string>
+    <string name="schedule_add_info_dialog_add_google_calendar">Добавить в Google календарь</string>
 </resources>

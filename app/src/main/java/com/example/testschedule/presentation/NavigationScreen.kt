@@ -1,6 +1,5 @@
 package com.example.testschedule.presentation
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -51,7 +50,6 @@ object Routes {
     const val ACCOUNT_STUDY_ROUTE = "ACCOUNT_STUDY_ROUTE"
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavigationScreen(
     navController: NavHostController = rememberNavController()

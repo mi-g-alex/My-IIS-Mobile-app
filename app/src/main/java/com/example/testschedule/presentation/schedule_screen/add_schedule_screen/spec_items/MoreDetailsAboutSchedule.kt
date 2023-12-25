@@ -1,5 +1,7 @@
 package com.example.testschedule.presentation.schedule_screen.add_schedule_screen.spec_items
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,7 +9,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -57,6 +63,7 @@ fun MoreDetailsAboutSchedule(
 
 @Composable
 fun MoreAboutGroupDialog(dataOfGroup: ListOfGroupsModel) {
+    val ctx = LocalContext.current
     LazyColumn {
         item {
             Text(
@@ -90,11 +97,25 @@ fun MoreAboutGroupDialog(dataOfGroup: ListOfGroupsModel) {
                 )
             )
         }
+        if (dataOfGroup.calendarId.isNotBlank())
+            item {
+                Spacer(modifier = Modifier.height(5.dp))
+                val text =
+                    stringResource(id = R.string.schedule_add_info_dialog_add_google_calendar)
+                AssistChip(onClick = {
+                    val url = "https://calendar.google.com/calendar/u/0/r?cid=" + dataOfGroup.calendarId
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    ctx.startActivity(browserIntent)
+                }, label = { Text(text) }, leadingIcon = {
+                    Icon(imageVector = Icons.Outlined.DateRange, contentDescription = text)
+                })
+            }
     }
 }
 
 @Composable
 fun MoreAboutScheduleDialog(dataOfEmployee: ListOfEmployeesModel) {
+    val ctx = LocalContext.current
     LazyColumn(Modifier.fillMaxWidth()) {
         item {
             Box(Modifier.fillMaxWidth()) {
@@ -118,39 +139,62 @@ fun MoreAboutScheduleDialog(dataOfEmployee: ListOfEmployeesModel) {
 
         item {
             Text(
-            stringResource(
-                id = R.string.schedule_add_info_dialog_employee_fio,
-                dataOfEmployee.lastName, dataOfEmployee.firstName, (dataOfEmployee.middleName ?: "")
-            ))
+                stringResource(
+                    id = R.string.schedule_add_info_dialog_employee_fio,
+                    dataOfEmployee.lastName,
+                    dataOfEmployee.firstName,
+                    (dataOfEmployee.middleName ?: "")
+                )
+            )
         }
 
         if (dataOfEmployee.degree?.isNotBlank() == true)
-        item {
-            Text(stringResource(
-                id = R.string.schedule_add_info_dialog_employee_degree,
-                dataOfEmployee.degree
-            ))
-        }
+            item {
+                Text(
+                    stringResource(
+                        id = R.string.schedule_add_info_dialog_employee_degree,
+                        dataOfEmployee.degree
+                    )
+                )
+            }
 
         if (dataOfEmployee.rank?.isNotBlank() == true)
-        item {
-            Text(stringResource(
-                id = R.string.schedule_add_info_dialog_employee_rank,
-                dataOfEmployee.rank
-            ))
-        }
+            item {
+                Text(
+                    stringResource(
+                        id = R.string.schedule_add_info_dialog_employee_rank,
+                        dataOfEmployee.rank
+                    )
+                )
+            }
 
         if (dataOfEmployee.academicDepartment.isNotEmpty())
-        item {
-            var dep = ""
-            dataOfEmployee.academicDepartment.sorted().forEach {
-                dep += "$it, "
+            item {
+                var dep = ""
+                dataOfEmployee.academicDepartment.sorted().forEach {
+                    dep += "$it, "
+                }
+                dep = dep.removeSuffix(", ")
+                Text(
+                    stringResource(
+                        id = R.string.schedule_add_info_dialog_employee_departments,
+                        dep
+                    )
+                )
             }
-            dep = dep.removeSuffix(", ")
-            Text(stringResource(
-                id = R.string.schedule_add_info_dialog_employee_departments,
-                dep
-            ))
-        }
+
+        if (dataOfEmployee.calendarId.isNotBlank())
+            item {
+                Spacer(modifier = Modifier.height(5.dp))
+                val text =
+                    stringResource(id = R.string.schedule_add_info_dialog_add_google_calendar)
+                AssistChip(onClick = {
+                    val url = "https://calendar.google.com/calendar/u/0/r?cid=" + dataOfEmployee.calendarId
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    ctx.startActivity(browserIntent)
+                }, label = { Text(text) }, leadingIcon = {
+                    Icon(imageVector = Icons.Outlined.DateRange, contentDescription = text)
+                })
+            }
     }
 }

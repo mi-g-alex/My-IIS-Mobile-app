@@ -349,7 +349,7 @@ fun RatingDialog(data: RatingModel.Point.LessonByName, closeDialog: () -> Unit) 
                         i.value.all.filter { it.omissions != 0 }.forEach {
                             item {
                                 Text(
-                                    text = stringResource(id = R.string.account_rating_omiisions_detailed, it.date, it.omissions),
+                                    text = stringResource(id = R.string.account_rating_omissions_detailed, it.date, it.omissions),
                                     style = MaterialTheme.typography.titleMedium
                                 )
                             }

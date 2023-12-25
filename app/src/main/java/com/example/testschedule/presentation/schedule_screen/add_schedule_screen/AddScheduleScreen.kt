@@ -450,6 +450,7 @@ fun SavedListView(
                                 goBackWhenSelect = goBackWhenSelect,
                                 item = ListOfGroupsModel(
                                     0,
+                                    "",
                                     stringResource(id = R.string.schedule_removed_from_server_schedules_list),
                                     it.title,
                                     "",
@@ -480,6 +481,7 @@ fun SavedListView(
                                 goBackWhenSelect = goBackWhenSelect,
                                 item = ListOfEmployeesModel(
                                     listOf(stringResource(id = R.string.schedule_removed_from_server_schedules_list)),
+                                    "",
                                     it.title,
                                     it.title,
                                     "",
@@ -883,6 +885,7 @@ fun CardPreview() {
         { _, _ -> },
         item = ListOfGroupsModel(
             1,
+            "",
             "ФКСиС",
             "253501",
             "ИиТП",
@@ -900,6 +903,7 @@ fun EmployeeCardPreview() {
         { _, _ -> },
         item = ListOfEmployeesModel(
             listOf("ФКП"),
+            "",
             "Владымцев В. Д. (доцент)",
             "Вадим",
             "Владымцев",

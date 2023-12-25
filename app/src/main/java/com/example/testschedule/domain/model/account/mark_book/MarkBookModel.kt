@@ -1,6 +1,6 @@
 package com.example.testschedule.domain.model.account.mark_book
 
-import com.example.testschedule.data.local.entity.mark_book.MarkBookEntity
+import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
 
 data class MarkBookModel(
     val averageMark: Double, // 9

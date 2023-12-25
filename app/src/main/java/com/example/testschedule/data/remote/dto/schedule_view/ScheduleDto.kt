@@ -24,7 +24,7 @@ data class ScheduleDto(
         val email: String?,
         val urlId: String,
         val calendarId: String?,
-        val jobPositions: Any? // TODO
+        val jobPositions: Any?
     )
 
     data class StudentGroupDto(

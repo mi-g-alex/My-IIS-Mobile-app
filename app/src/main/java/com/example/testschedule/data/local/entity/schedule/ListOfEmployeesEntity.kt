@@ -1,5 +1,6 @@
 package com.example.testschedule.data.local.entity.schedule
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
@@ -7,6 +8,8 @@ import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 @Entity
 data class ListOfEmployeesEntity(
     val academicDepartment: List<String>, // ["каф. фиб"]
+    @ColumnInfo(defaultValue = "")
+    val calendarId: String, // 4t4b9qurekmm2nnb2tjjdcseq0@group.calendar.google.com
     val fio: String, // Абрамов И. И. (профессор)
     val firstName: String, // Игорь
     val lastName: String, // Абрамов
@@ -18,14 +21,15 @@ data class ListOfEmployeesEntity(
     val urlId: String // i-abramov
 ) {
     fun toModel(): ListOfEmployeesModel = ListOfEmployeesModel(
-        this.academicDepartment,
-        this.fio,
-        this.firstName,
-        this.lastName,
-        this.middleName,
-        this.photoLink,
-        this.rank,
-        this.degree,
-        this.urlId
+        academicDepartment = this.academicDepartment,
+        calendarId = this.calendarId,
+        fio = this.fio,
+        firstName = this.firstName,
+        lastName = this.lastName,
+        middleName = this.middleName,
+        photoLink = this.photoLink,
+        rank = this.rank,
+        degree = this.degree,
+        urlId = this.urlId
     )
 }

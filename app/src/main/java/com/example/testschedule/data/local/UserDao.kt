@@ -12,7 +12,7 @@ import com.example.testschedule.data.local.entity.account.penalty.PenaltyEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
-import com.example.testschedule.data.local.entity.mark_book.MarkBookEntity
+import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
@@ -24,7 +24,6 @@ import com.example.testschedule.domain.model.schedule.ScheduleModel
 interface UserDao {
 
     // Schedule
-
     @Query("SELECT * FROM ScheduleEntity WHERE id = :id")
     suspend fun getSchedule(id: String): ScheduleModel
 

@@ -4,7 +4,7 @@ import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
-import com.example.testschedule.data.local.entity.mark_book.MarkBookEntity
+import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
 import com.example.testschedule.data.util.JsonParser
 import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.google.gson.reflect.TypeToken

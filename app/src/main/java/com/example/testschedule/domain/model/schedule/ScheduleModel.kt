@@ -4,6 +4,20 @@ import com.example.testschedule.data.remote.dto.schedule_view.ScheduleDto
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+/**
+ * ### ScheduleModel - базовый класс расписания, с основной информацией
+ * * __id__ (_i-abramov/210101_) - ID группы (номер) или urlId преподавателя
+ * * __title__ (_Абрамов И. И. / 210101_) - какой будет Title отображаться в расписании
+ * * __isGroupSchedule__ - True если расписание относится к группе
+ * * __startLessonsDate__ - Дата начала занятий в формате Long
+ * * __endLessonsDate__ - Дата окончания занятий в формате Long
+ * * __startExamsDate__ - Дата начала сессии в формате Long
+ * * __endExamsDate__ - Дата конца сессии в формате Long
+ * * __employeeInfo__ - [EmployeeInfo] если расписание преподавателя, иначе NULL
+ * * __studentGroupInfo__ - [StudentGroupInfo] если расписание группы, иначе NULL
+ * * __schedules__  список [WeeksSchedule] из недель, где в каждой неделе есть список дней, а в каждом дне список занятий
+ * * __exams__ - список [WeeksSchedule.Lesson] храним экзаменов или NULL если их нет
+ */
 data class ScheduleModel(
     val id: String, // Тут ID как номер группы или urlId
     val title: String, // Что будет в шапке
@@ -17,18 +31,37 @@ data class ScheduleModel(
     val schedules: List<WeeksSchedule>, // Тут храним список из недель, где в каждой неделе есть список дней, а в каждом дне список занятий
     val exams: List<WeeksSchedule.Lesson>? // Тут список храним экзаменов
 ) {
+    /**
+     * ### EmployeeInfo - информация о преподавтеле в расписании
+     * * __firstName__ (_Игорь_) - имя
+     * * __lastName__ (_Абрамов_) - фамилия
+     * * __middleName__ (_ Иванович_) - отчество (может быть NULL потому что да)
+     * * __photoLink__ (_https://iis.bsuir.by/api/v1/employees/photo/500434_) - ссылка на фотку. Вообще генерится как `ссылка + id`, поэтому __по ссылке фотки может и не быть)__
+     * * __degree__ (_кандидат технических наук и т.п._) - степень
+     * * __degreeAbbrev__ (__)
+     * * __rank__ (_профессор_) - ранг преподавателя
+     * * __urlId__ (_i-abramov_) - string-id
+     */
     data class EmployeeInfo(
         val id: Int, // ID преподавателя
         val firstName: String, // Сергей
         val middleName: String?, // Николаевич
         val lastName: String, // Нестеренков
-        val photoLink: String?, // https://iis.bsuir.by/api/v1/employees/photo/501822 (ля какой)
+        val photoLink: String?, // https://iis.bsuir.by/api/v1/employees/photo/501822
         val degree: String?, // кандидат технических наук и т.п.
         val degreeAbbrev: String?, // кратко? к.т.н.
         val rank: String?, // доцент и т.п.h
         val urlId: String, // s-nesterenkov
     )
 
+    /**
+     * ### ListOfGroupsModel - информация о группе в расписании
+     * * __name__ (_210101_) - номер гурппы
+     * * __facultyAbbrev__ (_ФКП_) - факультет, к которому относится группа
+     * * __specialityName__ (_Информационные системы..._) - полное название специальности
+     * * __specialityAbbrev__ (_ИСиТ(в ОПБ)_) - аббревиатура специальности
+     * * __course__ (_2_) - номер курса (может быть 0, тогда группу не отображаем
+     */
     data class StudentGroupInfo(
         val name: String, // 253501
         val facultyAbbrev: String, // ФКСиС
@@ -37,6 +70,9 @@ data class ScheduleModel(
         val course: Int // 1
     )
 
+    /**
+     * ### WeeksSchedule - хранятся 6 дней недели (пн-сб), внутри которых список предометов [Lesson]
+     */
     data class WeeksSchedule( // Список предметов на этой неделе в определенный день
         val monday: List<Lesson>,
         val tuesday: List<Lesson>,
@@ -45,6 +81,26 @@ data class ScheduleModel(
         val friday: List<Lesson>,
         val saturday: List<Lesson>
     ) {
+
+        /**
+         * ### Lesson - вся информация о конкретной паре
+         * * __auditories__ (_["4-4к."]_) - список кабинетов, в котором проходит занятие (зачем список вопрос хороший)
+         * * __startLessonTime__ (_635_) - Время начала пары в формате `HH * 60 + MM`
+         * * __endLessonTime__ (_715_) -  Время конца пары в формате `HH * 60 + MM`
+         * * __startLessonDate__ - Дата, когда пройдет первая пара в формате LONG
+         * * __endLessonDate__ - Дата, когда планируется последняя пара в формете LONG
+         * * __dateLesson__ - Дата события или экзамена (2 поля выше тогда NULL)
+         * * __lessonTypeAbbrev__ (_ЛК, ЛР, ПЗ, Консультация, Экзамен, Зачет, УЛк, УПз, УЛр_) - какого типа пара из перечесленно (мб еще что-то есть)
+         * * __note__ (_"21.12 пары не будет"_) - примечание к паре
+         * * __numSubgroup__ (_0, 1, 2_) - 0 - общая пара, 1 и 2 по подгруппам соответственно
+         * * __studentGroups__ (_[[StudentGroupsInfo], ]_) - краткая информация о группе, у преподавателя в расписании может быть больше чем 1 группа в списке. В расписании группы только сама группа.
+         * * __subject__ (_МА_) - краткое название предмета
+         * * __subjectFullName__ (_Математический анализ_) - полное название предмета
+         * * __weekNumber__ (_[1, 2, 3, 4]_) - список недель, по которых приходит пара
+         * * __employees__ (_[[EmployeeInfo], ]_) - список преподавателей, которые ведут предмет
+         * * __announcement__ (_True/False_) - событие выпало
+         * * __split__ - _А ВОТ НЕ ЗНАЮ ЧТО ЭТО ТАКОЕ но пусть будет, вдруг найду_
+         */
         data class Lesson(
             val auditories: List<String>, // Список кабинетов
             val startLessonTime: Int, // Время начала урока / экзамена
@@ -73,6 +129,9 @@ data class ScheduleModel(
     }
 }
 
+/**
+ * Конвертирует из DTO расписание в мою [ScheduleModel]
+ */
 fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
     val isGroupSchedule = schedule.studentGroupDto != null && schedule.employeeDto == null
 
@@ -277,6 +336,9 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
     )
 }
 
+/**
+ * Конвертирует время из "12:22" в 12*60+22 = 742
+ */
 fun timeToInt(time: String): Int {
     val parts = time.split(":")
     return if (parts.size == 2) {
@@ -292,6 +354,10 @@ fun timeToInt(time: String): Int {
     }
 }
 
+
+/**
+ * Конвертирует из DTO пару в Lesson
+ */
 fun convertDay(
     day: ScheduleDto.SchedulesDto.SchedulesItemDto
 ): ScheduleModel.WeeksSchedule.Lesson {

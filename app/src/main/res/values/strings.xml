@@ -74,7 +74,7 @@
     <string name="account_omissions_semester_number">%s semester</string>
     <string name="account_omissions_dates">Dates: %s – %s</string>
     <string name="account_omissions_date">Date: %s</string>
-    <string name="account_omissions_date_fromat">dd.MM.yyyy</string>
+    <string name="account_omissions_date_format">dd.MM.yyyy</string>
     <string name="account_omissions_note">Note: %s</string>
     <string name="account_penalty_title">Incentives &amp; Penalty</string>
     <string name="account_penalty_status">Status: %s</string>
@@ -87,7 +87,7 @@
     <string name="account_rating_other_point">Other</string>
     <string name="account_rating_average_mark">Average mark: %s</string>
     <string name="account_rating_omissions">Skipped hours: %d</string>
-    <string name="account_rating_omiisions_detailed">%s - %dh</string>
+    <string name="account_rating_omissions_detailed">%s - %dh</string>
     <string name="account_rating_main_info">%s | %sh</string>
     <string name="account_rating_dialog_marks">\nMarks</string>
     <string name="account_rating_dialog_omissions">\nOmissions</string>
@@ -144,6 +144,7 @@
     <string name="schedule_add_info_dialog_employee_rank">Rank: %s</string>
     <string name="schedule_add_info_dialog_employee_degree">Degree: %s</string>
     <string name="schedule_add_info_dialog_employee_departments">Departments: %s</string>
+    <string name="schedule_add_info_dialog_add_google_calendar">Add to Google calendar</string>
     <string name="schedule_bottom_sheet_edit_btn_desc">Change saved schedules</string>
     <string name="schedule_bottom_sheet_title">Select schedule</string>
     <string name="schedule_dialog_auditories">Auditories: %s</string>

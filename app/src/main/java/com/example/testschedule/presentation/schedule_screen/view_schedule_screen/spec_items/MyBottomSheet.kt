@@ -80,6 +80,7 @@ fun BottomSheet(
                                 selectScheduleClicked,
                                 item = ListOfGroupsModel(
                                     0,
+                                    "",
                                     stringResource(id = R.string.schedule_removed_from_server_schedules_list),
                                     it.title,
                                     "",
@@ -104,6 +105,7 @@ fun BottomSheet(
                                 selectScheduleClicked = selectScheduleClicked,
                                 item = ListOfEmployeesModel(
                                     listOf(stringResource(id = R.string.schedule_removed_from_server_schedules_list)),
+                                    "",
                                     it.title,
                                     it.title,
                                     "",

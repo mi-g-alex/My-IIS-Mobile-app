@@ -16,6 +16,7 @@ data class ListOfGroupsDto(
 ) {
     fun toModel() = ListOfGroupsModel(
         course = this.course,
+        calendarId = this.calendarId,
         facultyAbbrev = this.facultyAbbrev,
         name = this.name,
         specialityAbbrev = this.specialityAbbrev,

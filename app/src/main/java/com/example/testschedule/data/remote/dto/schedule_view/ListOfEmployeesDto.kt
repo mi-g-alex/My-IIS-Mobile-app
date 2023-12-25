@@ -18,6 +18,7 @@ data class ListOfEmployeesDto(
     fun toModel() =
         ListOfEmployeesModel(
             academicDepartment = this.academicDepartment,
+            calendarId = this.calendarId,
             fio = this.fio,
             firstName = this.firstName,
             lastName = this.lastName,

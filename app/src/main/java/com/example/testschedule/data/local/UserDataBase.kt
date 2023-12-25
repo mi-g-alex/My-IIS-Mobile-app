@@ -12,7 +12,7 @@ import com.example.testschedule.data.local.entity.account.penalty.PenaltyEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
-import com.example.testschedule.data.local.entity.mark_book.MarkBookEntity
+import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
@@ -20,7 +20,7 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
 import com.example.testschedule.data.local.entity.account.study.certificate.CertificateEntity
 
 @Database(
-    version = 14,
+    version = 15,
     entities = [
         // Schedules
         ScheduleEntity::class,
@@ -62,6 +62,7 @@ import com.example.testschedule.data.local.entity.account.study.certificate.Cert
         AutoMigration(from = 11, to = 12),
         AutoMigration(from = 12, to = 13),
         AutoMigration(from = 13, to = 14),
+        AutoMigration(from = 14, to = 15),
     ],
 )
 @TypeConverters(Converters::class)

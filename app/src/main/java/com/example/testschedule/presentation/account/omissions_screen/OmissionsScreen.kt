@@ -132,7 +132,7 @@ fun OmissionsItem(
                 if (item.dateFrom != 0L) {
                     val text = timeLongToString(
                         item.dateFrom,
-                        stringResource(id = R.string.account_omissions_date_fromat)
+                        stringResource(id = R.string.account_omissions_date_format)
                     )
                     Text(
                         stringResource(id = R.string.account_omissions_date, text),
@@ -144,11 +144,11 @@ fun OmissionsItem(
             } else {
                 val textStart = timeLongToString(
                     item.dateFrom,
-                    stringResource(id = R.string.account_omissions_date_fromat)
+                    stringResource(id = R.string.account_omissions_date_format)
                 )
                 val textEnd = timeLongToString(
                     item.dateTo,
-                    stringResource(id = R.string.account_omissions_date_fromat)
+                    stringResource(id = R.string.account_omissions_date_format)
                 )
                 Text(
                     stringResource(id = R.string.account_omissions_dates, textStart, textEnd),
