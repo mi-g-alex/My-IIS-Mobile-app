@@ -1,6 +1,12 @@
 package com.example.testschedule.domain.model.schedule
 
+import android.util.Log
 import com.example.testschedule.data.remote.dto.schedule_view.ScheduleDto
+import com.example.testschedule.domain.model.schedule.ScheduleModel.EmployeeInfo
+import com.example.testschedule.domain.model.schedule.ScheduleModel.StudentGroupInfo
+import com.example.testschedule.domain.model.schedule.ScheduleModel.WeeksSchedule
+import com.example.testschedule.domain.model.schedule.ScheduleModel.WeeksSchedule.Lesson
+import com.example.testschedule.domain.model.schedule.ScheduleModel.WeeksSchedule.Lesson.StudentGroupsInfo
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -137,9 +143,9 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
 
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
 
-    val startLessonsDate =
+    var startLessonsDate =
         if (schedule.startDate.isNullOrBlank()) null else dateFormat.parse(schedule.startDate)?.time
-    val endLessonsDate =
+    var endLessonsDate =
         if (schedule.endDate.isNullOrBlank()) null else dateFormat.parse(schedule.endDate)?.time
     val startExamsDate =
         if (schedule.startExamsDate.isNullOrBlank()) null else dateFormat.parse(schedule.startExamsDate)?.time
@@ -148,7 +154,7 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
 
     val employeeTempInfo = schedule.employeeDto
     val employeeInfo = if (employeeTempInfo != null) {
-        ScheduleModel.EmployeeInfo(
+        EmployeeInfo(
             id = employeeTempInfo.id,
             firstName = employeeTempInfo.firstName,
             middleName = employeeTempInfo.middleName,
@@ -173,12 +179,12 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
     } else null
 
     data class Week(
-        val monday: MutableList<ScheduleModel.WeeksSchedule.Lesson>,
-        val tuesday: MutableList<ScheduleModel.WeeksSchedule.Lesson>,
-        val wednesday: MutableList<ScheduleModel.WeeksSchedule.Lesson>,
-        val thursday: MutableList<ScheduleModel.WeeksSchedule.Lesson>,
-        val friday: MutableList<ScheduleModel.WeeksSchedule.Lesson>,
-        val saturday: MutableList<ScheduleModel.WeeksSchedule.Lesson>
+        val monday: MutableList<Lesson>,
+        val tuesday: MutableList<Lesson>,
+        val wednesday: MutableList<Lesson>,
+        val thursday: MutableList<Lesson>,
+        val friday: MutableList<Lesson>,
+        val saturday: MutableList<Lesson>
     ) {
         fun toWeekList() = ScheduleModel.WeeksSchedule(
             this.monday.toList(),
@@ -213,7 +219,34 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
 
     val listOfWeeks = listOf(week1, week2, week3, week4)
 
-    schedule.schedules?.monday?.forEach { day ->
+    var curSchedule = schedule.schedules
+    val prevSchedule = schedule.previousSchedules
+
+    var m = curSchedule?.monday?.toMutableList() ?: mutableListOf()
+    prevSchedule?.monday?.let { m += it }
+    curSchedule = curSchedule?.copy(monday = m)
+
+    m = curSchedule?.tuesday?.toMutableList() ?: mutableListOf()
+    prevSchedule?.tuesday?.let { m += it }
+    curSchedule = curSchedule?.copy(tuesday = m)
+
+    m = curSchedule?.wednesday?.toMutableList() ?: mutableListOf()
+    prevSchedule?.wednesday?.let { m += it }
+    curSchedule = curSchedule?.copy(wednesday = m)
+
+    m = curSchedule?.thursday?.toMutableList() ?: mutableListOf()
+    prevSchedule?.thursday?.let { m += it }
+    curSchedule = curSchedule?.copy(thursday = m)
+
+    m = curSchedule?.friday?.toMutableList() ?: mutableListOf()
+    prevSchedule?.friday?.let { m += it }
+    curSchedule = curSchedule?.copy(friday = m)
+
+    m = curSchedule?.saturday?.toMutableList() ?: mutableListOf()
+    prevSchedule?.saturday?.let { m += it }
+    curSchedule = curSchedule?.copy(saturday = m)
+
+    curSchedule?.monday?.forEach { day ->
         val tmp = convertDay(day)
         if (day.weekNumber != null) {
             day.weekNumber.forEach { week ->
@@ -227,7 +260,7 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
         }
     }
 
-    schedule.schedules?.tuesday?.forEach { day ->
+    curSchedule?.tuesday?.forEach { day ->
         val tmp = convertDay(day)
         if (day.weekNumber != null) {
             day.weekNumber.forEach { week ->
@@ -241,7 +274,7 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
         }
     }
 
-    schedule.schedules?.wednesday?.forEach { day ->
+    curSchedule?.wednesday?.forEach { day ->
         val tmp = convertDay(day)
         if (day.weekNumber != null) {
             day.weekNumber.forEach { week ->
@@ -255,7 +288,7 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
         }
     }
 
-    schedule.schedules?.thursday?.forEach { day ->
+    curSchedule?.thursday?.forEach { day ->
         val tmp = convertDay(day)
         if (day.weekNumber != null) {
             day.weekNumber.forEach { week ->
@@ -269,7 +302,7 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
         }
     }
 
-    schedule.schedules?.friday?.forEach { day ->
+    curSchedule?.friday?.forEach { day ->
         val tmp = convertDay(day)
         if (day.weekNumber != null) {
             day.weekNumber.forEach { week ->
@@ -283,7 +316,7 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
         }
     }
 
-    schedule.schedules?.saturday?.forEach { day ->
+    curSchedule?.saturday?.forEach { day ->
         val tmp = convertDay(day)
         if (day.weekNumber != null) {
             day.weekNumber.forEach { week ->
@@ -319,6 +352,34 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
     } else {
         ""
     }
+
+    val lastDayOfLessonsManually =
+        (schedules.flatMap { it.monday } +
+                schedules.flatMap { it.thursday } +
+                schedules.flatMap { it.tuesday } +
+                schedules.flatMap { it.wednesday } +
+                schedules.flatMap { it.friday } +
+                schedules.flatMap { it.saturday }).filter { it.endLessonDate != null }.maxOf { it.endLessonDate!! }
+
+    val firstDayOfLessonsManually =
+        (schedules.flatMap { it.monday } +
+                schedules.flatMap { it.thursday } +
+                schedules.flatMap { it.tuesday } +
+                schedules.flatMap { it.wednesday } +
+                schedules.flatMap { it.friday } +
+                schedules.flatMap { it.saturday }).filter { it.startLessonDate != null }.minOf { it.startLessonDate!! }
+
+
+
+    endLessonsDate?.let {
+        if (lastDayOfLessonsManually > it)
+            endLessonsDate = lastDayOfLessonsManually
+    } ?: {endLessonsDate = lastDayOfLessonsManually }
+
+    startLessonsDate?.let {
+        if (firstDayOfLessonsManually < it)
+            startLessonsDate = firstDayOfLessonsManually
+    } ?: { startLessonsDate = firstDayOfLessonsManually }
 
     return ScheduleModel(
         id = if (isGroupSchedule) schedule.studentGroupDto?.name
@@ -360,7 +421,7 @@ fun timeToInt(time: String): Int {
  */
 fun convertDay(
     day: ScheduleDto.SchedulesDto.SchedulesItemDto
-): ScheduleModel.WeeksSchedule.Lesson {
+): Lesson {
     val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
 
     val startLessonTime = timeToInt(day.startLessonTime)
@@ -374,7 +435,7 @@ fun convertDay(
         if (day.dateLesson.isNullOrBlank()) null else dateFormat.parse(day.dateLesson)?.time
 
     val studentGroups = day.studentGroups.map {
-        ScheduleModel.WeeksSchedule.Lesson.StudentGroupsInfo(
+        StudentGroupsInfo(
             specialityName = it.specialityName,
             numberOfStudents = it.numberOfStudents,
             name = it.name,
@@ -382,7 +443,7 @@ fun convertDay(
         )
     }
     val employees = day.employees?.map {
-        ScheduleModel.EmployeeInfo(
+        EmployeeInfo(
             id = it.id,
             firstName = it.firstName,
             middleName = it.middleName,
@@ -394,7 +455,8 @@ fun convertDay(
             urlId = it.urlId
         )
     }
-    return ScheduleModel.WeeksSchedule.Lesson(
+
+    return Lesson(
         auditories = day.auditories ?: emptyList(),
         startLessonTime = startLessonTime,
         endLessonTime = endLessonTime,

@@ -1,5 +1,6 @@
 package com.example.testschedule.presentation
 
+import android.util.Log
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -14,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.example.testschedule.presentation.account.announcement_screen.AnnouncementsScreen
 import com.example.testschedule.presentation.account.dormitory_screen.DormitoryScreen
 import com.example.testschedule.presentation.account.group_screen.GroupScreen
@@ -26,14 +28,14 @@ import com.example.testschedule.presentation.account.rating_screen.RatingScreen
 import com.example.testschedule.presentation.account.study_screen.StudyScreen
 import com.example.testschedule.presentation.auth_screen.AuthScreen
 import com.example.testschedule.presentation.schedule_screen.add_schedule_screen.AddScheduleScreen
-import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.ViewExamsScreen
-import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.ViewScheduleScreen
+import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.exams.ViewExamsScreen
+import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.schedule.ViewScheduleScreen
 
 object Routes {
     const val SCHEDULE_ROUTE = "SCHEDULE_ROUTE"
     const val SCHEDULE_HOME_ROUTE = "SCHEDULE_HOME_ROUTE/{id}/{title}/{isPreview}"
     const val SCHEDULE_EDIT_LIST_ROUTE = "SCHEDULE_EDIT_LIST_ROUTE"
-    const val SCHEDULE_EXAMS_VIEW_ROUTE = "SCHEDULE_EXAMS_VIEW"
+    const val SCHEDULE_EXAMS_VIEW_ROUTE = "SCHEDULE_EXAMS_VIEW/{id}"
 
     const val LOGIN_SCREEN_ROUTE = "LOGIN_SCREEN_ROUTE"
 
@@ -54,6 +56,9 @@ object Routes {
 fun NavigationScreen(
     navController: NavHostController = rememberNavController()
 ) {
+
+    val examsData : MutableMap<String, ScheduleModel> = mutableMapOf()
+
     val enter = slideInHorizontally(
         initialOffsetX = { 450 },
         animationSpec = tween(
@@ -104,8 +109,9 @@ fun NavigationScreen(
                     },
                     scheduleId = id,
                     titleLink = title,
-                    navToExams = {
-                        navController.navigate(Routes.SCHEDULE_EXAMS_VIEW_ROUTE)
+                    navToExams = { exams ->
+                        examsData[exams.id] = exams
+                        navController.navigate("SCHEDULE_EXAMS_VIEW/" + exams.id)
                     },
                     goToAddSchedule = {
                         navController.navigate(Routes.SCHEDULE_EDIT_LIST_ROUTE)
@@ -148,8 +154,13 @@ fun NavigationScreen(
                 route = Routes.SCHEDULE_EXAMS_VIEW_ROUTE,
                 enterTransition = { enter },
                 exitTransition = { out }
-            ) {
+            ) { entry ->
+                val id = entry.arguments?.getString("id") ?: ""
+                Log.e("SCHEDULE_ID", id)
+                val exams = examsData[id]
+                Log.e("SCHEDULE_EXAMS", exams.toString())
                 ViewExamsScreen(
+                    exams = exams!!,
                     navBack = {
                         popNav()
                     },
@@ -351,7 +362,7 @@ fun NavigationScreen(
                 enterTransition = { enter },
                 exitTransition = { out }
             ) {
-                
+
                 RatingScreen(
                     onBackPressed = { popNav() },
                     onLogOut = {
@@ -368,7 +379,7 @@ fun NavigationScreen(
                 enterTransition = { enter },
                 exitTransition = { out }
             ) {
-                
+
                 StudyScreen(
                     onBackPressed = { popNav() },
                     onLogOut = {

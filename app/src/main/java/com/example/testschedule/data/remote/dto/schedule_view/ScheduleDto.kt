@@ -3,13 +3,16 @@ package com.example.testschedule.data.remote.dto.schedule_view
 import com.google.gson.annotations.SerializedName
 
 data class ScheduleDto(
+    val currentPeriod: String?,
+    val currentTerm: String?,
     val startDate: String?,
     val endDate: String?,
     val startExamsDate: String?,
     val endExamsDate: String?,
     val employeeDto: EmployeeDto?,
     val studentGroupDto : StudentGroupDto?,
-    val schedules : SchedulesDto?,
+    val schedules: SchedulesDto?,
+    val previousSchedules: SchedulesDto?,
     val exams: List<SchedulesDto.SchedulesItemDto>?
 ) {
     data class EmployeeDto(

@@ -6,6 +6,7 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.21'
     id 'com.google.devtools.ksp'
+    id 'com.kyleduo.android-apk-naming'
 }
 
 android {
@@ -16,11 +17,15 @@ android {
         applicationId 'by.g_alex.my_iis'
         minSdk 21
         targetSdk 34
-        versionCode 12
-        versionName '0.0.0-12'
+        versionCode 14
+        versionName '0.0.0-' + versionCode.toString()
 
         vectorDrawables {
             useSupportLibrary true
+        }
+
+        apkNaming {
+            template 'My IIS ' + versionName + '.apk'
         }
     }
 
@@ -66,7 +71,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.30.1"
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
 
     implementation 'androidx.activity:activity-compose:1.8.2'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
@@ -89,7 +93,6 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager:0.30.0"
     implementation "com.google.accompanist:accompanist-pager-indicators:0.30.0"
 
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2"
     implementation "androidx.navigation:navigation-compose:2.7.6"
     implementation "com.google.accompanist:accompanist-flowlayout:0.30.0"
     implementation "io.coil-kt:coil-compose:2.5.0"
@@ -99,8 +102,9 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
 
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"
 
     //Dagger - Hilt
     implementation 'com.google.dagger:hilt-android:2.50'

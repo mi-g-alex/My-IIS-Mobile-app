@@ -32,91 +32,90 @@ interface IisAPI {
 
     // Расписание
 
-    @GET("student-groups") // Получение списка группы
+    @GET("student-groups") /** Получение списка группы **/
     suspend fun getListOfGroups(): List<ListOfGroupsDto>
 
-    @GET("employees/all") // Получение списка преподавателей
+    @GET("employees/all") /** Получение списка преподавателей **/
     suspend fun getListOfEmployees(): List<ListOfEmployeesDto>
 
-    @GET("schedule") // Получение расписания группы
+    @GET("schedule") /** Получение расписания группы **/
     suspend fun getGroupSchedule(@Query("studentGroup") groupNumber: String): ScheduleDto
 
-    @GET("employees/schedule/{urlId}") // Получение расписания преподавателя
+    @GET("employees/schedule/{urlId}") /** Получение расписания преподавателя **/
     suspend fun getEmployeeSchedule(@Path("urlId") urlId: String): ScheduleDto
 
-    @GET("schedule/current-week")
+    @GET("schedule/current-week") /** Получение текущей недели **/
     suspend fun getCurrentWeek(): Int
 
 
     // Авторизация
-    @POST("auth/login")
+    @POST("auth/login") /** Вход в аккаунте **/
     fun loginToAccount(@Body request: LoginAndPasswordDto): Call<UserBasicDataDto?>
 
 
     // Работа с профилем
 
-    // Получение данных об аккаунте
-    @GET("profiles/personal-cv")
+    @GET("profiles/personal-cv") /** Получение данных об аккаунте **/
     suspend fun getAccountProfile(@Header("Cookie") cookies: String): AccountProfileDto
 
-    // Получение уведомлений
-    @GET("notifications")
+    // Уведомлений
+    @GET("notifications") /** Получение списка всех уведомлений **/
     suspend fun getNotifications(
         @Header("Cookie") cookies: String,
         @Query("pageNumber") pagerNumber: Int,
         @Query("pageSize") pagerSize: Int
     ): NotificationsDto
 
-    @PATCH("notifications")
+    @PATCH("notifications") /** Пометить уведомления как прочитанные **/
     suspend fun readNotifications(
         @Header("Cookie") cookies: String,
         @Body data: List<ReadNotificationDto>
     )
 
     // Получение донных о заселение (общежитие + льготы)
-    @GET("dormitory-queue-application")
+    @GET("dormitory-queue-application") /** Получение списка заявок на общежитие **/
     suspend fun getDormitory(@Header("Cookie") cookies: String): List<DormitoryDto>
 
-    @GET("dormitory-queue-application/privileges")
+    @GET("dormitory-queue-application/privileges") /** Получение списка льгот **/
     suspend fun getPrivileges(@Header("Cookie") cookies: String): List<PrivilegesDto>
 
-    // Получение списка групп
-    @GET("student-groups/user-group-info")
+    // Группа
+    @GET("student-groups/user-group-info") /** Получение списка группы **/
     suspend fun getGroupList(@Header("Cookie") cookies: String): GroupDto
 
-    // Получение зачётки
-    @GET("markbook")
+    // Зачётки
+    @GET("markbook") /** Получение список отметок из зачётки **/
     suspend fun getMarkBook(@Header("Cookie") cookies: String): MarkBookDto
 
-    // Получение списка справок и т.п. за пропуски
-    @GET("omissions-by-student")
+    // Пропуски и взыскания
+    @GET("omissions-by-student") /** Получение списка справок покрывающих пропуски **/
     suspend fun getOmissions(@Header("Cookie") cookies: String): OmissionsDto
 
-    @GET("dormitory-queue-application/premium-penalty")
+    @GET("dormitory-queue-application/premium-penalty") /** Получение списка взысканий / поощрений **/
     suspend fun getPenalty(@Header("Cookie") cookies: String): List<PenaltyDto>
 
-    //  Получение списка события для аккаунта
-    @GET("announcements")
+    //  События
+    @GET("announcements") /** Получение списка события для аккаунта **/
     suspend fun getAnnouncements(@Header("Cookie") cookies: String): List<AnnouncementDto>
 
     // Рейтинг
-    @GET("grade-book")
+    @GET("grade-book") /** Получение отметок в личном рейтинге **/
     suspend fun getRatingOfStudent(@Header("Cookie") cookies: String): List<RatingDto>
 
     // Учёба | Справки
-    @GET("certificate") // Список справок
+    @GET("certificate") /** Получение списка справок, заканных для печати **/
     suspend fun getCertificates(@Header("Cookie") cookies: String): List<CertificateItemDto>
 
-    @GET("certificate/places")
+    @GET("certificate/places") /** Получение список, доступных для заказа **/
     suspend fun getNewCertificatePlaces(@Header("Cookie") cookies: String): List<NewCertificatePlacesDto>
 
-    @POST("api/v1/certificate/register") // Заказать справку
+    @POST("certificate/register") /** Заказать справку **/
     fun createCertificate(
         @Body request: CreateCertificateDto,
         @Header("Cookie") cookieValue: String
     ): Call<List<CertificateItemDto>>
 
-    @GET("api/v1/certificate/close") // Отменить справку
+    @GET("certificate/close") /** Отменить справку по id **/
     suspend fun closeCertificate(@Query("id") id: Int, @Header("Cookie") cookies: String): Any
 
 }

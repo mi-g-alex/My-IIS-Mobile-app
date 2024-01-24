@@ -1,5 +1,6 @@
 package com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items
 
+import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -65,7 +66,20 @@ fun getLessonByDate(
     week: Int,
     all: List<ScheduleModel.WeeksSchedule>
 ): LessonDay {
-    var currWeek = (week + ((cal.timeInMillis - lastUpdate) / 1000 / 60 / 60 / 24 / 7).toInt()) % 4
+    val currentWeekMonday = GregorianCalendar(
+        cal.get(Calendar.YEAR),
+        cal.get(Calendar.MONTH),
+        cal.get(Calendar.DAY_OF_MONTH),
+        0, 0, 0
+    )
+    if (currentWeekMonday.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+        currentWeekMonday.timeInMillis -= 6 * 24 * 60 * 60 * 1000
+    } else {
+        currentWeekMonday.timeInMillis -= (cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY) * 24 * 60 * 60 * 1000
+    }
+
+    var currWeek = (week + ((currentWeekMonday.timeInMillis - lastUpdate) / 1000 / 60 / 60 / 24 / 7).toInt()) % 4
+    if (currWeek < 0) currWeek += 4
     if (currWeek == 0) currWeek = 4
 
     val lessonsTmp: List<ScheduleModel.WeeksSchedule.Lesson> =
