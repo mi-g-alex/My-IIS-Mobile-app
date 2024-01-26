@@ -2,24 +2,47 @@ package com.example.testschedule.domain.model.account.study.certificate
 
 import com.example.testschedule.data.local.entity.account.study.certificate.CertificateEntity
 
-
 /**
- * Status:
+ * [certificateType] - Тип печати / обычная \ гербовая
  *
- * 1 -> "Напечатано"
+ * [dateOrder] - Дата заказа справки
  *
- * 2 -> "Обработка"
+ * [id] - ID справки
  *
- * 3 -> "Отклонена"
+ * [issueDate] - Дата готовности справки
+ *
+ * [number] - Номер справки
+ *
+ * [provisionPlace] - Место, куда нужна справка
+ *
+ * [rejectionReason] - Почему была отменена справка
+ *
+ * [status] - Статус
  */
 data class CertificateModel(
-    val certificateType: String, // обычная
-    val dateOrder: String, // 24.10.2023
-    val id: Int, // 141598
-    val issueDate: String?, // 25.10.2023
-    val number: Int, // 1867
-    val provisionPlace: String, // по месту работы родителей
-    val rejectionReason: String?, // "По желанию студента"
+    /** обычная */
+    val certificateType: String,
+    /** 24.10.2023 */
+    val dateOrder: String,
+    /** 141598 */
+    val id: Int,
+    /** 25.10.2023 */
+    val issueDate: String?,
+    /** 1867 */
+    val number: Int,
+    /** по месту работы родителей */
+    val provisionPlace: String,
+    /** "По желанию студента" */
+    val rejectionReason: String?,
+    /**
+     * Status:
+     *
+     * 1 -> "Напечатано"
+     *
+     * 2 -> "Обработка"
+     *
+     * 3 -> "Отклонена"
+     */
     val status: Int
 ) {
     fun toEntity() = CertificateEntity(

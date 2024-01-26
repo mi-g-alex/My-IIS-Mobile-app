@@ -21,8 +21,6 @@ class CloseCertificateUseCase @Inject constructor(
             emit(Resource.Loading<Boolean>())
 
             val cookie = db.getCookie()
-            api.closeCertificate(id, cookie)
-
             emit(Resource.Success<Boolean>(true))
         }
         catch (e: HttpException) {
@@ -37,7 +35,7 @@ class CloseCertificateUseCase @Inject constructor(
                 db.setLoginAndPassword(LoginAndPasswordModel(username = us, password = pass))
                 answerModel?.let { db.setUserBasicData(it) }
 
-                api.getCertificates(cookie)
+                api.closeCertificate(id, cookie)
                 emit(Resource.Success<Boolean>(true))
             } catch (e: IOException) {
                 if (e.toString() == "java.io.EOFException: End of input at line 1 column 1 path \$") {

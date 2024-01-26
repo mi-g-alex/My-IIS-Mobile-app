@@ -1,7 +1,6 @@
 package com.example.testschedule.presentation.schedule_screen.view_schedule_screen.schedule
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -71,10 +70,8 @@ fun ViewScheduleScreen(
         viewModel.getSaved()
         viewModel.getProfile()
         viewModel.title.value = titleLink ?: ""
-        Log.i("SCHEDULE_IS_FROM_EXAM", viewModel.isFromExams.toString())
         val x = viewModel.isFromExams
         viewModel.isFromExams = false
-        Log.w("SCHEDULE_IS_FROM_EXAM", viewModel.isFromExams.toString())
         if (scheduleId != null) {
             if (!x) {
                 viewModel.getSchedule(scheduleId)
@@ -198,10 +195,6 @@ fun ShowSchedule(
     if (it.startLessonsDate != null && it.endLessonsDate != null) {
         if (day.timeInMillis < it.startLessonsDate) day.timeInMillis = it.startLessonsDate
         val endDay = max(it.endLessonsDate, it.endExamsDate ?: 0L)
-
-        Log.e("SCHEDULE_DATE_TODAY", day.timeInMillis.toString())
-        Log.e("SCHEDULE_DATE_START", it.startLessonsDate.toString())
-        Log.e("SCHEDULE_DATE_END", endDay.toString())
 
         val lessons = getLessons(
             startDay = day,

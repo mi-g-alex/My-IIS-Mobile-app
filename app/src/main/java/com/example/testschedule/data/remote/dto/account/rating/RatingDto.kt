@@ -96,7 +96,6 @@ data class RatingDto(
 
             points[it.controlPoint]?.countOfOmissions =
                 points[it.controlPoint]?.countOfOmissions!! + it.gradeBookOmissions
-            Log.e("```", it.toString())
             points[it.controlPoint]?.listOfMarks?.addAll(it.marks)
             points[it.controlPoint]?.listOfSubjects?.add(it.lessonNameAbbrev)
 

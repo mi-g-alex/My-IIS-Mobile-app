@@ -156,9 +156,7 @@ fun NavigationScreen(
                 exitTransition = { out }
             ) { entry ->
                 val id = entry.arguments?.getString("id") ?: ""
-                Log.e("SCHEDULE_ID", id)
                 val exams = examsData[id]
-                Log.e("SCHEDULE_EXAMS", exams.toString())
                 ViewExamsScreen(
                     exams = exams!!,
                     navBack = {

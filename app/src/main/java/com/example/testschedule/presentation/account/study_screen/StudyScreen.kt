@@ -1,5 +1,6 @@
 package com.example.testschedule.presentation.account.study_screen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -15,31 +16,39 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Done
-import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -60,6 +69,11 @@ fun StudyScreen(
         }
     }
 
+    LaunchedEffect(viewModel.cnt.value) { }
+
+    val scope = rememberCoroutineScope()
+    val snackBarHostState = remember { SnackbarHostState() }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -72,6 +86,9 @@ fun StudyScreen(
             if (viewModel.isLoading.value) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
         }
     ) {
         LazyColumn(
@@ -81,14 +98,14 @@ fun StudyScreen(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
 
-           /* item {
-                val text = stringResource(id = R.string.available_soon)
-                Button(onClick = {
-                    Toast.makeText(cnt, text, Toast.LENGTH_LONG).show()
-                }) {
-                    Text(stringResource(id = R.string.account_study_certificates_create))
-                }
-            }*/
+            /* item {
+                 val text = stringResource(id = R.string.available_soon)
+                 Button(onClick = {
+                     Toast.makeText(cnt, text, Toast.LENGTH_LONG).show()
+                 }) {
+                     Text(stringResource(id = R.string.account_study_certificates_create))
+                 }
+             }*/
 
             stickyHeader {
                 Box(
@@ -104,20 +121,46 @@ fun StudyScreen(
             }
 
             if (viewModel.certificates.isNotEmpty()) {
-
                 viewModel.certificates.forEach { certificate ->
                     item {
-                        val text = stringResource(id = R.string.available_soon)
-                        CertificateItemView(certificate = certificate) {
-                            Toast.makeText(cnt, text, Toast.LENGTH_LONG).show()
+                        val textSuccess = stringResource(
+                            id = R.string.account_study_certificates_close_success,
+                            certificate.id
+                        )
+                        val textError = stringResource(
+                            id = R.string.account_study_certificates_close_error,
+                            certificate.id
+                        )
+                        CertificateItemView(
+                            certificate = certificate,
+                        ) {
+                            viewModel.closeCertificate(
+                                certificate.id,
+                                success = {
+                                    scope.launch {
+                                        snackBarHostState.showSnackbar(
+                                            message = textSuccess,
+                                            withDismissAction = true,
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                },
+                                error = {
+                                    scope.launch {
+                                        snackBarHostState.showSnackbar(
+                                            message = textError,
+                                            withDismissAction = true,
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                }
+                            )
                         }
                     }
                 }
             } else {
-                if(!viewModel.isLoading.value)
                 item {
                     Text(
-                        //viewModel.isLoading.value.toString()
                         stringResource(id = R.string.account_study_certificates_no_yet)
                     )
                 }
@@ -151,7 +194,7 @@ fun CertificateItemView(
                 val icon = when (certificate.status) {
                     1 -> Icons.Outlined.Done
                     3 -> Icons.Outlined.Clear
-                    2 -> Icons.Outlined.Send
+                    2 -> ImageVector.vectorResource(id = R.drawable.study_certificate_in_progressing)
                     else -> Icons.Outlined.Warning
                 }
 
@@ -176,6 +219,20 @@ fun CertificateItemView(
                 text = stringResource(
                     id = R.string.account_study_certificates_status,
                     stringArrayResource(id = R.array.account_study_certificates_status_array)[certificate.status]
+                ),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+
+            val certificateType = when (certificate.certificateType) {
+                "обычная" -> stringResource(id = R.string.account_study_certificates_type_common)
+                "гербовая" -> stringResource(id = R.string.account_study_certificates_type_herb)
+                else -> certificate.certificateType
+            }
+
+            Text(
+                text = stringResource(
+                    id = R.string.account_study_certificates_type,
+                    certificateType
                 ),
                 style = MaterialTheme.typography.bodyLarge,
             )
@@ -207,14 +264,14 @@ fun CertificateItemView(
                 )
             }
 
-           /* if (certificate.status == 2) {
-                Button(
+            if (certificate.status == 2) {
+                OutlinedButton(
                     onClick = { onCancelClicked(certificate.id) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(stringResource(id = R.string.account_study_certificates_cancel_request))
                 }
-            }*/
+            }
 
         }
     }

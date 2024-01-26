@@ -96,12 +96,16 @@
     <string name="account_study_certificates_number">Certificate %d %s</string>
     <string name="account_study_certificates_order_date">Order date: %s</string>
     <string name="account_study_certificates_type">Type: %s</string>
+    <string name="account_study_certificates_type_common">Common</string>
+    <string name="account_study_certificates_type_herb">Herb</string>
     <string name="account_study_certificates_status">Status: %s</string>
     <string name="account_study_certificates_issue_date">Issue date: %s</string>
     <string name="account_study_certificates_cancel_request">Cancel request</string>
     <string name="account_study_certificates_no_yet">No certificates yet</string>
     <string name="account_study_certificates_reject_reason">Reject reason: %s</string>
     <string name="account_study_certificates_create">Request certificate</string>
+    <string name="account_study_certificates_close_success">Certificate %d has been cancelled</string>
+    <string name="account_study_certificates_close_error">Something went wrong. Certificate %d not closed</string>
     <string name="available_soon">It will be available soon!</string>
     <string name="back">Back</string>
     <string name="cancel">Cancel</string>

@@ -1,9 +1,12 @@
+@file:OptIn(ExperimentalLayoutApi::class)
+
 package com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,13 +39,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.FlowRow
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
-import com.google.accompanist.flowlayout.FlowRow
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -474,7 +477,7 @@ fun MoreDetailCard(
                             style = MaterialTheme.typography.headlineSmall
                         )
                         FlowRow(
-                            mainAxisSpacing = 8.dp,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             lesson.employees.sortedBy { it.lastName }.forEach { employee ->
@@ -508,7 +511,7 @@ fun MoreDetailCard(
                             style = MaterialTheme.typography.headlineSmall
                         )
                         FlowRow(
-                            mainAxisSpacing = 8.dp,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             lesson.studentGroups.sortedBy { it.name }.forEach { group ->

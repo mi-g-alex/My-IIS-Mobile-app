@@ -49,9 +49,9 @@
         <item>Subgroup 2</item>
     </string-array>
     <string-array name="account_study_certificates_status_array">
-        <item>unknown</item>
-        <item>printed</item>
-        <item>in processing</item>
-        <item>rejected</item>
+        <item>Unknown</item>
+        <item>Printed</item>
+        <item>In processing</item>
+        <item>Rejected</item>
     </string-array>
 </resources>

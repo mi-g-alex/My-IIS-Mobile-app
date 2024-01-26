@@ -171,4 +171,8 @@
     <string name="account_study_certificates_create">Заказать справку</string>
     <string name="available_soon">Скоро будет доступно</string>
     <string name="schedule_add_info_dialog_add_google_calendar">Добавить в Google календарь</string>
+    <string name="account_study_certificates_close_success">Справка %d успешно отменена</string>
+    <string name="account_study_certificates_close_error">Что-то пошло не так... Ошибка отмены справки %d</string>
+    <string name="account_study_certificates_type_common">Обычная</string>
+    <string name="account_study_certificates_type_herb">Гербовая</string>
 </resources>
