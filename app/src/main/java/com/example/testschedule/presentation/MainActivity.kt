@@ -22,7 +22,6 @@ import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.exams.ViewExamsScreen
 import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.schedule.ViewScheduleScreen
 import com.example.testschedule.presentation.ui.theme.TestScheduleTheme
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -111,7 +110,7 @@ class PreviewActivity : ComponentActivity() {
                             val id = entry.arguments?.getString("id") ?: ""
                             val exams = examsData[id]
                             ViewExamsScreen(
-                                exams = exams!!,
+                                scheduleExams = exams!!,
                                 navBack = {
                                     popNav()
                                 },

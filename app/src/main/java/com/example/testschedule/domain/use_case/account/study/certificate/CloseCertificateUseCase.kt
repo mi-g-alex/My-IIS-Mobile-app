@@ -19,8 +19,8 @@ class CloseCertificateUseCase @Inject constructor(
     operator fun invoke(id: Int): Flow<Resource<Boolean>> = flow {
         try {
             emit(Resource.Loading<Boolean>())
-
             val cookie = db.getCookie()
+            api.closeCertificate(id, cookie)
             emit(Resource.Success<Boolean>(true))
         }
         catch (e: HttpException) {

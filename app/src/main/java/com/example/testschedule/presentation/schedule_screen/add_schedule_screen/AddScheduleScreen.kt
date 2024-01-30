@@ -56,8 +56,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil.compose.SubcomposeAsyncImage
 import com.example.testschedule.R
 import com.example.testschedule.common.Constants
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
@@ -812,16 +811,15 @@ fun EmployeeItemCard(
                     )
 
                     if (item.photoLink != null) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(item.photoLink)
-                                .crossfade(true).build(),
+                        SubcomposeAsyncImage(
+                            model = item.photoLink,
                             contentDescription = item.fio,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
                         )
+                        // ImageRequest.Builder(LocalContext.current).data(item.photoLink).crossfade(true).build()
                     }
                 }
                 Column(Modifier.padding(start = 16.dp)) {

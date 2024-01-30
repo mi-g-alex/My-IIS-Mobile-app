@@ -23,8 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil.compose.SubcomposeAsyncImage
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
@@ -119,10 +118,8 @@ fun MoreAboutScheduleDialog(dataOfEmployee: ListOfEmployeesModel) {
     LazyColumn(Modifier.fillMaxWidth()) {
         item {
             Box(Modifier.fillMaxWidth()) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(dataOfEmployee.photoLink)
-                        .crossfade(true).build(),
+                SubcomposeAsyncImage(
+                    model = dataOfEmployee.photoLink,
                     contentDescription = dataOfEmployee.fio,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

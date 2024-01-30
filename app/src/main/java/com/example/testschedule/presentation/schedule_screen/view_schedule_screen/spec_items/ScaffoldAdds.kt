@@ -30,8 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil.compose.SubcomposeAsyncImage
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
 
@@ -112,10 +111,8 @@ fun MyTopAppBar(
                         stringResource(id = R.string.login_to_account_button)
                     )
                 }
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(userData.value?.photoUrl)
-                        .crossfade(true).build(),
+                SubcomposeAsyncImage(
+                    model = userData.value?.photoUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

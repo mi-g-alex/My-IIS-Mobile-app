@@ -46,8 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil.compose.SubcomposeAsyncImage
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 
@@ -100,13 +99,6 @@ fun AccountMenuScreen(
                     .padding(it)
             ) {
                 item { AccountMenuProfileCard(user = viewModel.userInfo.value!!) }
-                /*item {
-                    MenuNotificationItem(
-                        icon = R.drawable.acc_menu_notifications,
-                        title = stringResource(id = R.string.account_menu_card_notifications),
-                        number = viewModel.notificationsCount.intValue
-                    ) { goToNotifications() }
-                }*/
                 item { Spacer(modifier = Modifier.height(10.dp)) }
                 item {
                     MenuItem(
@@ -261,10 +253,8 @@ fun AccountMenuProfileCard(user: AccountProfileModel) {
                         Modifier.size(48.dp)
                     )
                 }
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(user.photoUrl)
-                        .crossfade(true).build(),
+                SubcomposeAsyncImage(
+                    model = user.photoUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

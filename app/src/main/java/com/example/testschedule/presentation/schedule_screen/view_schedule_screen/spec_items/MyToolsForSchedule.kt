@@ -1,6 +1,5 @@
 package com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items
 
-import android.util.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -43,7 +42,7 @@ fun getExams(
     all: List<ScheduleModel.WeeksSchedule.Lesson>,
 ) : List<ExamDay> {
     val list = mutableListOf<ExamDay>()
-    all.forEach {it ->
+    all.forEach {
         if(it.dateLesson != null) {
             val cal = GregorianCalendar()
             cal.timeInMillis = it.dateLesson

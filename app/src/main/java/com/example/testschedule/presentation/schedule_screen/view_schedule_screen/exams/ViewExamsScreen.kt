@@ -29,7 +29,7 @@ import com.example.testschedule.presentation.schedule_screen.view_schedule_scree
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ViewExamsScreen(
-    exams: ScheduleModel,
+    scheduleExams: ScheduleModel,
     navBack: () -> Unit,
     selectScheduleClicked: (id: String, title: String) -> Unit,
     viewModel: ViewExamsViewModel = hiltViewModel()
@@ -38,7 +38,7 @@ fun ViewExamsScreen(
     var dialogLesson by remember { mutableStateOf<ScheduleModel.WeeksSchedule.Lesson?>(null) }
 
     LaunchedEffect(viewModel.schedule.value) {
-        viewModel.schedule.value = exams
+        viewModel.schedule.value = scheduleExams
         if (viewModel.schedule.value != null) {
             viewModel.getExams()
         }
@@ -69,7 +69,7 @@ fun ViewExamsScreen(
                     .fillMaxSize()
                     .padding(it)
             ) {
-                viewModel.exams.value.forEachIndexed() { i, _ ->
+                viewModel.exams.value.forEachIndexed { i, _ ->
                     val exams = viewModel.exams.value
                     stickyHeader {
                         if (i == 0 || (exams[i - 1].date != exams[i].date)) {

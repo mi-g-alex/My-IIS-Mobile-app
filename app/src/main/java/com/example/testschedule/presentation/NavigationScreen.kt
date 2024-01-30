@@ -1,6 +1,6 @@
 package com.example.testschedule.presentation
 
-import android.util.Log
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -158,7 +158,7 @@ fun NavigationScreen(
                 val id = entry.arguments?.getString("id") ?: ""
                 val exams = examsData[id]
                 ViewExamsScreen(
-                    exams = exams!!,
+                    scheduleExams = exams!!,
                     navBack = {
                         popNav()
                     },
