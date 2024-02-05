@@ -174,4 +174,14 @@
     <string name="account_study_certificates_close_error">Что-то пошло не так... Ошибка отмены справки %d</string>
     <string name="account_study_certificates_type_common">Обычная</string>
     <string name="account_study_certificates_type_herb">Гербовая</string>
+    <string name="account_study_certificates_create_select_hint">Место</string>
+    <string name="account_study_certificates_create_herb">Гербовая печать</string>
+    <string name="account_study_certificates_create_herb_desc">По умолчанию обычная печать</string>
+    <string name="account_study_certificates_create_herb_warn">* Для этого места доступа только гербовая печать</string>
+    <string name="account_study_certificates_create_count">Количество: %d</string>
+    <string name="account_study_certificates_create_title">Заказать справку</string>
+    <string name="account_study_certificates_create_note">Заметка</string>
+    <string name="account_study_certificates_create_send">Отправить</string>
+    <string name="account_study_certificates_create_success">Заявка отправлена</string>
+    <string name="account_study_certificates_create_error">Что-то пошло не так…</string>
 </resources>

@@ -72,7 +72,7 @@ interface IisAPIRepository {
     // Учёба
     suspend fun getCertificates(cookies: String): List<CertificateModel>
 
-    suspend fun getNewCertificatePlaces(cookies: String) : List<NewCertificatePlacesModel>
+    suspend fun getNewCertificatePlaces() : List<NewCertificatePlacesModel>
 
     suspend fun createCertificate(request: CreateCertificateModel, cookies: String) : Call<List<CertificateItemDto>>
 

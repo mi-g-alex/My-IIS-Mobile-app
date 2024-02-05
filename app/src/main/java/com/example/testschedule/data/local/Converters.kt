@@ -3,8 +3,9 @@ package com.example.testschedule.data.local
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
-import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
+import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
+import com.example.testschedule.data.local.entity.account.study.certificate.NewCertificatePlacesEntity
 import com.example.testschedule.data.util.JsonParser
 import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.google.gson.reflect.TypeToken
@@ -128,6 +129,20 @@ class Converters(
         )
 
     @TypeConverter
+    fun listOfCertificatesNewPlacesToJson(meaning: List<NewCertificatePlacesEntity.Place>): String =
+        jsonParser.toJson(
+            meaning,
+            object : TypeToken<ArrayList<NewCertificatePlacesEntity.Place>>() {}.type
+        ) ?: ""
+
+    @TypeConverter
+    fun listOfCertificatesNewPlacesFromJson(json: String): List<NewCertificatePlacesEntity.Place>? =
+        jsonParser.fromJson<ArrayList<NewCertificatePlacesEntity.Place>>(
+            json,
+            object : TypeToken<ArrayList<NewCertificatePlacesEntity.Place>>() {}.type
+        )
+
+    @TypeConverter
     fun studentGroupCuratorToJson(meaning: GroupEntity.StudentGroupCurator?): String =
         jsonParser.toJson(
             meaning,
@@ -140,6 +155,7 @@ class Converters(
             json,
             object : TypeToken<GroupEntity.StudentGroupCurator?>() {}.type
         )
+
     @TypeConverter
     fun markBookMapToJson(meaning: Map<Int, MarkBookEntity.Semester>): String =
         jsonParser.toJson(
@@ -153,7 +169,6 @@ class Converters(
             json,
             object : TypeToken<Map<Int, MarkBookEntity.Semester>>() {}.type
         )
-
 
 
 }

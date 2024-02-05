@@ -18,6 +18,7 @@ import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
 import com.example.testschedule.data.local.entity.account.study.certificate.CertificateEntity
+import com.example.testschedule.data.local.entity.account.study.certificate.NewCertificatePlacesEntity
 import com.example.testschedule.domain.model.schedule.ScheduleModel
 
 @Dao
@@ -172,5 +173,14 @@ interface UserDao {
 
     @Query("DELETE FROM CertificateEntity")
     suspend fun deleteCertificates()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addCertificatePlaces(data: List<NewCertificatePlacesEntity>)
+
+    @Query("SELECT * FROM NewCertificatePlacesEntity")
+    suspend fun getCertificatesPlaces() : List<NewCertificatePlacesEntity>
+
+    @Query("DELETE FROM NewCertificatePlacesEntity")
+    suspend fun deleteCertificatesPlaces()
 
 }

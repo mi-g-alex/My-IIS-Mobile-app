@@ -1,5 +1,6 @@
 package com.example.testschedule.domain.repository
 
+import com.example.testschedule.data.local.entity.account.study.certificate.NewCertificatePlacesEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.domain.model.account.group.GroupModel
@@ -9,6 +10,7 @@ import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
+import com.example.testschedule.domain.model.account.study.certificate.NewCertificatePlacesModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
@@ -127,5 +129,11 @@ interface UserDatabaseRepository {
     suspend fun getCertificates() : List<CertificateModel>
 
     suspend fun deleteCertificates()
+
+    suspend fun addCertificatePlaces(data: List<NewCertificatePlacesModel>)
+
+    suspend fun getCertificatesPlaces() : List<NewCertificatePlacesModel>
+
+    suspend fun deleteCertificatesPlaces()
 
 }

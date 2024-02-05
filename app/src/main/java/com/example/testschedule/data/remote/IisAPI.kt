@@ -107,7 +107,7 @@ interface IisAPI {
     suspend fun getCertificates(@Header("Cookie") cookies: String): List<CertificateItemDto>
 
     @GET("certificate/places") /** Получение список, доступных для заказа **/
-    suspend fun getNewCertificatePlaces(@Header("Cookie") cookies: String): List<NewCertificatePlacesDto>
+    suspend fun getNewCertificatePlaces(): List<NewCertificatePlacesDto>
 
     @POST("certificate/register") /** Заказать справку **/
     fun createCertificate(

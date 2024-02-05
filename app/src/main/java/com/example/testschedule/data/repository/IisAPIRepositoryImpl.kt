@@ -122,8 +122,8 @@ class IisAPIRepositoryImpl @Inject constructor(
     override suspend fun getCertificates(cookies: String): List<CertificateModel> =
         api.getCertificates(cookies).map { it.toModel() }
 
-    override suspend fun getNewCertificatePlaces(cookies: String): List<NewCertificatePlacesModel> =
-        api.getNewCertificatePlaces(cookies).map { it.toModel() }
+    override suspend fun getNewCertificatePlaces(): List<NewCertificatePlacesModel> =
+        api.getNewCertificatePlaces().map { it.toModel() }
 
     override suspend fun createCertificate(
         request: CreateCertificateModel,
@@ -133,4 +133,5 @@ class IisAPIRepositoryImpl @Inject constructor(
 
     override suspend fun closeCertificate(id: Int, cookies: String): Any =
         api.closeCertificate(id, cookies)
+
 }

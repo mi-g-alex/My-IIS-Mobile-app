@@ -1,6 +1,5 @@
 package com.example.testschedule.presentation.account.study_screen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -17,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +42,6 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
@@ -55,6 +54,7 @@ import kotlinx.coroutines.launch
 fun StudyScreen(
     onBackPressed: () -> Unit,
     onLogOut: () -> Unit,
+    goToCreateCertificate: () -> Unit,
     viewModel: StudyViewModel = hiltViewModel()
 ) {
 
@@ -98,25 +98,28 @@ fun StudyScreen(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
 
-            /* item {
-                 val text = stringResource(id = R.string.available_soon)
-                 Button(onClick = {
-                     Toast.makeText(cnt, text, Toast.LENGTH_LONG).show()
-                 }) {
-                     Text(stringResource(id = R.string.account_study_certificates_create))
-                 }
-             }*/
-
             stickyHeader {
                 Box(
                     Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.background)
                 ) {
-                    Text(
-                        stringResource(id = R.string.account_study_certificates_title),
-                        style = MaterialTheme.typography.displaySmall
-                    )
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            stringResource(id = R.string.account_study_certificates_title),
+                            style = MaterialTheme.typography.displaySmall
+                        )
+
+                        Button(onClick = {
+                            goToCreateCertificate()
+                        }
+                        ) {
+                            Text(stringResource(id = R.string.account_study_certificates_create))
+                        }
+                    }
                 }
             }
 

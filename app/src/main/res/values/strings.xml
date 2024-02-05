@@ -92,6 +92,16 @@
     <string name="account_rating_dialog_marks">\nMarks</string>
     <string name="account_rating_dialog_omissions">\nOmissions</string>
     <string name="account_study_title">Study</string>
+    <string name="account_study_certificates_create_select_hint">Place</string>
+    <string name="account_study_certificates_create_title">Create certificate</string>
+    <string name="account_study_certificates_create_herb">Herb print</string>
+    <string name="account_study_certificates_create_herb_desc">Default: Common print</string>
+    <string name="account_study_certificates_create_herb_warn">"* Only Herb print available "</string>
+    <string name="account_study_certificates_create_count">Count: %d</string>
+    <string name="account_study_certificates_create_note">Note</string>
+    <string name="account_study_certificates_create_send">Send</string>
+    <string name="account_study_certificates_create_success">Request send</string>
+    <string name="account_study_certificates_create_error">Something went wrong…</string>
     <string name="account_study_certificates_title">Certificates</string>
     <string name="account_study_certificates_number">Certificate %d %s</string>
     <string name="account_study_certificates_order_date">Order date: %s</string>

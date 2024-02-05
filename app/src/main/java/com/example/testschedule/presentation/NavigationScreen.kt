@@ -1,6 +1,5 @@
 package com.example.testschedule.presentation
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -26,6 +25,7 @@ import com.example.testschedule.presentation.account.omissions_screen.OmissionsS
 import com.example.testschedule.presentation.account.penalty_screen.PenaltyScreen
 import com.example.testschedule.presentation.account.rating_screen.RatingScreen
 import com.example.testschedule.presentation.account.study_screen.StudyScreen
+import com.example.testschedule.presentation.account.study_screen.create.CreateCertificateScreen
 import com.example.testschedule.presentation.auth_screen.AuthScreen
 import com.example.testschedule.presentation.schedule_screen.add_schedule_screen.AddScheduleScreen
 import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.exams.ViewExamsScreen
@@ -50,6 +50,8 @@ object Routes {
     const val ACCOUNT_ANNOUNCEMENT_ROUTE = "ACCOUNT_ANNOUNCEMENT_ROUTE"
     const val ACCOUNT_RATING_ROUTE = "ACCOUNT_RATING_ROUTE"
     const val ACCOUNT_STUDY_ROUTE = "ACCOUNT_STUDY_ROUTE"
+    const val ACCOUNT_STUDY_MAIN_ROUTE = "ACCOUNT_STUDY_MAIN_ROUTE"
+    const val ACCOUNT_STUDY_CREATE_CERTIFICATE_ROUTE = "ACCOUNT_STUDY_CREATE_CERTIFICATE_ROUTE"
 }
 
 @Composable
@@ -57,7 +59,7 @@ fun NavigationScreen(
     navController: NavHostController = rememberNavController()
 ) {
 
-    val examsData : MutableMap<String, ScheduleModel> = mutableMapOf()
+    val examsData: MutableMap<String, ScheduleModel> = mutableMapOf()
 
     val enter = slideInHorizontally(
         initialOffsetX = { 450 },
@@ -371,22 +373,49 @@ fun NavigationScreen(
                     }
                 )
             }
-
-            composable(
+            navigation(
                 route = Routes.ACCOUNT_STUDY_ROUTE,
-                enterTransition = { enter },
-                exitTransition = { out }
+                startDestination = Routes.ACCOUNT_STUDY_MAIN_ROUTE,
             ) {
+                composable(
+                    route = Routes.ACCOUNT_STUDY_MAIN_ROUTE,
+                    enterTransition = { enter },
+                    exitTransition = { out }
+                ) {
+                    StudyScreen(
+                        onBackPressed = { popNav() },
+                        onLogOut = {
+                            navController.popBackStack()
+                            navController.popBackStack()
+                            navController.popBackStack()
+                            navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                        },
+                        goToCreateCertificate = {
+                            navController.navigate(Routes.ACCOUNT_STUDY_CREATE_CERTIFICATE_ROUTE)
+                        }
+                    )
+                }
 
-                StudyScreen(
-                    onBackPressed = { popNav() },
-                    onLogOut = {
-                        navController.popBackStack()
-                        navController.popBackStack()
-                        navController.popBackStack()
-                        navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
-                    }
-                )
+                composable(
+                    route = Routes.ACCOUNT_STUDY_CREATE_CERTIFICATE_ROUTE,
+                    enterTransition = { enter },
+                    exitTransition = { out }
+                ) {
+                    CreateCertificateScreen(
+                        onBackPressed = {
+                            navController.popBackStack()
+                            navController.popBackStack()
+                            navController.navigate(Routes.ACCOUNT_STUDY_MAIN_ROUTE)
+                        },
+                        onLogOut = {
+                            navController.popBackStack()
+                            navController.popBackStack()
+                            navController.popBackStack()
+                            navController.popBackStack()
+                            navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                        },
+                    )
+                }
             }
         }
     }

@@ -6,21 +6,22 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.testschedule.data.local.entity.account.announcement.AnnouncementEntity
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
+import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
 import com.example.testschedule.data.local.entity.account.notifications.NotificationEntity
 import com.example.testschedule.data.local.entity.account.omissions.OmissionsEntity
 import com.example.testschedule.data.local.entity.account.penalty.PenaltyEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
+import com.example.testschedule.data.local.entity.account.study.certificate.CertificateEntity
+import com.example.testschedule.data.local.entity.account.study.certificate.NewCertificatePlacesEntity
 import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
-import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
-import com.example.testschedule.data.local.entity.account.study.certificate.CertificateEntity
 
 @Database(
-    version = 15,
+    version = 16,
     entities = [
         // Schedules
         ScheduleEntity::class,
@@ -45,7 +46,8 @@ import com.example.testschedule.data.local.entity.account.study.certificate.Cert
         // Announcements
         AnnouncementEntity::class,
         // Study
-        CertificateEntity::class
+        CertificateEntity::class,
+        NewCertificatePlacesEntity::class,
     ],
     exportSchema = true,
     autoMigrations = [
@@ -63,6 +65,7 @@ import com.example.testschedule.data.local.entity.account.study.certificate.Cert
         AutoMigration(from = 12, to = 13),
         AutoMigration(from = 13, to = 14),
         AutoMigration(from = 14, to = 15),
+        AutoMigration(from = 15, to = 16),
     ],
 )
 @TypeConverters(Converters::class)

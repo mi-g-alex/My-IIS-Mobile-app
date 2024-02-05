@@ -2,7 +2,7 @@ package com.example.testschedule.domain.model.account.study.certificate
 
 import com.example.testschedule.data.remote.dto.account.study.certificate.CreateCertificateDto
 
-class CreateCertificateModel (
+data class CreateCertificateModel (
     val count: Int, // 1
     val certificate: CreateCertificateItemModel
 ) {
