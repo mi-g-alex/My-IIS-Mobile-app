@@ -1,6 +1,5 @@
 package com.example.testschedule.presentation.account.study_screen.create
 
-import androidx.compose.runtime.clearCompositionErrors
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,7 +10,6 @@ import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.account.study.certificate.CreateCertificatesUseCase
 import com.example.testschedule.domain.use_case.account.study.certificate.GetCertificatesNewPlacesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch

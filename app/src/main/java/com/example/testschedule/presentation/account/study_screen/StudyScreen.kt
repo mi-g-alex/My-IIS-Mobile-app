@@ -3,20 +3,26 @@ package com.example.testschedule.presentation.account.study_screen
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Warning
-import androidx.compose.material3.Button
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +33,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
+import com.example.testschedule.domain.model.account.study.mark_sheet.MarkSheetModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
 import kotlinx.coroutines.launch
 
@@ -55,6 +63,7 @@ fun StudyScreen(
     onBackPressed: () -> Unit,
     onLogOut: () -> Unit,
     goToCreateCertificate: () -> Unit,
+    goToCreateMarkSheet: () -> Unit,
     viewModel: StudyViewModel = hiltViewModel()
 ) {
 
@@ -69,10 +78,13 @@ fun StudyScreen(
         }
     }
 
-    LaunchedEffect(viewModel.cnt.value) { }
+    LaunchedEffect(viewModel.cnt.intValue) { }
 
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
+
+    var collapseMarkSheet by remember { mutableStateOf(true) }
+    var collapseCertificates by remember { mutableStateOf(true) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -102,6 +114,7 @@ fun StudyScreen(
                 Box(
                     Modifier
                         .fillMaxWidth()
+                        .clickable { collapseMarkSheet = !collapseMarkSheet }
                         .background(MaterialTheme.colorScheme.background)
                 ) {
                     Row(
@@ -109,22 +122,117 @@ fun StudyScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            stringResource(id = R.string.account_study_certificates_title),
+                            stringResource(id = R.string.account_study_mark_sheet_title),
                             style = MaterialTheme.typography.displaySmall
                         )
 
-                        Button(onClick = {
-                            goToCreateCertificate()
-                        }
+                        FilledIconButton(
+                            onClick = { goToCreateMarkSheet() }
                         ) {
-                            Text(stringResource(id = R.string.account_study_certificates_create))
+                            Icon(
+                                Icons.Outlined.Add,
+                                stringResource(id = R.string.account_study_mark_sheet_create)
+                            )
                         }
                     }
                 }
             }
+            if (viewModel.markSheets.isNotEmpty()) {
+                viewModel.markSheets.forEachIndexed { index, markSheet ->
+                    if (index > 2 && collapseMarkSheet) return@forEachIndexed
+                    item {
+                        val textSuccess = stringResource(
+                            id = R.string.account_study_mark_sheet_close_success,
+                            markSheet.number
+                        )
+                        val textError = stringResource(
+                            id = R.string.account_study_mark_sheet_close_error,
+                            markSheet.number
+                        )
+                        MarkSheetItemView(
+                            markSheet,
+                        ) {
+                            viewModel.closeMarkSheet(
+                                markSheet.id,
+                                success = {
+                                    scope.launch {
+                                        snackBarHostState.showSnackbar(
+                                            message = textSuccess,
+                                            withDismissAction = true,
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                },
+                                error = {
+                                    scope.launch {
+                                        snackBarHostState.showSnackbar(
+                                            message = textError,
+                                            withDismissAction = true,
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+                if (viewModel.markSheets.size > 3) {
+                    item {
+                        TextButton(onClick = { collapseMarkSheet = !collapseMarkSheet }) {
+                            Icon(
+                                if (collapseMarkSheet)
+                                    Icons.Outlined.KeyboardArrowDown
+                                else
+                                    Icons.Outlined.KeyboardArrowUp,
+                                null
+                            )
+                            Text(stringResource(id = if (!collapseMarkSheet) R.string.less else R.string.more))
+                        }
+                    }
+                }
+            } else {
+                item {
+                    Text(
+                        stringResource(id = R.string.account_study_mark_sheet_no_yet),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
+
+            item { Spacer(modifier = Modifier.height(20.dp)) }
+
+            stickyHeader {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { collapseCertificates = !collapseCertificates }
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+
+                        Text(
+                            stringResource(id = R.string.account_study_certificates_title),
+                            style = MaterialTheme.typography.displaySmall
+                        )
+
+
+                        FilledIconButton(onClick = { goToCreateCertificate() }) {
+                            Icon(
+                                Icons.Outlined.Add,
+                                stringResource(id = R.string.account_study_certificates_create)
+                            )
+                        }
+                    }
+                }
+            }
             if (viewModel.certificates.isNotEmpty()) {
-                viewModel.certificates.forEach { certificate ->
+                viewModel.certificates.forEachIndexed { index, certificate ->
+                    if (index > 2 && collapseCertificates) return@forEachIndexed
                     item {
                         val textSuccess = stringResource(
                             id = R.string.account_study_certificates_close_success,
@@ -161,10 +269,26 @@ fun StudyScreen(
                         }
                     }
                 }
+                if (viewModel.certificates.size > 3) {
+                    item {
+                        TextButton(onClick = { collapseCertificates = !collapseCertificates }) {
+                            Icon(
+                                if (collapseCertificates)
+                                    Icons.Outlined.KeyboardArrowDown
+                                else
+                                    Icons.Outlined.KeyboardArrowUp,
+                                null
+                            )
+                            Text(stringResource(id = if(!collapseCertificates) R.string.less else R.string.more))
+                        }
+                    }
+                }
             } else {
                 item {
                     Text(
-                        stringResource(id = R.string.account_study_certificates_no_yet)
+                        stringResource(id = R.string.account_study_certificates_no_yet),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -273,6 +397,159 @@ fun CertificateItemView(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(stringResource(id = R.string.account_study_certificates_cancel_request))
+                }
+            }
+
+        }
+    }
+}
+
+
+@Composable
+fun MarkSheetItemView(
+    markSheet: MarkSheetModel,
+    onCancelClicked: (id: Int) -> Unit
+) {
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp)
+    ) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+//                val icon = when (certificate.status) {
+//                    1 -> Icons.Outlined.Done
+//                    3 -> Icons.Outlined.Clear
+//                    2 -> ImageVector.vectorResource(id = R.drawable.study_certificate_in_progressing)
+//                    else -> Icons.Outlined.Warning
+//                }
+
+                Text(
+                    text = stringResource(
+                        id = R.string.account_study_mark_sheet_number,
+                        markSheet.number
+                    ),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1.0f)
+                )
+
+//                Icon(
+//                    imageVector = icon,
+//                    contentDescription = stringArrayResource(id = R.array.account_study_certificates_status_array)[certificate.status],
+//                )
+            }
+
+            val statusId = when (markSheet.status) {
+                "обрабатывается" -> 1
+                "оплачена" -> 1
+                "одобрена" -> 3
+                "напечатана" -> 4
+                "отклонена" -> 5
+                else -> 0
+            }
+            val statusText =
+                stringArrayResource(id = R.array.account_study_mark_sheet_status_array)[statusId]
+            Text(
+                text = stringResource(
+                    id = R.string.account_study_mark_sheet_status,
+                    statusText
+                ),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+
+            if ((markSheet.subjectName + markSheet.subjectType).isNotBlank())
+                Text(
+                    text = stringResource(
+                        id = R.string.account_study_mark_sheet_subject,
+                        markSheet.subjectName,
+                        markSheet.subjectType
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+
+            if (markSheet.employeeFIO.isNotBlank())
+                Text(
+                    text = stringResource(
+                        id = R.string.account_study_mark_sheet_employee,
+                        markSheet.employeeFIO
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+
+            if (markSheet.term != 0)
+                Text(
+                    text = stringResource(
+                        id = R.string.account_study_mark_sheet_term,
+                        markSheet.term
+                    ),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+            Text(
+                text = stringResource(
+                    id = if (markSheet.isGoodReason) R.string.account_study_mark_sheet_reason_good else R.string.account_study_mark_sheet_reason_not_good,
+                ),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+
+
+            if (markSheet.absentDate.isNotBlank())
+                Text(
+                    text = stringResource(
+                        id = R.string.account_study_mark_sheet_skip_date,
+                        markSheet.absentDate
+                    ),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+            if (markSheet.price > 0) {
+                Text(
+                    text = stringResource(
+                        id = R.string.account_study_mark_sheet_price,
+                        markSheet.price.toString()
+                    ),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            if (markSheet.createDate.isNotBlank()) {
+                Text(
+                    text = stringResource(
+                        id = R.string.account_study_mark_sheet_create_date,
+                        markSheet.createDate
+                    ),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            if (markSheet.rejectionReason.isNotBlank()) {
+                Text(
+                    text = stringResource(
+                        id = R.string.account_study_mark_sheet_reject_reason,
+                        markSheet.rejectionReason
+                    ),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            if (markSheet.status == "обрабатывается") {
+                OutlinedButton(
+                    onClick = { onCancelClicked(markSheet.id) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(id = R.string.account_study_mark_sheet_cancel_request))
                 }
             }
 

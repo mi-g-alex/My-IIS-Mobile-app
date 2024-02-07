@@ -1,6 +1,6 @@
 package com.example.testschedule.domain.repository
 
-import com.example.testschedule.data.remote.dto.account.study.certificate.CertificateItemDto
+import com.example.testschedule.data.remote.dto.account.study.mark_sheet.additional.MarkSheetTypeModel
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
@@ -15,6 +15,10 @@ import com.example.testschedule.domain.model.account.rating.RatingModel
 import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
 import com.example.testschedule.domain.model.account.study.certificate.CreateCertificateModel
 import com.example.testschedule.domain.model.account.study.certificate.NewCertificatePlacesModel
+import com.example.testschedule.domain.model.account.study.mark_sheet.MarkSheetModel
+import com.example.testschedule.domain.model.account.study.mark_sheet.create.CreateMarkSheetModel
+import com.example.testschedule.domain.model.account.study.mark_sheet.create.MarkSheetSubjectsModel
+import com.example.testschedule.domain.model.account.study.mark_sheet.create.SearchEmployeeMarkSheetModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
@@ -33,13 +37,13 @@ interface IisAPIRepository {
 
 
     // Авторизация
-    suspend fun loginToAccount(username: String, password: String) : Call<UserBasicDataDto?>
+    suspend fun loginToAccount(username: String, password: String): Call<UserBasicDataDto?>
 
 
     // Работа с профилем
 
     // Получение данных об аккаунте
-    suspend fun getAccountProfile(cookies: String) : AccountProfileModel
+    suspend fun getAccountProfile(cookies: String): AccountProfileModel
 
     // Уведомлений
     suspend fun getNotifications(cookies: String): List<NotificationModel>
@@ -72,10 +76,30 @@ interface IisAPIRepository {
     // Учёба
     suspend fun getCertificates(cookies: String): List<CertificateModel>
 
-    suspend fun getNewCertificatePlaces() : List<NewCertificatePlacesModel>
+    suspend fun getNewCertificatePlaces(cookies: String): List<NewCertificatePlacesModel>
 
-    suspend fun createCertificate(request: CreateCertificateModel, cookies: String) : Call<List<CertificateItemDto>>
+    suspend fun createCertificate(
+        request: CreateCertificateModel,
+        cookies: String
+    ): Call<Any>
 
-    suspend fun closeCertificate(id: Int, cookies: String): Any
+    suspend fun closeCertificate(id: Int, cookies: String)
+
+    suspend fun getMarkSheets(cookies: String): List<MarkSheetModel>
+
+    suspend fun closeMarkSheet(id: Int, cookies: String)
+
+    suspend fun createMarkSheet(
+        request: CreateMarkSheetModel,
+        cookies: String
+    ): Call<Any>
+
+    suspend fun getMarkSheetTypes(cookies: String): List<MarkSheetTypeModel>
+
+    suspend fun getMarkSheetSubjects(cookies: String): List<MarkSheetSubjectsModel>
+
+    suspend fun searchEmployeeById(thId: Int?, focsId: Int?, cookies: String): List<SearchEmployeeMarkSheetModel>
+
+    suspend fun searchEmployeeByName(name: String): List<SearchEmployeeMarkSheetModel>
 
 }

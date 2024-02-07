@@ -54,4 +54,13 @@
         <item>In processing</item>
         <item>Rejected</item>
     </string-array>
+
+    <string-array name="account_study_mark_sheet_status_array">
+        <item>Unknown</item>
+        <item>In processing</item>
+        <item>Paid</item>
+        <item>Approved</item>
+        <item>Printed</item>
+        <item>Rejected</item>
+    </string-array>
 </resources>

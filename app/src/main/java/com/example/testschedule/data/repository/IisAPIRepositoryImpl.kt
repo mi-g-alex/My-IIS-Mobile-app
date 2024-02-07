@@ -3,7 +3,7 @@ package com.example.testschedule.data.repository
 import com.example.testschedule.data.remote.IisAPI
 import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.account.notifications.ReadNotificationDto
-import com.example.testschedule.data.remote.dto.account.study.certificate.CertificateItemDto
+import com.example.testschedule.data.remote.dto.account.study.mark_sheet.additional.MarkSheetTypeModel
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
@@ -19,6 +19,10 @@ import com.example.testschedule.domain.model.account.rating.RatingModel
 import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
 import com.example.testschedule.domain.model.account.study.certificate.CreateCertificateModel
 import com.example.testschedule.domain.model.account.study.certificate.NewCertificatePlacesModel
+import com.example.testschedule.domain.model.account.study.mark_sheet.MarkSheetModel
+import com.example.testschedule.domain.model.account.study.mark_sheet.create.CreateMarkSheetModel
+import com.example.testschedule.domain.model.account.study.mark_sheet.create.MarkSheetSubjectsModel
+import com.example.testschedule.domain.model.account.study.mark_sheet.create.SearchEmployeeMarkSheetModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
@@ -122,16 +126,52 @@ class IisAPIRepositoryImpl @Inject constructor(
     override suspend fun getCertificates(cookies: String): List<CertificateModel> =
         api.getCertificates(cookies).map { it.toModel() }
 
-    override suspend fun getNewCertificatePlaces(): List<NewCertificatePlacesModel> =
-        api.getNewCertificatePlaces().map { it.toModel() }
+    override suspend fun getNewCertificatePlaces(cookies: String): List<NewCertificatePlacesModel> =
+        api.getNewCertificatePlaces(cookies).map { it.toModel() }
 
     override suspend fun createCertificate(
         request: CreateCertificateModel,
         cookies: String
-    ): Call<List<CertificateItemDto>> =
+    ): Call<Any> =
         api.createCertificate(request.toDto(), cookies)
 
-    override suspend fun closeCertificate(id: Int, cookies: String): Any =
+    override suspend fun closeCertificate(id: Int, cookies: String) =
         api.closeCertificate(id, cookies)
 
+    override suspend fun getMarkSheets(cookies: String): List<MarkSheetModel> =
+        api.getMarkSheets(cookies).map { it.toModel() }
+
+    override suspend fun closeMarkSheet(id: Int, cookies: String) =
+        api.closeMarkSheet(id, cookies)
+
+    override suspend fun createMarkSheet(
+        request: CreateMarkSheetModel,
+        cookies: String
+    ): Call<Any> =
+        api.createMarkSheet(request.toDto(), cookies)
+
+    override suspend fun getMarkSheetTypes(cookies: String): List<MarkSheetTypeModel> =
+        api.getMarkSheetTypes(cookies).map { it.toModel() }
+
+    override suspend fun getMarkSheetSubjects(cookies: String): List<MarkSheetSubjectsModel> =
+        api.getMarkSheetSubjects(cookies).map { it.toModel() }
+
+    override suspend fun searchEmployeeById(
+        thId: Int?,
+        focsId: Int?,
+        cookies: String
+    ): List<SearchEmployeeMarkSheetModel> {
+        if (thId != null) {
+            return api.searchEmployeeThIdMarkSheet(thId, cookies)?.map { it.toModel() }
+                ?: emptyList()
+        }
+        if (focsId != null) {
+            return api.searchEmployeeFocsIdMarkSheet(focsId, cookies)?.map { it.toModel() }
+                ?: emptyList()
+        }
+        return emptyList()
+    }
+
+    override suspend fun searchEmployeeByName(name: String): List<SearchEmployeeMarkSheetModel> =
+        api.searchEmployeeNameMarkSheet(name)?.map { it.toModel() } ?: emptyList()
 }

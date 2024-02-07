@@ -26,6 +26,7 @@ import com.example.testschedule.presentation.account.penalty_screen.PenaltyScree
 import com.example.testschedule.presentation.account.rating_screen.RatingScreen
 import com.example.testschedule.presentation.account.study_screen.StudyScreen
 import com.example.testschedule.presentation.account.study_screen.create.CreateCertificateScreen
+import com.example.testschedule.presentation.account.study_screen.create.CreateMarkSheetScreen
 import com.example.testschedule.presentation.auth_screen.AuthScreen
 import com.example.testschedule.presentation.schedule_screen.add_schedule_screen.AddScheduleScreen
 import com.example.testschedule.presentation.schedule_screen.view_schedule_screen.exams.ViewExamsScreen
@@ -52,6 +53,7 @@ object Routes {
     const val ACCOUNT_STUDY_ROUTE = "ACCOUNT_STUDY_ROUTE"
     const val ACCOUNT_STUDY_MAIN_ROUTE = "ACCOUNT_STUDY_MAIN_ROUTE"
     const val ACCOUNT_STUDY_CREATE_CERTIFICATE_ROUTE = "ACCOUNT_STUDY_CREATE_CERTIFICATE_ROUTE"
+    const val ACCOUNT_STUDY_CREATE_MARK_SHEET_ROUTE = "ACCOUNT_STUDY_CREATE_MARK_SHEET_ROUTE"
 }
 
 @Composable
@@ -392,6 +394,9 @@ fun NavigationScreen(
                         },
                         goToCreateCertificate = {
                             navController.navigate(Routes.ACCOUNT_STUDY_CREATE_CERTIFICATE_ROUTE)
+                        },
+                        goToCreateMarkSheet = {
+                            navController.navigate(Routes.ACCOUNT_STUDY_CREATE_MARK_SHEET_ROUTE)
                         }
                     )
                 }
@@ -402,6 +407,27 @@ fun NavigationScreen(
                     exitTransition = { out }
                 ) {
                     CreateCertificateScreen(
+                        onBackPressed = {
+                            navController.popBackStack()
+                            navController.popBackStack()
+                            navController.navigate(Routes.ACCOUNT_STUDY_MAIN_ROUTE)
+                        },
+                        onLogOut = {
+                            navController.popBackStack()
+                            navController.popBackStack()
+                            navController.popBackStack()
+                            navController.popBackStack()
+                            navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                        },
+                    )
+                }
+
+                composable(
+                    route = Routes.ACCOUNT_STUDY_CREATE_MARK_SHEET_ROUTE,
+                    enterTransition = { enter },
+                    exitTransition = { out }
+                ) {
+                    CreateMarkSheetScreen(
                         onBackPressed = {
                             navController.popBackStack()
                             navController.popBackStack()

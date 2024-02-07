@@ -13,6 +13,7 @@ import com.example.testschedule.data.local.entity.account.penalty.PenaltyEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.local.entity.account.study.certificate.CertificateEntity
 import com.example.testschedule.data.local.entity.account.study.certificate.NewCertificatePlacesEntity
+import com.example.testschedule.data.local.entity.account.study.mark_sheet.MarkSheetEntity
 import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
@@ -21,7 +22,7 @@ import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
 
 @Database(
-    version = 16,
+    version = 17,
     entities = [
         // Schedules
         ScheduleEntity::class,
@@ -48,6 +49,7 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
         // Study
         CertificateEntity::class,
         NewCertificatePlacesEntity::class,
+        MarkSheetEntity::class
     ],
     exportSchema = true,
     autoMigrations = [
@@ -66,6 +68,7 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
         AutoMigration(from = 13, to = 14),
         AutoMigration(from = 14, to = 15),
         AutoMigration(from = 15, to = 16),
+        AutoMigration(from = 16, to = 17),
     ],
 )
 @TypeConverters(Converters::class)

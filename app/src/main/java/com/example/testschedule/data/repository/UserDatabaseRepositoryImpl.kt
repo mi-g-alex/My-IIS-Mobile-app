@@ -14,6 +14,7 @@ import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
 import com.example.testschedule.domain.model.account.study.certificate.NewCertificatePlacesModel
+import com.example.testschedule.domain.model.account.study.mark_sheet.MarkSheetModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
@@ -187,6 +188,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         dao.deletePenalty()
         dao.deleteAnnouncements()
         dao.deleteCertificates()
+        dao.deleteMarkSheet()
     }
 
 
@@ -304,5 +306,17 @@ class UserDatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun deleteCertificatesPlaces() {
         dao.deleteCertificatesPlaces()
+    }
+
+    override suspend fun addMarkSheet(data: List<MarkSheetModel>) {
+        dao.deleteMarkSheet()
+        dao.addMarkSheet(data.map { it.toEntity() })
+    }
+
+    override suspend fun getMarkSheet(): List<MarkSheetModel> =
+        dao.getMarkSheet().map { it.toModel() }
+
+    override suspend fun deleteMarkSheet() {
+        dao.deleteMarkSheet()
     }
 }

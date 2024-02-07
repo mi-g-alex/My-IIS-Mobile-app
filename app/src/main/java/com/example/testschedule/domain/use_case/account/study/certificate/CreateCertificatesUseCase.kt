@@ -2,7 +2,6 @@ package com.example.testschedule.domain.use_case.account.study.certificate
 
 import android.util.Log
 import com.example.testschedule.common.Resource
-import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
 import com.example.testschedule.domain.model.account.study.certificate.CreateCertificateModel
 import com.example.testschedule.domain.model.auth.LoginAndPasswordModel
 import com.example.testschedule.domain.repository.IisAPIRepository
@@ -23,9 +22,9 @@ class CreateCertificatesUseCase @Inject constructor(
         certificatePlace: String,
         certificateType: String,
         certificateCount: Int,
-    ): Flow<Resource<List<CertificateModel>>> = flow {
+    ): Flow<Resource<Boolean>> = flow {
         try {
-            emit(Resource.Loading<List<CertificateModel>>())
+            emit(Resource.Loading<Boolean>())
 
             val cookie = db.getCookie()
             val certificate = CreateCertificateModel(
@@ -33,10 +32,9 @@ class CreateCertificatesUseCase @Inject constructor(
                     certificateType, certificatePlace
                 )
             )
-            val ans = api.createCertificate(certificate, cookie).awaitResponse()
-            val data = ans.body()?.map { it.toModel() } ?: emptyList()
+            api.createCertificate(certificate, cookie).awaitResponse()
 
-            emit(Resource.Success<List<CertificateModel>>(data))
+            emit(Resource.Success<Boolean>(true))
         } catch (e: HttpException) {
             Log.e("End Of Season", e.toString())
 
@@ -55,26 +53,26 @@ class CreateCertificatesUseCase @Inject constructor(
                         certificateType, certificatePlace
                     )
                 )
-                val ans = api.createCertificate(certificate, cookie).awaitResponse()
-                val data = ans.body()?.map { it.toModel() } ?: emptyList()
 
-                emit(Resource.Success<List<CertificateModel>>(data))
+                api.createCertificate(certificate, cookie).awaitResponse()
+
+                emit(Resource.Success<Boolean>(true))
             } catch (e: IOException) {
                 if (e.toString() == "java.io.EOFException: End of input at line 1 column 1 path \$") {
-                    emit(Resource.Error<List<CertificateModel>>("WrongPassword"))
+                    emit(Resource.Error<Boolean>("WrongPassword"))
                 } else if (e.toString().contains("Unable to resolve host")) {
-                    emit(Resource.Error<List<CertificateModel>>("ConnectionFailed"))
+                    emit(Resource.Error<Boolean>("ConnectionFailed"))
                 } else {
-                    emit(Resource.Error<List<CertificateModel>>("OtherError"))
+                    emit(Resource.Error<Boolean>("OtherError"))
                 }
 
             } catch (e: Exception) {
-                emit(Resource.Error<List<CertificateModel>>("OtherError"))
+                emit(Resource.Error<Boolean>("OtherError"))
             }
         } catch (e: IOException) {
-            emit(Resource.Error<List<CertificateModel>>("ConnectionFailed"))
+            emit(Resource.Error<Boolean>("ConnectionFailed"))
         } catch (e: Exception) {
-            emit(Resource.Error<List<CertificateModel>>("OtherError"))
+            emit(Resource.Error<Boolean>("OtherError"))
         }
 
     }

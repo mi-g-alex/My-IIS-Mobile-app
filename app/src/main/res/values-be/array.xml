@@ -40,4 +40,13 @@
         <item>Обрабатывается</item>
         <item>Отклонено</item>
     </string-array>
+
+    <string-array name="account_study_mark_sheet_status_array">
+        <item>Неизвестно</item>
+        <item>Обрабатывается</item>
+        <item>Оплачена</item>
+        <item>Одобрена</item>
+        <item>Напечатана</item>
+        <item>Отклонена</item>
+    </string-array>
 </resources>

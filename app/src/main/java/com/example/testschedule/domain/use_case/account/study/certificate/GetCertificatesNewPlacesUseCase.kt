@@ -18,8 +18,8 @@ class GetCertificatesNewPlacesUseCase @Inject constructor(
     operator fun invoke(): Flow<Resource<List<NewCertificatePlacesModel>>> = flow {
         try {
             emit(Resource.Loading<List<NewCertificatePlacesModel>>())
-
-            val data = api.getNewCertificatePlaces()
+            val cookies = db.getCookie()
+            val data = api.getNewCertificatePlaces(cookies)
             db.deleteCertificatesPlaces()
             db.addCertificatePlaces(data)
 

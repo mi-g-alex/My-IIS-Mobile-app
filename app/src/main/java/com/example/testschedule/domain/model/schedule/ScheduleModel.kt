@@ -336,11 +336,8 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
 
     val exams = schedule.exams?.map { convertDay(it) }
 
-    Log.e("EXAMS_ADD_SCHEDULE", schedule.studentGroupDto?.name.toString() + listOfWeeks.toString())
     exams?.forEach { exam ->
         exam.weekNumber.forEach { week ->
-            Log.e("EXAMS_ADD_SCHEDULE", listOfWeeks[week - 1].monday.contains(exam).toString())
-            Log.e("EXAMS_ADD_SCHEDULE", exam.toString())
 
             if (!listOfWeeks[week - 1].monday.contains(exam)) {
                 listOfWeeks[week - 1].monday.add(exam)

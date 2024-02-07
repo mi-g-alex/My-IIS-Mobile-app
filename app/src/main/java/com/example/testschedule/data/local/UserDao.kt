@@ -6,19 +6,20 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.testschedule.data.local.entity.account.announcement.AnnouncementEntity
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
+import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
 import com.example.testschedule.data.local.entity.account.notifications.NotificationEntity
 import com.example.testschedule.data.local.entity.account.omissions.OmissionsEntity
 import com.example.testschedule.data.local.entity.account.penalty.PenaltyEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
+import com.example.testschedule.data.local.entity.account.study.certificate.CertificateEntity
+import com.example.testschedule.data.local.entity.account.study.certificate.NewCertificatePlacesEntity
+import com.example.testschedule.data.local.entity.account.study.mark_sheet.MarkSheetEntity
 import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
-import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
-import com.example.testschedule.data.local.entity.account.study.certificate.CertificateEntity
-import com.example.testschedule.data.local.entity.account.study.certificate.NewCertificatePlacesEntity
 import com.example.testschedule.domain.model.schedule.ScheduleModel
 
 @Dao
@@ -183,4 +184,12 @@ interface UserDao {
     @Query("DELETE FROM NewCertificatePlacesEntity")
     suspend fun deleteCertificatesPlaces()
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addMarkSheet(data: List<MarkSheetEntity>)
+
+    @Query("SELECT * FROM MarkSheetEntity")
+    suspend fun getMarkSheet() : List<MarkSheetEntity>
+
+    @Query("DELETE FROM MarkSheetEntity")
+    suspend fun deleteMarkSheet()
 }
