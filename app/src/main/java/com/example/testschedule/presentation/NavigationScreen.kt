@@ -24,6 +24,7 @@ import com.example.testschedule.presentation.account.notifications_screen.Notifi
 import com.example.testschedule.presentation.account.omissions_screen.OmissionsScreen
 import com.example.testschedule.presentation.account.penalty_screen.PenaltyScreen
 import com.example.testschedule.presentation.account.rating_screen.RatingScreen
+import com.example.testschedule.presentation.account.settings.SettingsScreen
 import com.example.testschedule.presentation.account.study_screen.StudyScreen
 import com.example.testschedule.presentation.account.study_screen.create.CreateCertificateScreen
 import com.example.testschedule.presentation.account.study_screen.create.CreateMarkSheetScreen
@@ -41,6 +42,7 @@ object Routes {
     const val LOGIN_SCREEN_ROUTE = "LOGIN_SCREEN_ROUTE"
 
     const val ACCOUNT_ROUTE = "ACCOUNT_ROUTE"
+    const val ACCOUNT_SETTINGS_ROUTE = "ACCOUNT_SETTINGS_ROUTE"
     const val ACCOUNT_MENU_ROUTE = "ACCOUNT_MENU_ROUTE"
     const val ACCOUNT_NOTIFICATIONS_ROUTE = "ACCOUNT_NOTIFICATIONS_ROUTE"
     const val ACCOUNT_DORMITORY_ROUTE = "ACCOUNT_DORMITORY_ROUTE"
@@ -235,6 +237,9 @@ fun NavigationScreen(
                     },
                     goToStudy = {
                         navController.navigate(Routes.ACCOUNT_STUDY_ROUTE)
+                    },
+                    goToSettings = {
+                        navController.navigate(Routes.ACCOUNT_SETTINGS_ROUTE)
                     }
                 )
             }
@@ -245,6 +250,24 @@ fun NavigationScreen(
                 exitTransition = { out }
             ) {
                 NotificationsScreen(
+                    onBackPressed = {
+                        popNav()
+                    },
+                    onLogOut = {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                    }
+                )
+            }
+
+            composable(
+                route = Routes.ACCOUNT_SETTINGS_ROUTE,
+                enterTransition = { enter },
+                exitTransition = { out }
+            ) {
+                SettingsScreen(
                     onBackPressed = {
                         popNav()
                     },

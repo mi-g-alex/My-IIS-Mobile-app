@@ -3,14 +3,15 @@ buildscript {
         mavenCentral()
     }
     ext {
-        compose_ui_version = '1.5.0'
+        compose_ui_version = '1.6.0'
         room_version = '2.6.1'
         lifecycle_version = '2.7.0'
         m3_version = '1.1.2'
-        accompanist_version = '0.32.0'
+        accompanist_version = '0.34.0'
         retrofit2_version = '2.9.0'
         okhttp3_version = '5.0.0-alpha.12'
         kotlinx_coroutines_version = '1.7.3'
+        compose_material_version = '1.6.1'
     }
     dependencies {
         classpath "com.google.dagger:hilt-android-gradle-plugin:2.50"

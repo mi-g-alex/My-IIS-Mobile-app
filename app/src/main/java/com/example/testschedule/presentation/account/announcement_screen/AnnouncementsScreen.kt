@@ -138,7 +138,7 @@ fun AnnouncementItem(
                 )
             }
 
-            if(item.auditory != null) {
+            if (item.auditory != null) {
                 Text(
                     stringResource(
                         id = R.string.account_announcement_place,

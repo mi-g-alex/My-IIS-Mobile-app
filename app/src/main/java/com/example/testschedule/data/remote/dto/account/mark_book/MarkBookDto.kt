@@ -4,7 +4,7 @@ import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 
 data class MarkBookDto(
     val averageMark: Double?, // 9
-    val markPages: Map<Int,MapValue>?,
+    val markPages: Map<Int, MapValue>?,
     val number: String // 25350033
 ) {
     data class MapValue(

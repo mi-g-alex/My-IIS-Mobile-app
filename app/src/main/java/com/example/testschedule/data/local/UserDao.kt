@@ -48,13 +48,13 @@ interface UserDao {
     suspend fun insertAllGroupsList(group: List<ListOfGroupsEntity>)
 
     @Query("SELECT * FROM ListOfGroupsEntity WHERE name= :name")
-    suspend fun getGroupById(name: String) : ListOfGroupsEntity?
+    suspend fun getGroupById(name: String): ListOfGroupsEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllEmployeesList(employee: List<ListOfEmployeesEntity>)
 
     @Query("SELECT * FROM ListOfEmployeesEntity WHERE urlId= :id")
-    suspend fun getEmployeeById(id: String) : ListOfEmployeesEntity?
+    suspend fun getEmployeeById(id: String): ListOfEmployeesEntity?
 
     @Query("SELECT * FROM ListOfGroupsEntity")
     suspend fun getAllGroupsList(): List<ListOfGroupsEntity>
@@ -74,7 +74,7 @@ interface UserDao {
     suspend fun setLoginAndPassword(data: LoginAndPasswordEntity)
 
     @Query("SELECT * FROM LoginAndPasswordEntity LIMIT 1")
-    suspend fun getLoginAndPassword() : LoginAndPasswordEntity
+    suspend fun getLoginAndPassword(): LoginAndPasswordEntity
 
     @Query("DELETE FROM LoginAndPasswordEntity WHERE `key`=0")
     suspend fun deleteLoginAndPassword()
@@ -83,7 +83,7 @@ interface UserDao {
     suspend fun setUserBasicData(data: UserBasicDataEntity)
 
     @Query("SELECT * FROM UserBasicDataEntity WHERE `key`=0")
-    suspend fun getUserBasicData() : UserBasicDataEntity?
+    suspend fun getUserBasicData(): UserBasicDataEntity?
 
     @Query("DELETE FROM UserBasicDataEntity WHERE `key`=0")
     suspend fun deleteUserBasicData()
@@ -96,7 +96,7 @@ interface UserDao {
     suspend fun setAccountProfile(data: AccountProfileEntity)
 
     @Query("SELECT * FROM AccountProfileEntity WHERE `key`=0")
-    suspend fun getAccountProfile() : AccountProfileEntity?
+    suspend fun getAccountProfile(): AccountProfileEntity?
 
     @Query("DELETE FROM AccountProfileEntity WHERE `key`=0")
     suspend fun deleteAccountProfile()
@@ -110,7 +110,7 @@ interface UserDao {
     suspend fun updateNotificationStatus(id: Int, status: Boolean = true)
 
     @Query("SELECT * FROM NotificationEntity")
-    suspend fun getNotifications() : List<NotificationEntity>
+    suspend fun getNotifications(): List<NotificationEntity>
 
     @Query("DELETE FROM NotificationEntity")
     suspend fun deleteNotifications()
@@ -150,7 +150,7 @@ interface UserDao {
     suspend fun addPenalty(data: List<PenaltyEntity>)
 
     @Query("SELECT * FROM PenaltyEntity")
-    suspend fun getPenalty() : List<PenaltyEntity>?
+    suspend fun getPenalty(): List<PenaltyEntity>?
 
     @Query("DELETE FROM PenaltyEntity")
     suspend fun deletePenalty()
@@ -160,7 +160,7 @@ interface UserDao {
     suspend fun addAnnouncement(data: List<AnnouncementEntity>)
 
     @Query("SELECT * FROM AnnouncementEntity")
-    suspend fun getAnnouncements() : List<AnnouncementEntity>
+    suspend fun getAnnouncements(): List<AnnouncementEntity>
 
     @Query("DELETE FROM AnnouncementEntity")
     suspend fun deleteAnnouncements()
@@ -170,7 +170,7 @@ interface UserDao {
     suspend fun addCertificate(data: List<CertificateEntity>)
 
     @Query("SELECT * FROM CertificateEntity")
-    suspend fun getCertificates() : List<CertificateEntity>
+    suspend fun getCertificates(): List<CertificateEntity>
 
     @Query("DELETE FROM CertificateEntity")
     suspend fun deleteCertificates()
@@ -179,7 +179,7 @@ interface UserDao {
     suspend fun addCertificatePlaces(data: List<NewCertificatePlacesEntity>)
 
     @Query("SELECT * FROM NewCertificatePlacesEntity")
-    suspend fun getCertificatesPlaces() : List<NewCertificatePlacesEntity>
+    suspend fun getCertificatesPlaces(): List<NewCertificatePlacesEntity>
 
     @Query("DELETE FROM NewCertificatePlacesEntity")
     suspend fun deleteCertificatesPlaces()
@@ -188,7 +188,7 @@ interface UserDao {
     suspend fun addMarkSheet(data: List<MarkSheetEntity>)
 
     @Query("SELECT * FROM MarkSheetEntity")
-    suspend fun getMarkSheet() : List<MarkSheetEntity>
+    suspend fun getMarkSheet(): List<MarkSheetEntity>
 
     @Query("DELETE FROM MarkSheetEntity")
     suspend fun deleteMarkSheet()

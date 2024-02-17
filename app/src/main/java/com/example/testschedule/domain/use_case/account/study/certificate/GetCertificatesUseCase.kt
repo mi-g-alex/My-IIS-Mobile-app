@@ -24,7 +24,7 @@ class GetCertificatesUseCase @Inject constructor(
 
             val cookie = db.getCookie()
             val data = api.getCertificates(cookie)
-
+            db.addCertificate(data)
             emit(Resource.Success<List<CertificateModel>>(data))
         } catch (e: HttpException) {
             Log.e("End Of Season", e.toString())

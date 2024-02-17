@@ -13,8 +13,8 @@ import javax.inject.Inject
 class GetListOfGroupsUseCase @Inject constructor(
     private val rep: IisAPIRepository,
     private val db: UserDatabaseRepository
-){
-    operator fun invoke() : Flow<Resource<List<ListOfGroupsModel>>> = flow {
+) {
+    operator fun invoke(): Flow<Resource<List<ListOfGroupsModel>>> = flow {
         try {
             emit(Resource.Loading())
             val list = rep.getListOfGroups()

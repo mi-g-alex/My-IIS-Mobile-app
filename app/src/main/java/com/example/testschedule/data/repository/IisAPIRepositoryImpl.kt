@@ -3,6 +3,7 @@ package com.example.testschedule.data.repository
 import com.example.testschedule.data.remote.IisAPI
 import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.account.notifications.ReadNotificationDto
+import com.example.testschedule.data.remote.dto.account.settings.password.ChangePasswordDto
 import com.example.testschedule.data.remote.dto.account.study.mark_sheet.additional.MarkSheetTypeModel
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
@@ -28,6 +29,7 @@ import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.example.testschedule.domain.model.schedule.scheduleFromDtoToModel
 import com.example.testschedule.domain.repository.IisAPIRepository
+import okhttp3.ResponseBody
 import retrofit2.Call
 import javax.inject.Inject
 
@@ -174,4 +176,27 @@ class IisAPIRepositoryImpl @Inject constructor(
 
     override suspend fun searchEmployeeByName(name: String): List<SearchEmployeeMarkSheetModel> =
         api.searchEmployeeNameMarkSheet(name)?.map { it.toModel() } ?: emptyList()
+
+    override suspend fun settingsUpdateBio(profile: AccountProfileModel, cookies: String) {
+        api.settingsUpdateBio(profile.toDto(), cookies)
+    }
+
+    override suspend fun settingsUpdateViewProfile(profile: AccountProfileModel, cookies: String) {
+        api.settingsUpdateViewProfile(profile.toDto(), cookies)
+    }
+
+    override suspend fun settingsUpdateViewRating(profile: AccountProfileModel, cookies: String) {
+        api.settingsUpdateViewRating(profile.toDto(), cookies)
+
+    }
+
+    override suspend fun settingsUpdateViewJob(profile: AccountProfileModel, cookies: String) {
+        api.settingsUpdateViewJob(profile.toDto(), cookies)
+    }
+
+    override suspend fun settingsUpdatePassword(
+        password: ChangePasswordDto,
+        cookies: String
+    ): Call<ResponseBody?> =
+        api.settingsChangePassword(password, cookies)
 }

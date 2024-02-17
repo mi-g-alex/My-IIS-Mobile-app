@@ -16,16 +16,16 @@ data class DormitoryDto(
     val status: String? // Документы приняты | Ожидание | К заселению | Заселён | Отклонена | Выселен
 ) {
     fun toModel() = DormitoryModel(
-        acceptedDate =  this.acceptedDate,
-        applicationDate =  this.applicationDate,
-        docContent =  this.docContent,
-        docReference =  this.docReference,
-        id =  this.id,
-        number =  this.number,
-        numberInQueue =  this.numberInQueue,
-        rejectionReason =  this.rejectionReason,
-        roomInfo =  this.roomInfo,
-        settledDate =  this.settledDate,
-        status =  this.status,
+        acceptedDate = this.acceptedDate,
+        applicationDate = this.applicationDate,
+        docContent = this.docContent,
+        docReference = this.docReference,
+        id = this.id,
+        number = this.number,
+        numberInQueue = this.numberInQueue,
+        rejectionReason = this.rejectionReason,
+        roomInfo = this.roomInfo,
+        settledDate = this.settledDate,
+        status = this.status,
     )
 }

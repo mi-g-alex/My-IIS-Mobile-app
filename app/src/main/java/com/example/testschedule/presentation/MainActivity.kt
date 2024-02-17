@@ -50,7 +50,7 @@ class PreviewActivity : ComponentActivity() {
         val appLinkIntent: Intent = intent
         val appLinkData: Uri? = appLinkIntent.data
 
-        val examsData : MutableMap<String, ScheduleModel> = mutableMapOf()
+        val examsData: MutableMap<String, ScheduleModel> = mutableMapOf()
 
         setContent {
             val navController = rememberNavController()
@@ -68,7 +68,7 @@ class PreviewActivity : ComponentActivity() {
                         startDestination = Routes.SCHEDULE_HOME_ROUTE
                     ) {
                         composable(
-                          route = Routes.SCHEDULE_HOME_ROUTE
+                            route = Routes.SCHEDULE_HOME_ROUTE
                         ) { entry ->
                             val id = entry.arguments?.getString("id")
                             val title = entry.arguments?.getString("title") ?: id
@@ -76,8 +76,9 @@ class PreviewActivity : ComponentActivity() {
                                 goBackSet = { _, _ ->
                                 },
                                 scheduleId = id ?: appLinkData?.lastPathSegment ?: "",
-                                titleLink = title ?: appLinkData?.lastPathSegment ?: "Плохая ссылка",
-                                navToExams = {exams ->
+                                titleLink = title ?: appLinkData?.lastPathSegment
+                                ?: "Плохая ссылка",
+                                navToExams = { exams ->
                                     examsData[exams.id] = exams
                                     navController.navigate("SCHEDULE_EXAMS_VIEW/" + exams.id)
                                 },
@@ -92,20 +93,24 @@ class PreviewActivity : ComponentActivity() {
                         }
                         composable(
                             route = Routes.SCHEDULE_EXAMS_VIEW_ROUTE,
-                            enterTransition = { slideInHorizontally(
-                                initialOffsetX = { 450 },
-                                animationSpec = tween(
-                                    durationMillis = 250,
-                                    easing = FastOutSlowInEasing
-                                )
-                            ) + fadeIn(animationSpec = tween(250)) },
-                            exitTransition = { slideOutHorizontally(
-                                targetOffsetX = { 450 },
-                                animationSpec = tween(
-                                    durationMillis = 250,
-                                    easing = FastOutSlowInEasing
-                                )
-                            ) + fadeOut(animationSpec = tween(250)) }
+                            enterTransition = {
+                                slideInHorizontally(
+                                    initialOffsetX = { 450 },
+                                    animationSpec = tween(
+                                        durationMillis = 250,
+                                        easing = FastOutSlowInEasing
+                                    )
+                                ) + fadeIn(animationSpec = tween(250))
+                            },
+                            exitTransition = {
+                                slideOutHorizontally(
+                                    targetOffsetX = { 450 },
+                                    animationSpec = tween(
+                                        durationMillis = 250,
+                                        easing = FastOutSlowInEasing
+                                    )
+                                ) + fadeOut(animationSpec = tween(250))
+                            }
                         ) { entry ->
                             val id = entry.arguments?.getString("id") ?: ""
                             val exams = examsData[id]

@@ -63,16 +63,18 @@ class CreateCertificateViewModel @Inject constructor(
     fun createCertificate(onSuccess: () -> Unit, onError: () -> Unit) {
         val place =
             selectedPlace.value + (if (noteText.value.isNotEmpty() && selectedPlaceType.intValue !in (1..2)) " (" + noteText.value + ")" else "")
-        val type = if(isHerbOption.value) "гербовая" else "обычная"
+        val type = if (isHerbOption.value) "гербовая" else "обычная"
         val count = countOfCertificates.intValue
         createCertificatesUseCase.invoke(place, type, count).onEach { res ->
-            when(res) {
+            when (res) {
                 is Resource.Success -> {
                     onSuccess()
                 }
+
                 is Resource.Loading -> {
                     isLoading.value = true
                 }
+
                 is Resource.Error -> {
                     isLoading.value = false
                     errorText.value = res.message.toString()

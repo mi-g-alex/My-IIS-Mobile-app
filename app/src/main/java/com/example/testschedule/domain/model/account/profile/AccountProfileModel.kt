@@ -1,6 +1,7 @@
 package com.example.testschedule.domain.model.account.profile
 
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
+import com.example.testschedule.data.remote.dto.account.profile.AccountProfileDto
 
 data class AccountProfileModel(
     val id: Int?, // 152xx
@@ -29,9 +30,15 @@ data class AccountProfileModel(
         val reference: String // t.me/xxxxx
     ) {
         fun toEntity() = AccountProfileEntity.Reference(
-            id = this.id,
-            name = this.name,
-            reference = this.reference
+            id = id,
+            name = name,
+            reference = reference
+        )
+
+        fun toDto() = AccountProfileDto.ReferenceDto(
+            id = id,
+            name = name,
+            reference = reference
         )
     }
 
@@ -40,31 +47,58 @@ data class AccountProfileModel(
         val name: String // C/C++
     ) {
         fun toEntity() = AccountProfileEntity.Skill(
-            id = this.id,
-            name = this.name
+            id = id,
+            name = name
+        )
+
+        fun toDto() = AccountProfileDto.SkillDto(
+            id = id,
+            name = name
         )
     }
 
-    fun toEntity()  = AccountProfileEntity(
+    fun toEntity() = AccountProfileEntity(
         key = 0,
-        birthDate = this.birthDate,
-        course = this.course,
-        faculty = this.faculty,
-        firstName = this.firstName,
-        id = this.id,
-        lastName = this.lastName,
-        middleName = this.middleName,
-        outlookLogin = this.outlookLogin,
-        outlookPassword = this.outlookPassword,
-        photoUrl = this.photoUrl,
-        rating = this.rating,
-        references = this.references.map { it.toEntity() },
-        settingPublished = this.settingPublished,
-        settingSearchJob = this.settingSearchJob,
-        settingShowRating = this.settingShowRating,
-        skills = this.skills.map { it.toEntity() },
-        speciality = this.speciality,
-        group = this.group,
-        bio = this.bio,
+        birthDate = birthDate,
+        course = course,
+        faculty = faculty,
+        firstName = firstName,
+        id = id,
+        lastName = lastName,
+        middleName = middleName,
+        outlookLogin = outlookLogin,
+        outlookPassword = outlookPassword,
+        photoUrl = photoUrl,
+        rating = rating,
+        references = references.map { it.toEntity() },
+        settingPublished = settingPublished,
+        settingSearchJob = settingSearchJob,
+        settingShowRating = settingShowRating,
+        skills = skills.map { it.toEntity() },
+        speciality = speciality,
+        group = group,
+        bio = bio,
+    )
+
+    fun toDto() = AccountProfileDto(
+        birthDate = birthDate,
+        course = course,
+        faculty = faculty,
+        firstName = firstName,
+        id = id,
+        lastName = lastName,
+        middleName = middleName,
+        officeEmail = outlookLogin,
+        officePassword = outlookPassword,
+        photoUrl = photoUrl,
+        rating = rating,
+        references = references.map { it.toDto() },
+        published = settingPublished,
+        searchJob = settingSearchJob,
+        showRating = settingShowRating,
+        skills = skills.map { it.toDto() },
+        speciality = speciality,
+        studentGroup = group,
+        summary = bio,
     )
 }

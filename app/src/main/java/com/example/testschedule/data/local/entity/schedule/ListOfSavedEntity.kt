@@ -8,5 +8,5 @@ data class ListOfSavedEntity(
     @PrimaryKey
     val id: String,
     val isGroup: Boolean,
-    val title : String
+    val title: String
 )

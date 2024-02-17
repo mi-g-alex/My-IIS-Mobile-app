@@ -11,6 +11,7 @@ import com.example.testschedule.data.remote.dto.account.omissions.OmissionsDto
 import com.example.testschedule.data.remote.dto.account.penalty.PenaltyDto
 import com.example.testschedule.data.remote.dto.account.profile.AccountProfileDto
 import com.example.testschedule.data.remote.dto.account.rating.RatingDto
+import com.example.testschedule.data.remote.dto.account.settings.password.ChangePasswordDto
 import com.example.testschedule.data.remote.dto.account.study.certificate.CertificateItemDto
 import com.example.testschedule.data.remote.dto.account.study.certificate.CreateCertificateDto
 import com.example.testschedule.data.remote.dto.account.study.certificate.NewCertificatePlacesDto
@@ -24,12 +25,14 @@ import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.data.remote.dto.schedule_view.ListOfEmployeesDto
 import com.example.testschedule.data.remote.dto.schedule_view.ListOfGroupsDto
 import com.example.testschedule.data.remote.dto.schedule_view.ScheduleDto
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -157,7 +160,7 @@ interface IisAPI {
     fun createMarkSheet(
         @Body request: CreateMarkSheetDto,
         @Header("Cookie") cookieValue: String
-    ) : Call<Any>
+    ): Call<Any>
 
     @GET("mark-sheet/types")
     /** Получение списка типов справок **/
@@ -186,6 +189,42 @@ interface IisAPI {
     suspend fun searchEmployeeNameMarkSheet(
         @Query("employee-fio") id: String
     ): List<SearchEmployeeMarkSheetDto>?
+
+    // Настройки
+    @PUT("profiles/summary")
+    /** Обновление "О себе"**/
+    suspend fun settingsUpdateBio(
+        @Body profile: AccountProfileDto,
+        @Header("Cookie") cookies: String
+    )
+
+    @PUT("profiles/personal-cv-published")
+    /** Обновление настройки профиль **/
+    suspend fun settingsUpdateViewProfile(
+        @Body profile: AccountProfileDto,
+        @Header("Cookie") cookies: String
+    )
+
+    @PUT("profiles/personal-cv-rating")
+    /** Обновление настройки рейтинг **/
+    suspend fun settingsUpdateViewRating(
+        @Body profile: AccountProfileDto,
+        @Header("Cookie") cookies: String
+    )
+
+    @PUT("profiles/personal-cv-searching-job")
+    /** Обновление настройки работа **/
+    suspend fun settingsUpdateViewJob(
+        @Body profile: AccountProfileDto,
+        @Header("Cookie") cookies: String
+    )
+
+    @POST("settings/password/change")
+            /** Смена пароля аккаунта **/
+    fun settingsChangePassword(
+        @Body password: ChangePasswordDto,
+        @Header("Cookie") cookieValue: String
+    ): Call<ResponseBody?>
 
 }
 

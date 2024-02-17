@@ -37,7 +37,7 @@ class AccountProfileViewModel @Inject constructor(
         getNotifications()
     }
 
-    private fun getUserAccountInfo() {
+    fun getUserAccountInfo() {
         isLoading.value = true
         viewModelScope.launch {
             basicInfo.value = db.getUserBasicData()
@@ -50,9 +50,6 @@ class AccountProfileViewModel @Inject constructor(
                     isLoading.value = isLoadingAccount.value || isLoadingNotifications.value
                     userInfo.value = res.data
                     errorText.value = ""
-                    viewModelScope.launch {
-                        res.data?.let { db.setAccountProfile(it) }
-                    }
                 }
 
                 is Resource.Error -> {
@@ -76,38 +73,38 @@ class AccountProfileViewModel @Inject constructor(
     }
 
     fun getNotifications() {
-        viewModelScope.launch {
-            notificationsCount.intValue = db.getNotifications().filter { i -> !i.isViewed }.size
-        }
-        getNotificationsUseCase().onEach { res ->
-            when (res) {
-                is Resource.Success -> {
-                    isLoadingNotifications.value = false
-                    isLoading.value = isLoadingAccount.value || isLoadingNotifications.value
-                    res.data?.let {
-                        notificationsCount.intValue = it.filter { i -> !i.isViewed }.size
-                    }
-                    errorText.value = ""
+        /*        viewModelScope.launch {
+                    notificationsCount.intValue = db.getNotifications().filter { i -> !i.isViewed }.size
                 }
+                getNotificationsUseCase().onEach { res ->
+                    when (res) {
+                        is Resource.Success -> {
+                            isLoadingNotifications.value = false
+                            isLoading.value = isLoadingAccount.value || isLoadingNotifications.value
+                            res.data?.let {
+                                notificationsCount.intValue = it.filter { i -> !i.isViewed }.size
+                            }
+                            errorText.value = ""
+                        }
 
-                is Resource.Error -> {
-                    isLoadingNotifications.value = false
-                    isLoading.value = isLoadingAccount.value || isLoadingNotifications.value
-                    errorText.value = res.message.toString()
-                    if (errorText.value == "WrongPassword") {
-                        viewModelScope.launch {
-                            db.deleteUserBasicData()
+                        is Resource.Error -> {
+                            isLoadingNotifications.value = false
+                            isLoading.value = isLoadingAccount.value || isLoadingNotifications.value
+                            errorText.value = res.message.toString()
+                            if (errorText.value == "WrongPassword") {
+                                viewModelScope.launch {
+                                    db.deleteUserBasicData()
+                                }
+                            }
+                        }
+
+                        is Resource.Loading -> {
+                            isLoading.value = true
+                            isLoadingNotifications.value = true
+                            errorText.value = ""
                         }
                     }
-                }
-
-                is Resource.Loading -> {
-                    isLoading.value = true
-                    isLoadingNotifications.value = true
-                    errorText.value = ""
-                }
-            }
-        }.launchIn(viewModelScope)
+                }.launchIn(viewModelScope)*/
     }
 
     fun exit() {

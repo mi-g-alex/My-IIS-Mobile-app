@@ -34,7 +34,7 @@ class AuthViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            if(db.getAllGroupsList().isEmpty()) {
+            if (db.getAllGroupsList().isEmpty()) {
                 getListOfGroupsUseCase().launchIn(viewModelScope)
                 getListOfEmployeesUseCase().launchIn(viewModelScope)
             }

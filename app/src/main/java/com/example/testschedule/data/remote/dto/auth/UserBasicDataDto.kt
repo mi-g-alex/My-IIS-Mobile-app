@@ -16,7 +16,7 @@ data class UserBasicDataDto(
 ) {
     fun toModel(cookie: String): UserBasicDataModel = UserBasicDataModel(
         canStudentNote = this.canStudentNote,
-        email= this.email,
+        email = this.email,
         fio = this.fio,
         group = this.group,
         hasNotConfirmedContact = this.hasNotConfirmedContact,

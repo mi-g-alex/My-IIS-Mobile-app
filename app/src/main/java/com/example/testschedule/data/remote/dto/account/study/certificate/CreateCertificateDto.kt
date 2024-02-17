@@ -1,6 +1,6 @@
 package com.example.testschedule.data.remote.dto.account.study.certificate
 
-data class CreateCertificateDto (
+data class CreateCertificateDto(
     val certificateCount: Int, // 1
     val certificateRequestDto: CreateCertificateItemDto?
 ) {

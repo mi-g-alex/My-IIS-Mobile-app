@@ -10,7 +10,7 @@ data class ScheduleDto(
     val startExamsDate: String?,
     val endExamsDate: String?,
     val employeeDto: EmployeeDto?,
-    val studentGroupDto : StudentGroupDto?,
+    val studentGroupDto: StudentGroupDto?,
     val schedules: SchedulesDto?,
     val previousSchedules: SchedulesDto?,
     val exams: List<SchedulesDto.SchedulesItemDto>?
@@ -45,17 +45,17 @@ data class ScheduleDto(
 
     data class SchedulesDto(
         @SerializedName("Понедельник")
-        val monday : List<SchedulesItemDto>?,
+        val monday: List<SchedulesItemDto>?,
         @SerializedName("Вторник")
-        val tuesday : List<SchedulesItemDto>?,
+        val tuesday: List<SchedulesItemDto>?,
         @SerializedName("Среда")
-        val wednesday : List<SchedulesItemDto>?,
+        val wednesday: List<SchedulesItemDto>?,
         @SerializedName("Четверг")
-        val thursday : List<SchedulesItemDto>?,
+        val thursday: List<SchedulesItemDto>?,
         @SerializedName("Пятница")
-        val friday : List<SchedulesItemDto>?,
+        val friday: List<SchedulesItemDto>?,
         @SerializedName("Суббота")
-        val saturday : List<SchedulesItemDto>?,
+        val saturday: List<SchedulesItemDto>?,
     ) {
         data class SchedulesItemDto(
             val auditories: List<String>?,
@@ -67,7 +67,7 @@ data class ScheduleDto(
             val studentGroups: List<StudentGroupsItemDto>,
             val subject: String?,
             val subjectFullName: String?,
-            val weekNumber : List<Int>?,
+            val weekNumber: List<Int>?,
             val employees: List<EmployeeDto>?,
             val dateLesson: String?,
             val startLessonDate: String?,

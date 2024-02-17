@@ -17,19 +17,18 @@ class GetCertificatesNewPlacesUseCase @Inject constructor(
 
     operator fun invoke(): Flow<Resource<List<NewCertificatePlacesModel>>> = flow {
         try {
-            emit(Resource.Loading<List<NewCertificatePlacesModel>>())
+            emit(Resource.Loading())
             val cookies = db.getCookie()
             val data = api.getNewCertificatePlaces(cookies)
             db.deleteCertificatesPlaces()
             db.addCertificatePlaces(data)
-
-            emit(Resource.Success<List<NewCertificatePlacesModel>>(data))
+            emit(Resource.Success(data))
         } catch (e: HttpException) {
-            emit(Resource.Error<List<NewCertificatePlacesModel>>("HttpError"))
+            emit(Resource.Error("ConnectionFailed"))
         } catch (e: IOException) {
-            emit(Resource.Error<List<NewCertificatePlacesModel>>("ConnectionFailed"))
+            emit(Resource.Error("ConnectionFailed"))
         } catch (e: Exception) {
-            emit(Resource.Error<List<NewCertificatePlacesModel>>("OtherError"))
+            emit(Resource.Error("OtherError"))
         }
 
     }

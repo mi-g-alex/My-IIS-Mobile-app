@@ -2,7 +2,7 @@ package com.example.testschedule.presentation.account.additional_elements
 
 import android.widget.Toast
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -37,7 +37,7 @@ fun BasicTopBar(
         navigationIcon = {
             IconButton(onClick = onBackPressed, enabled = enabled) {
                 Icon(
-                    Icons.Default.ArrowBack,
+                    Icons.AutoMirrored.Filled.ArrowBack,
                     title
                 )
             }

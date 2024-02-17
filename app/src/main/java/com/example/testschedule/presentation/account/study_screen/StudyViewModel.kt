@@ -46,19 +46,17 @@ class StudyViewModel @Inject constructor(
             certificates.addAll(db.getCertificates().sortedByDescending { it.id })
         }
         getCertificatesUseCase().onEach { res ->
-            when(res){
+            when (res) {
                 is Resource.Success -> {
                     isLoading.value = false
                     res.data?.let {
                         certificates.clear()
                         certificates.addAll(it.sortedByDescending { i -> i.id })
-                        viewModelScope.launch {
-                            db.addCertificate(it)
-                        }
                     }
                     cnt.intValue++
                     errorText.value = ""
                 }
+
                 is Resource.Error -> {
                     isLoading.value = false
                     errorText.value = res.message.toString()
@@ -68,6 +66,7 @@ class StudyViewModel @Inject constructor(
                         }
                     }
                 }
+
                 is Resource.Loading -> {
                     errorText.value = ""
                     isLoading.value = true
@@ -82,19 +81,17 @@ class StudyViewModel @Inject constructor(
             markSheets.addAll(db.getMarkSheet().sortedByDescending { it.id })
         }
         getMarkSheetUseCase().onEach { res ->
-            when(res){
+            when (res) {
                 is Resource.Success -> {
                     isLoading.value = false
                     res.data?.let {
                         markSheets.clear()
                         markSheets.addAll(it.sortedByDescending { i -> i.id })
-                        viewModelScope.launch {
-                            db.addMarkSheet(it)
-                        }
                     }
                     cnt.intValue++
                     errorText.value = ""
                 }
+
                 is Resource.Error -> {
                     isLoading.value = false
                     errorText.value = res.message.toString()
@@ -104,6 +101,7 @@ class StudyViewModel @Inject constructor(
                         }
                     }
                 }
+
                 is Resource.Loading -> {
                     errorText.value = ""
                     isLoading.value = true
@@ -114,7 +112,7 @@ class StudyViewModel @Inject constructor(
 
     fun closeCertificate(id: Int, success: () -> Unit, error: () -> Unit) {
         closeCertificateUseCase(id).onEach { res ->
-            when(res) {
+            when (res) {
                 is Resource.Success -> {
                     success()
                     isLoading.value = false
@@ -135,7 +133,7 @@ class StudyViewModel @Inject constructor(
 
     fun closeMarkSheet(id: Int, success: () -> Unit, error: () -> Unit) {
         closeMarkSheetUseCase(id).onEach { res ->
-            when(res) {
+            when (res) {
                 is Resource.Success -> {
                     success()
                     isLoading.value = false

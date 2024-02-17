@@ -40,10 +40,10 @@ fun getLessons(
 
 fun getExams(
     all: List<ScheduleModel.WeeksSchedule.Lesson>,
-) : List<ExamDay> {
+): List<ExamDay> {
     val list = mutableListOf<ExamDay>()
     all.forEach {
-        if(it.dateLesson != null) {
+        if (it.dateLesson != null) {
             val cal = GregorianCalendar()
             cal.timeInMillis = it.dateLesson
             list.add(
@@ -77,7 +77,8 @@ fun getLessonByDate(
         currentWeekMonday.timeInMillis -= (cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY) * 24 * 60 * 60 * 1000
     }
 
-    var currWeek = (week + ((currentWeekMonday.timeInMillis - lastUpdate) / 1000 / 60 / 60 / 24 / 7).toInt()) % 4
+    var currWeek =
+        (week + ((currentWeekMonday.timeInMillis - lastUpdate) / 1000 / 60 / 60 / 24 / 7).toInt()) % 4
     if (currWeek < 0) currWeek += 4
     if (currWeek == 0) currWeek = 4
 

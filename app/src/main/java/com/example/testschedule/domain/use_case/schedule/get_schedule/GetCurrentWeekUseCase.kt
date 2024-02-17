@@ -11,7 +11,7 @@ import javax.inject.Inject
 class GetCurrentWeekUseCase @Inject constructor(
     private val rep: IisAPIRepository
 ) {
-    operator fun invoke() : Flow<Resource<Int>> = flow {
+    operator fun invoke(): Flow<Resource<Int>> = flow {
         try {
             emit(Resource.Loading())
             val list = rep.getCurrentWeek()

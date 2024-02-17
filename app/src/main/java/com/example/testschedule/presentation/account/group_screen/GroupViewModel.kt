@@ -44,7 +44,7 @@ class GroupViewModel @Inject constructor(
                 is Resource.Error -> {
                     isLoading.value = false
                     errorText.value = res.message.toString()
-                    if(errorText.value == "WrongPassword") {
+                    if (errorText.value == "WrongPassword") {
                         viewModelScope.launch {
                             db.deleteUserBasicData()
                         }

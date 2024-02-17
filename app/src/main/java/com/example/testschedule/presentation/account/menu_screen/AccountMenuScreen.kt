@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.ExitToApp
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -62,6 +63,7 @@ fun AccountMenuScreen(
     goToAnnouncements: () -> Unit,
     goToRating: () -> Unit,
     goToStudy: () -> Unit,
+    goToSettings: () -> Unit,
     viewModel: AccountProfileViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -81,7 +83,7 @@ fun AccountMenuScreen(
         topBar = {
             AccountMenuTopAppBar(
                 onCloseClicked = { goBack() },
-                onSettingsClicked = {},
+                onSettingsClicked = { goToSettings() },
                 onExitClicked = { viewModel.exit(); goBack() },
                 isOfflineResult = viewModel.isLoading.value || viewModel.errorText.value.isNotEmpty(),
                 onNotificationClicked = goToNotifications,
@@ -92,7 +94,7 @@ fun AccountMenuScreen(
             }
         }
     ) {
-        if (viewModel.userInfo.value != null)
+        if (viewModel.userInfo.value != null) {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
@@ -163,6 +165,16 @@ fun AccountMenuScreen(
                     ) { goToPenalty() }
                 }
             }
+        } else {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                IconButton(onClick = { viewModel.getUserAccountInfo() }) {
+                    Icon(
+                        Icons.Outlined.Refresh,
+                        null
+                    )
+                }
+            }
+        }
     }
 }
 

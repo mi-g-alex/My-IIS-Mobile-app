@@ -1,6 +1,5 @@
 package com.example.testschedule.domain.model.schedule
 
-import android.util.Log
 import com.example.testschedule.data.remote.dto.schedule_view.ScheduleDto
 import com.example.testschedule.domain.model.schedule.ScheduleModel.EmployeeInfo
 import com.example.testschedule.domain.model.schedule.ScheduleModel.StudentGroupInfo
@@ -433,7 +432,7 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
     }
 
     if (startLessonsDate != null && firstDayOfLessonsManually != null) {
-        if (firstDayOfLessonsManually!!  < startLessonsDate) {
+        if (firstDayOfLessonsManually!! < startLessonsDate) {
             startLessonsDate = firstDayOfLessonsManually
         }
     } else {

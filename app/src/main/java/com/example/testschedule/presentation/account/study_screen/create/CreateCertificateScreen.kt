@@ -222,7 +222,8 @@ fun CreateCertificateScreen(
                         .padding(16.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    val createErrorText = stringResource(id = R.string.account_study_certificates_create_error)
+                    val createErrorText =
+                        stringResource(id = R.string.account_study_certificates_create_error)
                     Button(
                         onClick = {
                             viewModel.createCertificate(

@@ -78,7 +78,7 @@ fun MyTopAppBar(
             )
         },
         navigationIcon = {
-            if(!isPrev) IconButton(onClick = navIconClicked) {
+            if (!isPrev) IconButton(onClick = navIconClicked) {
                 Icon(
                     Icons.Outlined.Menu,
                     stringResource(id = R.string.schedule_open_list_of_saved_desc)
@@ -97,8 +97,8 @@ fun MyTopAppBar(
                     )
                 }
             }
-            if(!isPrev) IconButton(onClick = {
-                if(userData.value != null) {
+            if (!isPrev) IconButton(onClick = {
+                if (userData.value != null) {
                     goToProfile()
                 } else {
                     goToAuth()

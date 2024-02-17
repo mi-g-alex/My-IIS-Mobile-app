@@ -1,7 +1,5 @@
 package com.example.testschedule.domain.model.account.study.mark_sheet.create
 
-import com.example.testschedule.data.remote.dto.account.study.mark_sheet.create.SubjectsMarkSheetItemDto
-
 data class MarkSheetSubjectsModel(
     val abbrev: String, // АВС
     val etId: Int, // 230234

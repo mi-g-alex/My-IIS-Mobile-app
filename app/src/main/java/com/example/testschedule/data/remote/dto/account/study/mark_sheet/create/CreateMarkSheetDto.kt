@@ -20,6 +20,7 @@ data class CreateMarkSheetDto(
             focsId = focsId, thId = thId
         )
     }
+
     fun toModel() = CreateMarkSheetModel(
         subject = subject.toModel(),
         price = price,

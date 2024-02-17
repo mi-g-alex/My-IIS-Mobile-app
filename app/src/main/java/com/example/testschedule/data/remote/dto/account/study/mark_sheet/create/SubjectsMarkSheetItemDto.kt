@@ -33,7 +33,7 @@ data class SubjectsMarkSheetItemDto(
     fun toModel() = MarkSheetSubjectsModel(
         abbrev = abbrev ?: "",
         etId = etId ?: 0,
-        lessonTypes = lessonTypes?.map {it.toModel()} ?: emptyList(),
+        lessonTypes = lessonTypes?.map { it.toModel() } ?: emptyList(),
         term = term ?: 0
-        )
+    )
 }

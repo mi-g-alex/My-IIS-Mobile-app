@@ -15,9 +15,9 @@ data class AccountProfileDto(
     val officeEmail: String?, // emailhere@study.bsuir.by
     val officePassword: String?, // password here
     val photoUrl: String?, // https://drive.google.com/uc?id=1yRyNQ0sEVx3gnnzta...
-    val published: Boolean?, // true
     val rating: Int?, // 5
     val references: List<ReferenceDto>?,
+    val published: Boolean?, // true
     val searchJob: Boolean?, // false
     val showRating: Boolean?, // true
     val skills: List<SkillDto>?,

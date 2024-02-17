@@ -19,7 +19,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
@@ -184,7 +184,7 @@ fun AddScheduleScreen(
                 }
             }
         }
-        if(vm.showInfoDialog.value) {
+        if (vm.showInfoDialog.value) {
             MoreDetailsAboutSchedule(
                 closeDialog = { vm.showInfoDialog.value = false },
                 isGroup = isGroup,
@@ -636,7 +636,7 @@ fun MySearchBar(
                     if (active) active = false else goBack(); if (!active) text = ""
                 }) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back"
                     )
                 }

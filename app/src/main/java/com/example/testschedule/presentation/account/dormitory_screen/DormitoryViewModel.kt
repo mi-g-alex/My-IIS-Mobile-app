@@ -50,7 +50,7 @@ class DormitoryViewModel @Inject constructor(
                     isDormitoryLoading.value = false
                     isLoading.value = isDormitoryLoading.value || isPrivilegesLoading.value
                     errorText.value = res.message.toString()
-                    if(errorText.value == "WrongPassword") {
+                    if (errorText.value == "WrongPassword") {
                         viewModelScope.launch {
                             db.deleteUserBasicData()
                         }
@@ -80,7 +80,7 @@ class DormitoryViewModel @Inject constructor(
                     isPrivilegesLoading.value = false
                     isLoading.value = isDormitoryLoading.value || isPrivilegesLoading.value
                     errorText.value = res.message.toString()
-                    if(errorText.value == "WrongPassword") {
+                    if (errorText.value == "WrongPassword") {
                         viewModelScope.launch {
                             db.deleteUserBasicData()
                         }

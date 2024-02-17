@@ -13,8 +13,8 @@ import javax.inject.Inject
 class GetListOfEmployeesUseCase @Inject constructor(
     private val rep: IisAPIRepository,
     private val db: UserDatabaseRepository,
-){
-    operator fun invoke() : Flow<Resource<List<ListOfEmployeesModel>>> = flow {
+) {
+    operator fun invoke(): Flow<Resource<List<ListOfEmployeesModel>>> = flow {
         try {
             emit(Resource.Loading())
             val list = rep.getListOfEmployees()

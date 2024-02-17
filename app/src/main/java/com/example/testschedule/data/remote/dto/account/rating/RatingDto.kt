@@ -1,6 +1,5 @@
 package com.example.testschedule.data.remote.dto.account.rating
 
-import android.util.Log
 import com.example.testschedule.domain.model.account.rating.RatingModel
 
 data class RatingDto(
@@ -162,7 +161,9 @@ data class RatingDto(
                 )
             )
 
-            points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.countOfMarks?.addAll(it.marks)
+            points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.countOfMarks?.addAll(
+                it.marks
+            )
             points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.countOfOmissions =
                 points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.countOfOmissions!! + it.gradeBookOmissions
         }

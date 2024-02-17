@@ -29,7 +29,7 @@ data class ListOfEmployeesModel(
     val degree: String?, // д.ф.-м.н.
     val urlId: String // i-abramov
 ) {
-    fun toEntity() : ListOfEmployeesEntity = ListOfEmployeesEntity(
+    fun toEntity(): ListOfEmployeesEntity = ListOfEmployeesEntity(
         academicDepartment = this.academicDepartment,
         calendarId = this.calendarId,
         fio = this.fio,

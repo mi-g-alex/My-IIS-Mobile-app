@@ -193,7 +193,8 @@ fun ShowSchedule(
     val lastUpdate = a.getLong(Constants.LAST_UPDATE_CURRENT_WEEK, 0)
     val week = a.getInt(Constants.CURRENT_WEEK, 0)
     if ((it.startLessonsDate != null && it.endLessonsDate != null) || (it.startExamsDate != null && it.endExamsDate != null)) {
-        if (day.timeInMillis < (it.startLessonsDate ?: it.startExamsDate)!!) day.timeInMillis = it.startLessonsDate ?: it.endExamsDate!!
+        if (day.timeInMillis < (it.startLessonsDate ?: it.startExamsDate)!!) day.timeInMillis =
+            it.startLessonsDate ?: it.endExamsDate!!
         val endDay = max(it.endLessonsDate ?: it.endExamsDate!!, it.endExamsDate ?: 0L)
 
         val lessons = getLessons(

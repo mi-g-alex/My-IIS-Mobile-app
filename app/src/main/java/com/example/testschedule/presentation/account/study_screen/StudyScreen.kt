@@ -279,7 +279,7 @@ fun StudyScreen(
                                     Icons.Outlined.KeyboardArrowUp,
                                 null
                             )
-                            Text(stringResource(id = if(!collapseCertificates) R.string.less else R.string.more))
+                            Text(stringResource(id = if (!collapseCertificates) R.string.less else R.string.more))
                         }
                     }
                 }

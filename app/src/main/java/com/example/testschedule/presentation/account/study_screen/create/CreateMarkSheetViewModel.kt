@@ -1,6 +1,5 @@
 package com.example.testschedule.presentation.account.study_screen.create
 
-import android.util.Log
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -142,10 +141,11 @@ class CreateMarkSheetViewModel @Inject constructor(
                 price = calcPrice(),
                 markSheetType = selectedType.value!!,
                 isGoodReason = isGoodReason.value,
-                hours = if (selectedLesson.value?.isLab == true) hours.doubleValue.toInt().toString() else "",
+                hours = if (selectedLesson.value?.isLab == true) hours.doubleValue.toInt()
+                    .toString() else "",
                 focsId = selectedLesson.value?.focsId,
                 thId = selectedLesson.value?.thId,
-                absentDate = if(needAddDate.value) date else "",
+                absentDate = if (needAddDate.value) date else "",
                 employee = selectedEmployee.value!!
             ).onEach { res ->
                 when (res) {
@@ -167,8 +167,8 @@ class CreateMarkSheetViewModel @Inject constructor(
     }
 
     fun calcPrice(): Double {
-        return if (selectedEmployee.value == null)  0.0
-        else Math.round(100.0 * (selectedEmployee.value?.price ?: 1.0 ) * hours.doubleValue) / 100.0
+        return if (selectedEmployee.value == null) 0.0
+        else Math.round(100.0 * (selectedEmployee.value?.price ?: 1.0) * hours.doubleValue) / 100.0
     }
 
 }

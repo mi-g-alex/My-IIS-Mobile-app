@@ -7,6 +7,7 @@ import com.example.testschedule.domain.repository.IisAPIRepository
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.HttpException
 import retrofit2.awaitResponse
 import java.io.IOException
 import javax.inject.Inject
@@ -20,30 +21,40 @@ class LoginToAccountUseCase @Inject constructor(
         username: String? = null,
         password: String? = null
     ): Flow<Resource<UserBasicDataModel>> = flow {
-        var us = username
-        if (us == null)
-            us = db.getLoginAndPassword().username
-        var pass = password
-        if (pass == null)
-            pass = db.getLoginAndPassword().password
+
+        val us = username ?: db.getLoginAndPassword().username
+        val pass = password ?: db.getLoginAndPassword().password
+
         try {
             emit(Resource.Loading<UserBasicDataModel>())
+
             val response = api.loginToAccount(us, pass).awaitResponse()
-            val cookie = response.headers()["Set-Cookie"].toString()
-            val answerModel = response.body()?.toModel(cookie)
-            db.setLoginAndPassword(LoginAndPasswordModel(username = us, password = pass))
-            answerModel?.let { db.setUserBasicData(it) }
 
-            emit(Resource.Success<UserBasicDataModel>(answerModel))
-        } catch (e: IOException) {
-            if (e.toString() == "java.io.EOFException: End of input at line 1 column 1 path \$") {
-                emit(Resource.Error<UserBasicDataModel>("WrongPassword"))
-            } else if (e.toString().contains("Unable to resolve host")) {
-                emit(Resource.Error<UserBasicDataModel>("ConnectionFailed"))
+            if (response.isSuccessful) {
+                val cookie = response.headers()["Set-Cookie"].toString()
+
+                val answerModel = response.body()?.toModel(cookie)
+
+                db.setLoginAndPassword(LoginAndPasswordModel(username = us, password = pass))
+                answerModel?.let { db.setUserBasicData(it) }
+
+                emit(Resource.Success<UserBasicDataModel>(answerModel))
+                return@flow
             } else {
-                emit(Resource.Error<UserBasicDataModel>("OtherError"))
+                throw HttpException(response)
             }
-
+        } catch (e: HttpException) {
+            if (e.code() == 401) {
+                db.deleteUserBasicData()
+                emit(Resource.Error<UserBasicDataModel>("WrongPassword"))
+                return@flow
+            }
+            if (e.code() >= 500) {
+                emit(Resource.Error<UserBasicDataModel>("ConnectionFailed"))
+                return@flow
+            }
+        } catch (e: IOException) {
+            emit(Resource.Error<UserBasicDataModel>("ConnectionFailed"))
         } catch (e: Exception) {
             emit(Resource.Error<UserBasicDataModel>("OtherError"))
         }

@@ -1,5 +1,6 @@
 package com.example.testschedule.domain.repository
 
+import com.example.testschedule.data.remote.dto.account.settings.password.ChangePasswordDto
 import com.example.testschedule.data.remote.dto.account.study.mark_sheet.additional.MarkSheetTypeModel
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
@@ -22,6 +23,7 @@ import com.example.testschedule.domain.model.account.study.mark_sheet.create.Sea
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
+import okhttp3.ResponseBody
 import retrofit2.Call
 
 interface IisAPIRepository {
@@ -98,8 +100,25 @@ interface IisAPIRepository {
 
     suspend fun getMarkSheetSubjects(cookies: String): List<MarkSheetSubjectsModel>
 
-    suspend fun searchEmployeeById(thId: Int?, focsId: Int?, cookies: String): List<SearchEmployeeMarkSheetModel>
+    suspend fun searchEmployeeById(
+        thId: Int?,
+        focsId: Int?,
+        cookies: String
+    ): List<SearchEmployeeMarkSheetModel>
 
     suspend fun searchEmployeeByName(name: String): List<SearchEmployeeMarkSheetModel>
+
+    suspend fun settingsUpdateBio(profile: AccountProfileModel, cookies: String)
+
+    suspend fun settingsUpdateViewProfile(profile: AccountProfileModel, cookies: String)
+
+    suspend fun settingsUpdateViewRating(profile: AccountProfileModel, cookies: String)
+
+    suspend fun settingsUpdateViewJob(profile: AccountProfileModel, cookies: String)
+
+    suspend fun settingsUpdatePassword(
+        password: ChangePasswordDto,
+        cookies: String
+    ): Call<ResponseBody?>
 
 }

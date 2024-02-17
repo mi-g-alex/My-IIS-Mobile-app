@@ -102,7 +102,8 @@ fun MoreAboutGroupDialog(dataOfGroup: ListOfGroupsModel) {
                 val text =
                     stringResource(id = R.string.schedule_add_info_dialog_add_google_calendar)
                 AssistChip(onClick = {
-                    val url = "https://calendar.google.com/calendar/u/0/r?cid=" + dataOfGroup.calendarId
+                    val url =
+                        "https://calendar.google.com/calendar/u/0/r?cid=" + dataOfGroup.calendarId
                     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     ctx.startActivity(browserIntent)
                 }, label = { Text(text) }, leadingIcon = {
@@ -186,7 +187,8 @@ fun MoreAboutScheduleDialog(dataOfEmployee: ListOfEmployeesModel) {
                 val text =
                     stringResource(id = R.string.schedule_add_info_dialog_add_google_calendar)
                 AssistChip(onClick = {
-                    val url = "https://calendar.google.com/calendar/u/0/r?cid=" + dataOfEmployee.calendarId
+                    val url =
+                        "https://calendar.google.com/calendar/u/0/r?cid=" + dataOfEmployee.calendarId
                     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     ctx.startActivity(browserIntent)
                 }, label = { Text(text) }, leadingIcon = {
