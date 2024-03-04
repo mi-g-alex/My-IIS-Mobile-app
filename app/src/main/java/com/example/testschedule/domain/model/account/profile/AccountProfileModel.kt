@@ -52,7 +52,7 @@ data class AccountProfileModel(
         )
 
         fun toDto() = AccountProfileDto.SkillDto(
-            id = id,
+            id = if (id == 0) null else id,
             name = name
         )
     }

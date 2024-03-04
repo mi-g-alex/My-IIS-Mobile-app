@@ -181,6 +181,13 @@ class IisAPIRepositoryImpl @Inject constructor(
         api.settingsUpdateBio(profile.toDto(), cookies)
     }
 
+    override suspend fun settingsUpdateSkills(
+        skills: List<AccountProfileModel.SkillModel>,
+        cookies: String
+    ): Call<ResponseBody?> {
+        return api.settingsUpdateSkills(skills.map { it.toDto() }, cookies)
+    }
+
     override suspend fun settingsUpdateViewProfile(profile: AccountProfileModel, cookies: String) {
         api.settingsUpdateViewProfile(profile.toDto(), cookies)
     }

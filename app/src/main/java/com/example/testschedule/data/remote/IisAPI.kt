@@ -198,6 +198,12 @@ interface IisAPI {
         @Header("Cookie") cookies: String
     )
 
+    @POST("profiles/my-skills")
+    fun settingsUpdateSkills(
+        @Body skills: List<AccountProfileDto.SkillDto>,
+        @Header("Cookie") cookies: String
+    ): Call<ResponseBody?>
+
     @PUT("profiles/personal-cv-published")
     /** Обновление настройки профиль **/
     suspend fun settingsUpdateViewProfile(

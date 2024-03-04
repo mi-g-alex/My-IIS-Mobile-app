@@ -110,6 +110,11 @@ interface IisAPIRepository {
 
     suspend fun settingsUpdateBio(profile: AccountProfileModel, cookies: String)
 
+    suspend fun settingsUpdateSkills(
+        skills: List<AccountProfileModel.SkillModel>,
+        cookies: String
+    ): Call<ResponseBody?>
+
     suspend fun settingsUpdateViewProfile(profile: AccountProfileModel, cookies: String)
 
     suspend fun settingsUpdateViewRating(profile: AccountProfileModel, cookies: String)

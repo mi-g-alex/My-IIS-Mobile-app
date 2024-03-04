@@ -193,7 +193,16 @@
     <string name="account_settings_info_bio_success">Success. Current: </string>
     <string name="account_settings_info_bio_info">Current: %s</string>
     <string name="account_settings_info_skills">Skills</string>
+    <string name="account_settings_info_skills_title">Skills</string>
     <string name="account_settings_info_skills_desc">Tap to view or change your skills</string>
+    <string name="account_settings_info_skills_remove_desc">Remove skill: %s</string>
+    <string name="account_settings_info_skills_add_hint">Create new skill</string>
+    <string name="account_settings_info_skills_add_desc">Add skill: %s</string>
+    <string name="account_settings_info_skills_add_err">Already exists</string>
+    <string name="account_settings_info_skills_add_save">Already exists</string>
+    <string name="account_settings_info_skills_success">Success. Skills updated.</string>
+    <string name="account_settings_info_skills_error_connection">Connection Error</string>
+    <string name="account_settings_info_skills_error_other">Something went wrong…</string>
     <string name="account_settings_info_links">Links</string>
     <string name="account_settings_info_links_desc">Tap to view or change your links</string>
     <string name="account_settings_advanced_clear_cache">Clear image cache</string>

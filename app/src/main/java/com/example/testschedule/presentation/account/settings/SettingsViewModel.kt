@@ -10,6 +10,7 @@ import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.account.profile.GetAccountProfileUseCase
 import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsBioUseCase
 import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsPasswordUseCase
+import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsSkillsUseCase
 import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsViewUseCase
 import com.example.testschedule.presentation.account.settings.additional.DialogType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,7 @@ class SettingsViewModel @Inject constructor(
     private val updateSettingsViewUseCase: UpdateSettingsViewUseCase,
     private val updatePasswordUseCase: UpdateSettingsPasswordUseCase,
     private val updateSettingsBioUseCase: UpdateSettingsBioUseCase,
+    private val updateSettingsSkillsUseCase: UpdateSettingsSkillsUseCase,
     private val db: UserDatabaseRepository,
 ) : ViewModel() {
 
@@ -33,6 +35,8 @@ class SettingsViewModel @Inject constructor(
     val errorPassText = mutableStateOf("")
     val isLoadingBio = mutableStateOf(false)
     val errorBioText = mutableStateOf("")
+    val isLoadingSkills = mutableStateOf(false)
+    val errorSkillsText = mutableStateOf("")
 
     val userInfo = mutableStateOf<AccountProfileModel?>(null)
     val basicInfo = mutableStateOf<UserBasicDataModel?>(null)
@@ -175,6 +179,35 @@ class SettingsViewModel @Inject constructor(
 
                     isLoadingBio.value = false
                     errorPassText.value = res.message.toString()
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun updateSkills(
+        skills: List<AccountProfileModel.SkillModel>,
+        onSuccess: () -> Unit,
+        onError: (Boolean) -> Unit
+    ) {
+        updateSettingsSkillsUseCase(skills).onEach { res ->
+            when (res) {
+                is Resource.Success -> {
+                    onSuccess()
+                    userInfo.value = userInfo.value?.copy(skills = skills)
+                    isLoadingSkills.value = false
+                }
+
+                is Resource.Loading -> {
+                    isLoadingSkills.value = true
+                }
+                is Resource.Error -> {
+                    if (res.message.toString() == "WrongPassword")
+                        errorText.value = res.message.toString()
+                    else
+                        onError(res.message.toString() == "ConnectionFailed")
+
+                    isLoadingSkills.value = false
+                    errorSkillsText.value = res.message.toString()
                 }
             }
         }.launchIn(viewModelScope)

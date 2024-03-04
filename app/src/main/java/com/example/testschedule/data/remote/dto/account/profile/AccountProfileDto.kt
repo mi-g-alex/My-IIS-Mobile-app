@@ -38,11 +38,11 @@ data class AccountProfileDto(
     }
 
     data class SkillDto(
-        val id: Int, // 154
+        val id: Int?, // 154
         val name: String // C/C++
     ) {
         fun toModel() = SkillModel(
-            id = this.id,
+            id = this.id ?: 0,
             name = this.name
         )
     }

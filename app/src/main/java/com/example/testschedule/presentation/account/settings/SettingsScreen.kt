@@ -34,6 +34,7 @@ import com.example.testschedule.presentation.account.settings.features.ChangePho
 import com.example.testschedule.presentation.account.settings.features.DialogBio
 import com.example.testschedule.presentation.account.settings.features.DialogOutlook
 import com.example.testschedule.presentation.account.settings.features.DialogPassword
+import com.example.testschedule.presentation.account.settings.features.DialogSkills
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoilApi::class)
@@ -114,8 +115,11 @@ fun SettingsScreen(
         val passOk = stringResource(id = R.string.account_settings_password_success)
         val bioOk = stringResource(id = R.string.account_settings_info_bio_success)
         val bioOther = stringResource(id = R.string.account_settings_info_bio_error_other)
-        val bioConnection =
-            stringResource(id = R.string.account_settings_info_bio_error_connection)
+        val bioConnection = stringResource(id = R.string.account_settings_info_bio_error_connection)
+
+        val skillsOk = stringResource(id = R.string.account_settings_info_skills_success)
+        val skillsOther = stringResource(id = R.string.account_settings_info_skills_error_other)
+        val skillsConnection = stringResource(id = R.string.account_settings_info_skills_error_connection)
 
         if (userAccountData != null) {
 
@@ -174,7 +178,29 @@ fun SettingsScreen(
                 }
 
                 DialogType.LINKS -> {}
-                DialogType.SKILLS -> {}
+                DialogType.SKILLS -> {
+                    DialogSkills(
+                        onSaveClick = { skills ->
+                            viewModel.updateSkills(
+                                skills,
+                                onSuccess = {
+                                    selectedDialog = DialogType.NONE
+                                    showSnack(skillsOk)
+                                    viewModel.errorSkillsText.value = ""
+                                },
+                                onError = { isNetwork ->
+                                    toast(if (isNetwork) skillsConnection else skillsOther)
+                                    selectedDialog = DialogType.SKILLS
+                                }
+                            )
+                        },
+                        curSkills = userAccountData?.skills ?: emptyList(),
+                        isLoading = viewModel.isLoadingSkills.value,
+                        copy = copy,
+                        toast = toast
+                    ) { selectedDialog = DialogType.NONE; viewModel.errorSkillsText.value = "" }
+                }
+
                 DialogType.NONE -> {}
             }
 

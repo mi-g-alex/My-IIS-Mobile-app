@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 17,
-      "versionName": "0.0.0-17",
-      "outputFile": "My IIS 0.0.0-17.apk"
+      "versionCode": 18,
+      "versionName": "0.0.0-18",
+      "outputFile": "My IIS 0.0.0-18.apk"
     }
   ],
   "elementType": "File"

@@ -17,7 +17,7 @@ android {
         applicationId 'by.g_alex.my_iis'
         minSdk 21
         targetSdk 34
-        versionCode 17
+        versionCode 18
         versionName '0.0.0-' + versionCode.toString()
 
         vectorDrawables {
@@ -60,7 +60,7 @@ android {
     }
     packagingOptions {
         resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += '**'
         }
     }
 }
