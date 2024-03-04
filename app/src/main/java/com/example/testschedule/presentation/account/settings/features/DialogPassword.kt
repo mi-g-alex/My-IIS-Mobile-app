@@ -147,7 +147,7 @@ fun DialogPassword(
 }
 
 @Composable
-fun PasswordIcon(onClick: () -> Unit, value: Boolean) {
+private fun PasswordIcon(onClick: () -> Unit, value: Boolean) {
     IconButton(onClick = { onClick() }) {
         if (!value) {
             Icon(

@@ -9,6 +9,7 @@ import com.example.testschedule.domain.model.auth.UserBasicDataModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.account.profile.GetAccountProfileUseCase
 import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsBioUseCase
+import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsLinksUseCase
 import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsPasswordUseCase
 import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsSkillsUseCase
 import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsViewUseCase
@@ -26,6 +27,7 @@ class SettingsViewModel @Inject constructor(
     private val updatePasswordUseCase: UpdateSettingsPasswordUseCase,
     private val updateSettingsBioUseCase: UpdateSettingsBioUseCase,
     private val updateSettingsSkillsUseCase: UpdateSettingsSkillsUseCase,
+    private val updateSettingsLinksUseCase: UpdateSettingsLinksUseCase,
     private val db: UserDatabaseRepository,
 ) : ViewModel() {
 
@@ -37,6 +39,8 @@ class SettingsViewModel @Inject constructor(
     val errorBioText = mutableStateOf("")
     val isLoadingSkills = mutableStateOf(false)
     val errorSkillsText = mutableStateOf("")
+    val isLoadingLinks = mutableStateOf(false)
+    val errorLinksText = mutableStateOf("")
 
     val userInfo = mutableStateOf<AccountProfileModel?>(null)
     val basicInfo = mutableStateOf<UserBasicDataModel?>(null)
@@ -171,6 +175,7 @@ class SettingsViewModel @Inject constructor(
                 is Resource.Loading -> {
                     isLoadingBio.value = true
                 }
+
                 is Resource.Error -> {
                     if (res.message.toString() == "WrongPassword")
                         errorText.value = res.message.toString()
@@ -194,12 +199,14 @@ class SettingsViewModel @Inject constructor(
                 is Resource.Success -> {
                     onSuccess()
                     userInfo.value = userInfo.value?.copy(skills = skills)
+                    viewModelScope.launch { userInfo.value?.let { db.setAccountProfile(it) } }
                     isLoadingSkills.value = false
                 }
 
                 is Resource.Loading -> {
                     isLoadingSkills.value = true
                 }
+
                 is Resource.Error -> {
                     if (res.message.toString() == "WrongPassword")
                         errorText.value = res.message.toString()
@@ -208,6 +215,37 @@ class SettingsViewModel @Inject constructor(
 
                     isLoadingSkills.value = false
                     errorSkillsText.value = res.message.toString()
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun updateLinks(
+        links: List<AccountProfileModel.ReferenceModel>,
+        onSuccess: () -> Unit,
+        onError: (Boolean) -> Unit
+    ) {
+        updateSettingsLinksUseCase(links).onEach { res ->
+            when (res) {
+                is Resource.Success -> {
+                    onSuccess()
+                    userInfo.value = userInfo.value?.copy(references = links)
+                    viewModelScope.launch { userInfo.value?.let { db.setAccountProfile(it) } }
+                    isLoadingLinks.value = false
+                }
+
+                is Resource.Loading -> {
+                    isLoadingLinks.value = true
+                }
+
+                is Resource.Error -> {
+                    if (res.message.toString() == "WrongPassword")
+                        errorText.value = res.message.toString()
+                    else
+                        onError(res.message.toString() == "ConnectionFailed")
+
+                    isLoadingLinks.value = false
+                    errorLinksText.value = res.message.toString()
                 }
             }
         }.launchIn(viewModelScope)

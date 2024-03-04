@@ -177,29 +177,29 @@ class IisAPIRepositoryImpl @Inject constructor(
     override suspend fun searchEmployeeByName(name: String): List<SearchEmployeeMarkSheetModel> =
         api.searchEmployeeNameMarkSheet(name)?.map { it.toModel() } ?: emptyList()
 
-    override suspend fun settingsUpdateBio(profile: AccountProfileModel, cookies: String) {
+    override suspend fun settingsUpdateBio(profile: AccountProfileModel, cookies: String) =
         api.settingsUpdateBio(profile.toDto(), cookies)
-    }
 
     override suspend fun settingsUpdateSkills(
         skills: List<AccountProfileModel.SkillModel>,
         cookies: String
-    ): Call<ResponseBody?> {
-        return api.settingsUpdateSkills(skills.map { it.toDto() }, cookies)
-    }
+    ): Call<ResponseBody?> =
+        api.settingsUpdateSkills(skills.map { it.toDto() }, cookies)
+
+    override suspend fun settingsUpdateLinks(
+        links: List<AccountProfileModel.ReferenceModel>,
+        cookies: String
+    ) = api.settingsUpdateLinks(links.map { it.toDto() }, cookies)
 
     override suspend fun settingsUpdateViewProfile(profile: AccountProfileModel, cookies: String) {
         api.settingsUpdateViewProfile(profile.toDto(), cookies)
     }
 
-    override suspend fun settingsUpdateViewRating(profile: AccountProfileModel, cookies: String) {
+    override suspend fun settingsUpdateViewRating(profile: AccountProfileModel, cookies: String) =
         api.settingsUpdateViewRating(profile.toDto(), cookies)
 
-    }
-
-    override suspend fun settingsUpdateViewJob(profile: AccountProfileModel, cookies: String) {
+    override suspend fun settingsUpdateViewJob(profile: AccountProfileModel, cookies: String) =
         api.settingsUpdateViewJob(profile.toDto(), cookies)
-    }
 
     override suspend fun settingsUpdatePassword(
         password: ChangePasswordDto,

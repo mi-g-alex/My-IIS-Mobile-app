@@ -36,7 +36,7 @@ data class AccountProfileModel(
         )
 
         fun toDto() = AccountProfileDto.ReferenceDto(
-            id = id,
+            id = if (id == 0) null else id,
             name = name,
             reference = reference
         )

@@ -32,6 +32,7 @@ import com.example.testschedule.presentation.account.settings.additional.Space
 import com.example.testschedule.presentation.account.settings.additional.WithCheckBoxListItem
 import com.example.testschedule.presentation.account.settings.features.ChangePhotoItem
 import com.example.testschedule.presentation.account.settings.features.DialogBio
+import com.example.testschedule.presentation.account.settings.features.DialogLinks
 import com.example.testschedule.presentation.account.settings.features.DialogOutlook
 import com.example.testschedule.presentation.account.settings.features.DialogPassword
 import com.example.testschedule.presentation.account.settings.features.DialogSkills
@@ -119,7 +120,13 @@ fun SettingsScreen(
 
         val skillsOk = stringResource(id = R.string.account_settings_info_skills_success)
         val skillsOther = stringResource(id = R.string.account_settings_info_skills_error_other)
-        val skillsConnection = stringResource(id = R.string.account_settings_info_skills_error_connection)
+        val skillsConnection =
+            stringResource(id = R.string.account_settings_info_skills_error_connection)
+
+        val linksOk = stringResource(id = R.string.account_settings_info_links_success)
+        val linksOther = stringResource(id = R.string.account_settings_info_links_error_other)
+        val linksConnection =
+            stringResource(id = R.string.account_settings_info_links_error_connection)
 
         if (userAccountData != null) {
 
@@ -177,7 +184,29 @@ fun SettingsScreen(
                     ) { selectedDialog = DialogType.NONE; viewModel.errorBioText.value = "" }
                 }
 
-                DialogType.LINKS -> {}
+                DialogType.LINKS -> {
+                    DialogLinks(
+                        onSaveClick = { links ->
+                            viewModel.updateLinks(
+                                links,
+                                onSuccess = {
+                                    selectedDialog = DialogType.NONE
+                                    showSnack(linksOk)
+                                    viewModel.errorLinksText.value = ""
+                                },
+                                onError = { isNetwork ->
+                                    toast(if (isNetwork) linksConnection else linksOther)
+                                    selectedDialog = DialogType.LINKS
+                                }
+                            )
+                        },
+                        curLinks = userAccountData?.references ?: emptyList(),
+                        isLoading = viewModel.isLoadingSkills.value,
+                        copy = copy,
+                        toast = toast
+                    ) { selectedDialog = DialogType.NONE; viewModel.errorLinksText.value = "" }
+                }
+
                 DialogType.SKILLS -> {
                     DialogSkills(
                         onSaveClick = { skills ->
@@ -263,7 +292,7 @@ fun SettingsScreen(
                     BasicListItem(
                         mainText = stringResource(id = R.string.account_settings_info_links),
                         descText = stringResource(id = R.string.account_settings_info_links_desc),
-                    ) { }
+                    ) { selectedDialog = DialogType.LINKS }
                 }
 
                 // Skills

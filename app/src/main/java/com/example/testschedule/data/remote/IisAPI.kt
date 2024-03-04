@@ -199,10 +199,18 @@ interface IisAPI {
     )
 
     @POST("profiles/my-skills")
+            /** Обновление навыков **/
     fun settingsUpdateSkills(
         @Body skills: List<AccountProfileDto.SkillDto>,
         @Header("Cookie") cookies: String
     ): Call<ResponseBody?>
+
+    @PUT("profiles/my-references")
+    /** Обновление ссылок**/
+    suspend fun settingsUpdateLinks(
+        @Body skills: List<AccountProfileDto.ReferenceDto>,
+        @Header("Cookie") cookies: String
+    )
 
     @PUT("profiles/personal-cv-published")
     /** Обновление настройки профиль **/

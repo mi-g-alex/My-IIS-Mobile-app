@@ -42,7 +42,6 @@ fun DialogSkills(
     onDismiss: () -> Unit
 ) {
 
-    // TODO("UPDATE DATABASE")
     var actualList by remember { mutableStateOf(curSkills) }
 
     LaunchedEffect(actualList.size) {}
@@ -108,7 +107,7 @@ fun DialogSkills(
 }
 
 @Composable
-fun AddSkillField(
+private fun AddSkillField(
     onAddClicked: (String) -> Unit
 ) {
 
@@ -156,7 +155,7 @@ fun AddSkillField(
 }
 
 @Composable
-fun SkillItem(
+private fun SkillItem(
     item: SkillModel,
     onRemoveClicked: () -> Unit,
     copy: (text: String) -> Unit,

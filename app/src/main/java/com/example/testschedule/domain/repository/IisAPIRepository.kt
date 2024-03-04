@@ -115,6 +115,11 @@ interface IisAPIRepository {
         cookies: String
     ): Call<ResponseBody?>
 
+    suspend fun settingsUpdateLinks(
+        links: List<AccountProfileModel.ReferenceModel>,
+        cookies: String
+    ): Any
+
     suspend fun settingsUpdateViewProfile(profile: AccountProfileModel, cookies: String)
 
     suspend fun settingsUpdateViewRating(profile: AccountProfileModel, cookies: String)

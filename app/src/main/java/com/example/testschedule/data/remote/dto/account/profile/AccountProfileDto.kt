@@ -26,14 +26,14 @@ data class AccountProfileDto(
     val summary: String? // Text
 ) {
     data class ReferenceDto(
-        val id: Int, // 4371xxxx
+        val id: Int?, // 4371xxxx
         val name: String, // TG
         val reference: String // t.me/xxxx
     ) {
         fun toModel() = ReferenceModel(
-            id = this.id,
-            name = this.name,
-            reference = this.reference
+            id = id ?: 0,
+            name = name,
+            reference = reference
         )
     }
 
