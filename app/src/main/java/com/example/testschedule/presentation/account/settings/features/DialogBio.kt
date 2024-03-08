@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.example.testschedule.R
-
 @Composable
 fun DialogBio(
     onSaveClick: (bio: String) -> Unit,
@@ -21,7 +20,6 @@ fun DialogBio(
 ) {
 
     var bioText by remember { mutableStateOf(text) }
-
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
@@ -55,3 +53,4 @@ fun DialogBio(
         }
     )
 }
+

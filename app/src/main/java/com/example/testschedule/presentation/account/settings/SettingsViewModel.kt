@@ -55,6 +55,13 @@ class SettingsViewModel @Inject constructor(
         getUserAccountInfo()
     }
 
+    fun updateEmail(mail: String) {
+        viewModelScope.launch {
+            basicInfo.value = basicInfo.value?.copy(email = mail)
+            basicInfo.value?.let { db.setUserBasicData(it) }
+        }
+    }
+
     private fun getUserAccountInfo() {
         isLoading.value = true
         viewModelScope.launch {

@@ -1,7 +1,7 @@
-package com.example.testschedule.domain.use_case.account.settings
+package com.example.testschedule.domain.use_case.account.settings.email
 
 import com.example.testschedule.common.Resource
-import com.example.testschedule.domain.model.account.profile.AccountProfileModel
+import com.example.testschedule.domain.model.account.settings.email.SendConfirmMessageResponseModel
 import com.example.testschedule.domain.repository.IisAPIRepository
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import kotlinx.coroutines.flow.Flow
@@ -11,21 +11,21 @@ import retrofit2.awaitResponse
 import java.io.IOException
 import javax.inject.Inject
 
-class UpdateSettingsSkillsUseCase @Inject constructor(
+class EmailSettingsGetConfirmCodeUseCase @Inject constructor(
     private val api: IisAPIRepository,
     private val db: UserDatabaseRepository
 ) {
 
     operator fun invoke(
-        skills: List<AccountProfileModel.SkillModel>
-    ): Flow<Resource<Boolean>> = flow {
+        id: Int
+    ): Flow<Resource<SendConfirmMessageResponseModel>> = flow {
         try {
             emit(Resource.Loading())
 
             val cookie = db.getCookie()
-            val res = api.settingsUpdateSkills(skills, cookie).awaitResponse()
+            val res = api.settingsEmailGetConfirmCode(id, cookie).awaitResponse()
             if (res.isSuccessful)
-                emit(Resource.Success(true))
+                emit(Resource.Success(res.body()?.toModel()))
             else
                 throw HttpException(res)
         } catch (e: HttpException) {
@@ -38,9 +38,9 @@ class UpdateSettingsSkillsUseCase @Inject constructor(
                     val cookie = response.headers()["Set-Cookie"].toString()
                     response.body()?.toModel(cookie)?.let { db.setUserBasicData(it) }
 
-                    val res = api.settingsUpdateSkills(skills, cookie).awaitResponse()
+                    val res = api.settingsEmailGetConfirmCode(id, cookie).awaitResponse()
                     if (res.isSuccessful)
-                        emit(Resource.Success(true))
+                        emit(Resource.Success(res.body()?.toModel()))
                     else
                         throw HttpException(res)
                 } catch (e: HttpException) {

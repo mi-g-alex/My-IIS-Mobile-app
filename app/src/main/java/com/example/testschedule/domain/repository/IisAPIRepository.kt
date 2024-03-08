@@ -1,5 +1,6 @@
 package com.example.testschedule.domain.repository
 
+import com.example.testschedule.data.remote.dto.account.settings.email.SendConfirmMessageResponseDto
 import com.example.testschedule.data.remote.dto.account.settings.password.ChangePasswordDto
 import com.example.testschedule.data.remote.dto.account.study.mark_sheet.additional.MarkSheetTypeModel
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
@@ -13,6 +14,9 @@ import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.account.rating.RatingModel
+import com.example.testschedule.domain.model.account.settings.email.ContactsModel
+import com.example.testschedule.domain.model.account.settings.email.ContactsUpdateRequestModel
+import com.example.testschedule.domain.model.account.settings.email.SendConfirmCodeRequestModel
 import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
 import com.example.testschedule.domain.model.account.study.certificate.CreateCertificateModel
 import com.example.testschedule.domain.model.account.study.certificate.NewCertificatePlacesModel
@@ -108,6 +112,9 @@ interface IisAPIRepository {
 
     suspend fun searchEmployeeByName(name: String): List<SearchEmployeeMarkSheetModel>
 
+
+    // Settings
+
     suspend fun settingsUpdateBio(profile: AccountProfileModel, cookies: String)
 
     suspend fun settingsUpdateSkills(
@@ -128,6 +135,23 @@ interface IisAPIRepository {
 
     suspend fun settingsUpdatePassword(
         password: ChangePasswordDto,
+        cookies: String
+    ): Call<ResponseBody?>
+
+    suspend fun settingsEmailGetContacts(cookies: String): ContactsModel
+
+    suspend fun settingsEmailUpdate(
+        mail: ContactsUpdateRequestModel,
+        cookies: String
+    ): Call<ResponseBody?>
+
+    suspend fun settingsEmailGetConfirmCode(
+        id: Int,
+        cookies: String
+    ): Call<SendConfirmMessageResponseDto>
+
+    suspend fun settingsEmailConfirmMessage(
+        code: SendConfirmCodeRequestModel,
         cookies: String
     ): Call<ResponseBody?>
 

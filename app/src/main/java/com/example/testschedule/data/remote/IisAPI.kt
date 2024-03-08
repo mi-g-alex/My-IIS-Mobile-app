@@ -11,6 +11,10 @@ import com.example.testschedule.data.remote.dto.account.omissions.OmissionsDto
 import com.example.testschedule.data.remote.dto.account.penalty.PenaltyDto
 import com.example.testschedule.data.remote.dto.account.profile.AccountProfileDto
 import com.example.testschedule.data.remote.dto.account.rating.RatingDto
+import com.example.testschedule.data.remote.dto.account.settings.email.ContactsDto
+import com.example.testschedule.data.remote.dto.account.settings.email.ContactsUpdateRequestDto
+import com.example.testschedule.data.remote.dto.account.settings.email.SendConfirmCodeRequestDto
+import com.example.testschedule.data.remote.dto.account.settings.email.SendConfirmMessageResponseDto
 import com.example.testschedule.data.remote.dto.account.settings.password.ChangePasswordDto
 import com.example.testschedule.data.remote.dto.account.study.certificate.CertificateItemDto
 import com.example.testschedule.data.remote.dto.account.study.certificate.CreateCertificateDto
@@ -238,6 +242,34 @@ interface IisAPI {
     fun settingsChangePassword(
         @Body password: ChangePasswordDto,
         @Header("Cookie") cookieValue: String
+    ): Call<ResponseBody?>
+
+    // Email
+    @GET("settings/contacts")
+    /** Получение списка из 1 mail и его ID **/
+    suspend fun settingsEmailGetContacts(
+        @Header("Cookie") cookies: String
+    ): ContactsDto
+
+    @POST("settings/contact/update")
+    /** Отправвка нового Email **/
+    fun settingsEmailUpdate(
+        @Body mail: ContactsUpdateRequestDto,
+        @Header("Cookie") cookies: String
+    ): Call<ResponseBody?>
+
+    @POST("settings/contact/send-confirm-message")
+    /** Отправка кода на почту **/
+    fun settingsEmailGetConfirmCode(
+        @Body id: Int,
+        @Header("Cookie") cookies: String
+    ): Call<SendConfirmMessageResponseDto>
+
+    @POST("settings/contact/confirm")
+    /** Отправка кода для проверки **/
+    fun settingsEmailConfirmMessage(
+        @Body code: SendConfirmCodeRequestDto,
+        @Header("Cookie") cookies: String
     ): Call<ResponseBody?>
 
 }

@@ -150,8 +150,16 @@
     <string name="account_settings_phone_desc">To change phone number visit your dean office</string>
     <string name="account_settings_phone_info">Current: %s</string>
     <string name="account_settings_email">Email</string>
+    <string name="account_settings_email_loading">Loading…</string>
     <string name="account_settings_email_desc">Tap to change your email</string>
     <string name="account_settings_email_info">Current: %s</string>
+    <string name="account_settings_email_update_title">Change email</string>
+    <string name="account_settings_email_update_label">New email</string>
+    <string name="account_settings_email_update_regex">Is it email? Check again…</string>
+    <string name="account_settings_email_update_error_same">Email should be different</string>
+    <string name="account_settings_email_update_success">Email updated. Current:</string>
+    <string name="account_settings_email_update_error_connection">Connection Error</string>
+    <string name="account_settings_email_update_error_other">Something went wrong…</string>
     <string name="account_settings_password">Password</string>
     <string name="account_settings_password_desc">Tap to change your password</string>
     <string name="account_settings_outlook" translatable="false">Microsoft Office 365</string>
@@ -166,7 +174,7 @@
     <string name="account_settings_access_work">Search work</string>
     <string name="account_settings_access_work_desc">For filter "In job search" on student page</string>
     <string name="account_settings_access_snackbar_allow">Show</string>
-    <string name="account_settings_access_snackbar_dont_allow">Hide </string>
+    <string name="account_settings_access_snackbar_dont_allow">Hide</string>
     <string name="account_settings_access_snackbar_error">Error to update %s setting.</string>
     <string name="account_settings_access_snackbar_success">%s settings updated. Current: %s</string>
     <string name="account_settings_password_title">Change password</string>
@@ -204,11 +212,12 @@
     <string name="account_settings_info_skills_error_other">Something went wrong…</string>
     <string name="account_settings_info_links">Links</string>
     <string name="account_settings_info_links_title">Links</string>
-    <string name="account_settings_info_links_remove_desc">Remove link: %s</string>
+    <string name="account_settings_info_links_remove_desc">Remove link %s: %s</string>
+    <string name="account_settings_info_links_open_desc">Open link %s: %s</string>
     <string name="account_settings_info_links_add_label">Create new link</string>
     <string name="account_settings_info_links_add_hint1">Link title</string>
     <string name="account_settings_info_links_add_hint2">Link url</string>
-    <string name="account_settings_info_links_add_desc">Add link: %s</string>
+    <string name="account_settings_info_links_add_desc">Add link %s: %s</string>
     <string name="account_settings_info_links_add_err">Already exists</string>
     <string name="account_settings_info_links_success">Success. Links updated.</string>
     <string name="account_settings_info_links_error_other">Something went wrong…</string>

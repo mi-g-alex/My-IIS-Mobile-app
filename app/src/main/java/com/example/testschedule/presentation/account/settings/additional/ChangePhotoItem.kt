@@ -1,4 +1,4 @@
-package com.example.testschedule.presentation.account.settings.features
+package com.example.testschedule.presentation.account.settings.additional
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size

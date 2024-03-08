@@ -30,8 +30,9 @@ import com.example.testschedule.presentation.account.settings.additional.BasicLi
 import com.example.testschedule.presentation.account.settings.additional.DialogType
 import com.example.testschedule.presentation.account.settings.additional.Space
 import com.example.testschedule.presentation.account.settings.additional.WithCheckBoxListItem
-import com.example.testschedule.presentation.account.settings.features.ChangePhotoItem
+import com.example.testschedule.presentation.account.settings.additional.ChangePhotoItem
 import com.example.testschedule.presentation.account.settings.features.DialogBio
+import com.example.testschedule.presentation.account.settings.features.DialogChangeEmail
 import com.example.testschedule.presentation.account.settings.features.DialogLinks
 import com.example.testschedule.presentation.account.settings.features.DialogOutlook
 import com.example.testschedule.presentation.account.settings.features.DialogPassword
@@ -43,13 +44,14 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(
     onBackPressed: () -> Unit,
     onLogOut: () -> Unit,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
+    emailViewModel: EmailSettingViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
     val errorText = stringResource(id = R.string.error_to_login)
     var enabled by remember { mutableStateOf(true) }
-    LaunchedEffect(viewModel.errorText.value) {
-        if (viewModel.errorText.value == "WrongPassword") {
+    LaunchedEffect(viewModel.errorText.value, emailViewModel.errorText.value) {
+        if (viewModel.errorText.value == "WrongPassword" || emailViewModel.errorText.value == "WrongPassword") {
             Toast.makeText(cnt, errorText, Toast.LENGTH_LONG).show()
             onLogOut()
         }
@@ -128,6 +130,11 @@ fun SettingsScreen(
         val linksConnection =
             stringResource(id = R.string.account_settings_info_links_error_connection)
 
+        val emailOk = stringResource(id = R.string.account_settings_email_update_success)
+        val emailOther = stringResource(id = R.string.account_settings_email_update_error_other)
+        val emailConnection =
+            stringResource(id = R.string.account_settings_email_update_error_connection)
+
         if (userAccountData != null) {
 
             when (selectedDialog) {
@@ -137,7 +144,30 @@ fun SettingsScreen(
                     copy = copy
                 ) { selectedDialog = DialogType.NONE }
 
-                DialogType.EMAIL -> {}
+                DialogType.EMAIL -> {
+                    DialogChangeEmail(
+                        onSaveClick = { m ->
+                            emailViewModel.updateEmail(m, onError = {
+                                if (emailViewModel.errorText.value == "ConnectionFailed")
+                                    toast(emailConnection)
+                                if (emailViewModel.errorText.value == "OtherError")
+                                    toast(emailOther)
+                            }) {
+                                selectedDialog = DialogType.NONE
+                                showSnack("$emailOk $m")
+                                viewModel.updateEmail(m)
+                            }
+                        },
+                        curEmail = emailViewModel.email.value.let { m ->
+                            m.ifBlank {
+                                userBasicData?.email ?: ""
+                            }
+                        },
+                        isLoading = emailViewModel.isLoadingUpdate.value,
+                        errorText = emailViewModel.errorText.value
+                    ) { selectedDialog = DialogType.NONE; emailViewModel.errorText.value = "" }
+                }
+
                 DialogType.PASSWORD -> {
                     DialogPassword(
                         onSaveClick = { op, np ->
@@ -201,7 +231,7 @@ fun SettingsScreen(
                             )
                         },
                         curLinks = userAccountData?.references ?: emptyList(),
-                        isLoading = viewModel.isLoadingSkills.value,
+                        isLoading = viewModel.isLoadingLinks.value,
                         copy = copy,
                         toast = toast
                     ) { selectedDialog = DialogType.NONE; viewModel.errorLinksText.value = "" }
@@ -243,24 +273,35 @@ fun SettingsScreen(
 
                 // Email
                 item {
+                    val email = if (emailViewModel.isLoading.value)
+                        stringResource(id = R.string.account_settings_email_loading)
+                    else
+                        emailViewModel.email.value.let { m ->
+                            m.ifBlank {
+                                userBasicData?.email ?: ""
+                            }
+                        }
+
                     BasicListItem(
                         mainText = stringResource(id = R.string.account_settings_email),
                         descText = stringResource(id = R.string.account_settings_email_desc),
-                        additionalText = userBasicData?.email?.let { data ->
-                            stringResource(id = R.string.account_settings_email_info, data)
-                        } ?: ""
-                    ) { }
+                        additionalText = stringResource(
+                            id = R.string.account_settings_email_info,
+                            email
+                        )
+                    ) { selectedDialog = DialogType.EMAIL }
                 }
 
                 // Phone
                 item {
+                    val t = stringResource(id = R.string.account_settings_phone_desc)
                     BasicListItem(
                         mainText = stringResource(id = R.string.account_settings_phone),
-                        descText = stringResource(id = R.string.account_settings_phone_desc),
+                        descText = t,
                         additionalText = userBasicData?.phone?.let { data ->
                             stringResource(id = R.string.account_settings_phone_info, data)
                         } ?: ""
-                    ) { }
+                    ) { showSnack(t) }
                 }
 
                 // Password

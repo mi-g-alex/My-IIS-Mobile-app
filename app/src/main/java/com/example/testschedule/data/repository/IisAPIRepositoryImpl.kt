@@ -3,6 +3,7 @@ package com.example.testschedule.data.repository
 import com.example.testschedule.data.remote.IisAPI
 import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.account.notifications.ReadNotificationDto
+import com.example.testschedule.data.remote.dto.account.settings.email.SendConfirmMessageResponseDto
 import com.example.testschedule.data.remote.dto.account.settings.password.ChangePasswordDto
 import com.example.testschedule.data.remote.dto.account.study.mark_sheet.additional.MarkSheetTypeModel
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
@@ -17,6 +18,9 @@ import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.account.rating.RatingModel
+import com.example.testschedule.domain.model.account.settings.email.ContactsModel
+import com.example.testschedule.domain.model.account.settings.email.ContactsUpdateRequestModel
+import com.example.testschedule.domain.model.account.settings.email.SendConfirmCodeRequestModel
 import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
 import com.example.testschedule.domain.model.account.study.certificate.CreateCertificateModel
 import com.example.testschedule.domain.model.account.study.certificate.NewCertificatePlacesModel
@@ -191,9 +195,8 @@ class IisAPIRepositoryImpl @Inject constructor(
         cookies: String
     ) = api.settingsUpdateLinks(links.map { it.toDto() }, cookies)
 
-    override suspend fun settingsUpdateViewProfile(profile: AccountProfileModel, cookies: String) {
+    override suspend fun settingsUpdateViewProfile(profile: AccountProfileModel, cookies: String) =
         api.settingsUpdateViewProfile(profile.toDto(), cookies)
-    }
 
     override suspend fun settingsUpdateViewRating(profile: AccountProfileModel, cookies: String) =
         api.settingsUpdateViewRating(profile.toDto(), cookies)
@@ -206,4 +209,25 @@ class IisAPIRepositoryImpl @Inject constructor(
         cookies: String
     ): Call<ResponseBody?> =
         api.settingsChangePassword(password, cookies)
+
+    override suspend fun settingsEmailGetContacts(cookies: String): ContactsModel =
+        api.settingsEmailGetContacts(cookies).toModel()
+
+    override suspend fun settingsEmailUpdate(
+        mail: ContactsUpdateRequestModel,
+        cookies: String
+    ): Call<ResponseBody?> =
+        api.settingsEmailUpdate(mail.toDto(), cookies)
+
+    override suspend fun settingsEmailGetConfirmCode(
+        id: Int,
+        cookies: String
+    ): Call<SendConfirmMessageResponseDto> =
+        api.settingsEmailGetConfirmCode(id, cookies)
+
+    override suspend fun settingsEmailConfirmMessage(
+        code: SendConfirmCodeRequestModel,
+        cookies: String
+    ): Call<ResponseBody?> =
+        api.settingsEmailConfirmMessage(code.toDto(), cookies)
 }

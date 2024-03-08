@@ -137,7 +137,7 @@ private fun AddSkillField(
             ) {
                 Icon(
                     Icons.Default.Add,
-                    stringResource(id = R.string.account_settings_info_skills_add_desc)
+                    stringResource(id = R.string.account_settings_info_skills_add_desc, newSkillText)
                 )
             }
         },

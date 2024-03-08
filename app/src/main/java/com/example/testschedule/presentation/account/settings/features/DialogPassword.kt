@@ -81,11 +81,14 @@ fun DialogPassword(
             }
         },
         text = {
-            if(isLoading) LinearProgressIndicator()
+            if (isLoading) LinearProgressIndicator()
             Column {
-                if(isLoading) LinearProgressIndicator()
+                if (isLoading) LinearProgressIndicator()
                 OutlinedTextField(
                     value = passOldText,
+                    label = {
+                        Text(stringResource(id = R.string.account_settings_password_old_password))
+                    },
                     onValueChange = { passOldText = it },
                     isError = errorText == "WrongOldPassword",
                     supportingText = { if (errorText == "WrongOldPassword") Text(stringResource(id = R.string.account_settings_password_error_old_password)) },
@@ -102,6 +105,9 @@ fun DialogPassword(
                     value = passNewText,
                     onValueChange = { passNewText = it },
                     modifier = Modifier.padding(vertical = 8.dp),
+                    label = {
+                        Text(stringResource(id = R.string.account_settings_password_new_password))
+                    },
                     visualTransformation = if (!showNewPasswordState) PasswordVisualTransformation() else VisualTransformation.None,
                     trailingIcon = {
                         PasswordIcon(
@@ -120,17 +126,19 @@ fun DialogPassword(
                 OutlinedTextField(
                     value = passNewConfText,
                     onValueChange = { passNewConfText = it },
-                    visualTransformation = if (!showNewConfPasswordState) PasswordVisualTransformation() else VisualTransformation.None,
-                    trailingIcon = {
-                        PasswordIcon(
-                            { showNewConfPasswordState = !showNewConfPasswordState },
-                            showNewConfPasswordState
-                        )
+                    label = {
+                        Text(stringResource(id = R.string.account_settings_password_new_repeat_password))
                     },
                     isError = passNewText != passNewConfText && passNewConfText.isNotEmpty(),
                     supportingText = {
                         if (passNewText != passNewConfText && passNewConfText.isNotEmpty())
                             Text(stringResource(id = R.string.account_settings_password_error_passwords_not_same))
+                    },
+                    trailingIcon = {
+                        PasswordIcon(
+                            { showNewConfPasswordState = !showNewConfPasswordState },
+                            showNewConfPasswordState
+                        )
                     },
                     keyboardOptions = ko(ImeAction.Done),
                     keyboardActions =
@@ -138,7 +146,8 @@ fun DialogPassword(
                         onDone = {
                             if (isAllGood()) onSaveClick(passOldText, passNewText)
                         }
-                    )
+                    ),
+                    visualTransformation = if (!showNewConfPasswordState) PasswordVisualTransformation() else VisualTransformation.None
 
                 )
             }

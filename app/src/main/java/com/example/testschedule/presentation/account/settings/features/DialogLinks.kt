@@ -170,7 +170,7 @@ private fun AddLinkField(
                 ) {
                     Icon(
                         Icons.Default.Add,
-                        stringResource(id = R.string.account_settings_info_links_add_desc)
+                        stringResource(id = R.string.account_settings_info_links_add_desc, newLinkText, newLinkUrl)
                     )
                 }
             },
@@ -215,8 +215,9 @@ private fun LinkItem(
                     Icon(
                         ImageVector.vectorResource(id = R.drawable.link),
                         stringResource(
-                            id = R.string.account_settings_info_links_remove_desc,
-                            item.name
+                            id = R.string.account_settings_info_links_open_desc,
+                            item.name,
+                            item.reference
                         )
                     )
                 }
@@ -225,7 +226,8 @@ private fun LinkItem(
                         ImageVector.vectorResource(id = R.drawable.remove_something_circle),
                         stringResource(
                             id = R.string.account_settings_info_links_remove_desc,
-                            item.name
+                            item.name,
+                            item.reference
                         )
                     )
                 }

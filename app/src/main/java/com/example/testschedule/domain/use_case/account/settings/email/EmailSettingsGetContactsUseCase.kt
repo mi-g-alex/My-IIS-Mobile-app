@@ -1,7 +1,7 @@
-package com.example.testschedule.domain.use_case.account.settings
+package com.example.testschedule.domain.use_case.account.settings.email
 
 import com.example.testschedule.common.Resource
-import com.example.testschedule.domain.model.account.profile.AccountProfileModel
+import com.example.testschedule.domain.model.account.settings.email.ContactsModel
 import com.example.testschedule.domain.repository.IisAPIRepository
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import kotlinx.coroutines.flow.Flow
@@ -11,23 +11,18 @@ import retrofit2.awaitResponse
 import java.io.IOException
 import javax.inject.Inject
 
-class UpdateSettingsSkillsUseCase @Inject constructor(
+class EmailSettingsGetContactsUseCase @Inject constructor(
     private val api: IisAPIRepository,
     private val db: UserDatabaseRepository
 ) {
 
-    operator fun invoke(
-        skills: List<AccountProfileModel.SkillModel>
-    ): Flow<Resource<Boolean>> = flow {
+    operator fun invoke(): Flow<Resource<ContactsModel>> = flow {
         try {
             emit(Resource.Loading())
 
             val cookie = db.getCookie()
-            val res = api.settingsUpdateSkills(skills, cookie).awaitResponse()
-            if (res.isSuccessful)
-                emit(Resource.Success(true))
-            else
-                throw HttpException(res)
+            val res = api.settingsEmailGetContacts(cookie)
+            emit(Resource.Success(res))
         } catch (e: HttpException) {
             if (e.code() == 403) {
                 val us = db.getLoginAndPassword().username
@@ -35,14 +30,11 @@ class UpdateSettingsSkillsUseCase @Inject constructor(
                 try {
                     val response = api.loginToAccount(us, pass).awaitResponse()
                     if (!response.isSuccessful) throw HttpException(response)
-                    val cookie = response.headers()["Set-Cookie"].toString()
-                    response.body()?.toModel(cookie)?.let { db.setUserBasicData(it) }
 
-                    val res = api.settingsUpdateSkills(skills, cookie).awaitResponse()
-                    if (res.isSuccessful)
-                        emit(Resource.Success(true))
-                    else
-                        throw HttpException(res)
+                    val cookie = response.headers()["Set-Cookie"].toString()
+                    val res = api.settingsEmailGetContacts(cookie)
+
+                    emit(Resource.Success(res))
                 } catch (e: HttpException) {
                     if (e.code() == 401) {
                         db.deleteUserBasicData()
