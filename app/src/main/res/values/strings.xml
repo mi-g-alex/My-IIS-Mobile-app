@@ -144,6 +144,7 @@
     <string name="account_study_mark_sheet_title">Mark Sheets</string>
     <string name="account_study_title">Study</string>
     <string name="account_settings_title">Settings</string>
+    <string name="account_settings_unconfirmed_email">Email unconfirmed\nTap to confirm</string>
     <string name="account_settings_avatar">Profile picture</string>
     <string name="account_settings_avatar_desc">Tap to update your profile picture</string>
     <string name="account_settings_phone">Phone number</string>
@@ -160,6 +161,16 @@
     <string name="account_settings_email_update_success">Email updated. Current:</string>
     <string name="account_settings_email_update_error_connection">Connection Error</string>
     <string name="account_settings_email_update_error_other">Something went wrong…</string>
+    <string name="account_settings_email_confirm_title">Confirm email</string>
+    <string name="account_settings_email_confirm_get_code">Get code (%d left)</string>/
+    <string name="account_settings_email_confirm_left_time">%s sec left</string>
+    <string name="account_settings_email_confirm_input_code_hint">Input code here</string>
+    <string name="account_settings_email_confirm_input_code_label">Code</string>
+    <string name="account_settings_email_confirm_button_ok">Confirm</string>
+    <string name="account_settings_email_confirm_error_wrong_code">Wrong code</string>
+    <string name="account_settings_email_confirm_error_connection">Connection Error</string>
+    <string name="account_settings_email_confirm_error_other">Something went wrong…</string>
+    <string name="account_settings_email_confirm_success">Email confirmed</string>
     <string name="account_settings_password">Password</string>
     <string name="account_settings_password_desc">Tap to change your password</string>
     <string name="account_settings_outlook" translatable="false">Microsoft Office 365</string>

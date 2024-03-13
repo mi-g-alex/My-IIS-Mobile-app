@@ -57,7 +57,14 @@ class SettingsViewModel @Inject constructor(
 
     fun updateEmail(mail: String) {
         viewModelScope.launch {
-            basicInfo.value = basicInfo.value?.copy(email = mail)
+            basicInfo.value = basicInfo.value?.copy(email = mail, hasNotConfirmedContact = true)
+            basicInfo.value?.let { db.setUserBasicData(it) }
+        }
+    }
+
+    fun confirmedEmail() {
+        viewModelScope.launch {
+            basicInfo.value = basicInfo.value?.copy(hasNotConfirmedContact = false)
             basicInfo.value?.let { db.setUserBasicData(it) }
         }
     }

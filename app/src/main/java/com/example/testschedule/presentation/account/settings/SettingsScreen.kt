@@ -1,11 +1,17 @@
 package com.example.testschedule.presentation.account.settings
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -27,19 +33,21 @@ import coil.annotation.ExperimentalCoilApi
 import com.example.testschedule.R
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
 import com.example.testschedule.presentation.account.settings.additional.BasicListItem
+import com.example.testschedule.presentation.account.settings.additional.ButtonEmailUnconfirmedItem
 import com.example.testschedule.presentation.account.settings.additional.DialogType
 import com.example.testschedule.presentation.account.settings.additional.Space
 import com.example.testschedule.presentation.account.settings.additional.WithCheckBoxListItem
 import com.example.testschedule.presentation.account.settings.additional.ChangePhotoItem
 import com.example.testschedule.presentation.account.settings.features.DialogBio
 import com.example.testschedule.presentation.account.settings.features.DialogChangeEmail
+import com.example.testschedule.presentation.account.settings.features.DialogConfirmEmail
 import com.example.testschedule.presentation.account.settings.features.DialogLinks
 import com.example.testschedule.presentation.account.settings.features.DialogOutlook
 import com.example.testschedule.presentation.account.settings.features.DialogPassword
 import com.example.testschedule.presentation.account.settings.features.DialogSkills
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoilApi::class)
+@OptIn(ExperimentalCoilApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun SettingsScreen(
     onBackPressed: () -> Unit,
@@ -135,6 +143,15 @@ fun SettingsScreen(
         val emailConnection =
             stringResource(id = R.string.account_settings_email_update_error_connection)
 
+        val confirmOk = stringResource(id = R.string.account_settings_email_confirm_success)
+        val confirmOther = stringResource(id = R.string.account_settings_email_confirm_error_other)
+        val confirmConnection =
+            stringResource(id = R.string.account_settings_email_confirm_error_connection)
+        val confirmCode =
+            stringResource(id = R.string.account_settings_email_confirm_error_wrong_code)
+
+        var expTime by remember { emailViewModel.expiredTime }
+
         if (userAccountData != null) {
 
             when (selectedDialog) {
@@ -143,6 +160,35 @@ fun SettingsScreen(
                     password = userAccountData?.outlookPassword.toString(),
                     copy = copy
                 ) { selectedDialog = DialogType.NONE }
+
+                DialogType.CONFIRM_EMAIL -> {
+                    DialogConfirmEmail(
+                        onGetCodeClicked = {
+                            emailViewModel.getCode()
+                        },
+                        onSendCodeClicked = { code ->
+                            emailViewModel.confirmCode(code, onSuccess = {
+                                viewModel.confirmedEmail()
+                                selectedDialog = DialogType.NONE
+                                showSnack(confirmOk)
+                            }) {
+                                when (emailViewModel.errorTextForDialog.value) {
+                                    "ConnectionFailed" -> toast(confirmConnection)
+                                    "WRONG_CODE" -> toast(confirmCode)
+                                    else -> toast(confirmOther)
+                                }
+                            }
+                        },
+                        errorString = emailViewModel.errorTextForDialog.value,
+                        leftTime = expTime,
+                        numberOfAttempt = emailViewModel.numberOfAttempts.intValue
+                    ) {
+                        selectedDialog = DialogType.NONE
+                        expTime = 0L
+                        emailViewModel.errorTextForDialog.value = ""
+                        emailViewModel.errorText.value = ""
+                    }
+                }
 
                 DialogType.EMAIL -> {
                     DialogChangeEmail(
@@ -163,9 +209,12 @@ fun SettingsScreen(
                                 userBasicData?.email ?: ""
                             }
                         },
-                        isLoading = emailViewModel.isLoadingUpdate.value,
-                        errorText = emailViewModel.errorText.value
-                    ) { selectedDialog = DialogType.NONE; emailViewModel.errorText.value = "" }
+                        isLoading = emailViewModel.isLoadingForDialog.value,
+                        errorText = emailViewModel.errorTextForDialog.value
+                    ) {
+                        selectedDialog = DialogType.NONE
+                        emailViewModel.errorTextForDialog.value = ""
+                    }
                 }
 
                 DialogType.PASSWORD -> {
@@ -263,197 +312,219 @@ fun SettingsScreen(
                 DialogType.NONE -> {}
             }
 
-            LazyColumn(
-                Modifier
-                    .fillMaxSize()
-                    .padding(it)
-            ) {
-                // Picture
-                item { ChangePhotoItem(photoUrl = userAccountData?.photoUrl ?: "") {} }
+            Column {
 
-                // Email
-                item {
-                    val email = if (emailViewModel.isLoading.value)
-                        stringResource(id = R.string.account_settings_email_loading)
-                    else
-                        emailViewModel.email.value.let { m ->
-                            m.ifBlank {
-                                userBasicData?.email ?: ""
+                LazyColumn(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(it)
+                ) {
+
+                    stickyHeader {
+                        AnimatedVisibility(
+                            visible = userBasicData?.hasNotConfirmedContact == true,
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.background)
+                            ) {
+                                ButtonEmailUnconfirmedItem {
+                                    selectedDialog = DialogType.CONFIRM_EMAIL
+                                }
                             }
                         }
-
-                    BasicListItem(
-                        mainText = stringResource(id = R.string.account_settings_email),
-                        descText = stringResource(id = R.string.account_settings_email_desc),
-                        additionalText = stringResource(
-                            id = R.string.account_settings_email_info,
-                            email
-                        )
-                    ) { selectedDialog = DialogType.EMAIL }
-                }
-
-                // Phone
-                item {
-                    val t = stringResource(id = R.string.account_settings_phone_desc)
-                    BasicListItem(
-                        mainText = stringResource(id = R.string.account_settings_phone),
-                        descText = t,
-                        additionalText = userBasicData?.phone?.let { data ->
-                            stringResource(id = R.string.account_settings_phone_info, data)
-                        } ?: ""
-                    ) { showSnack(t) }
-                }
-
-                // Password
-                item {
-                    BasicListItem(
-                        mainText = stringResource(id = R.string.account_settings_password),
-                        descText = stringResource(id = R.string.account_settings_password_desc),
-                    ) { selectedDialog = DialogType.PASSWORD }
-                }
-
-                // Spacer
-                item { Space() }
-
-                // BIO
-                item {
-                    BasicListItem(
-                        mainText = stringResource(id = R.string.account_settings_info_bio),
-                        descText = stringResource(id = R.string.account_settings_info_bio_desc),
-                        additionalText = if (userAccountData?.bio?.isNotEmpty() == true)
-                            stringResource(
-                                id = R.string.account_settings_info_bio_info,
-                                userAccountData?.bio.toString()
-                            ) else null
-                    ) { selectedDialog = DialogType.BIO }
-                }
-
-                // Links
-                item {
-                    BasicListItem(
-                        mainText = stringResource(id = R.string.account_settings_info_links),
-                        descText = stringResource(id = R.string.account_settings_info_links_desc),
-                    ) { selectedDialog = DialogType.LINKS }
-                }
-
-                // Skills
-                item {
-                    BasicListItem(
-                        mainText = stringResource(id = R.string.account_settings_info_skills),
-                        descText = stringResource(id = R.string.account_settings_info_skills_desc),
-                    ) { selectedDialog = DialogType.SKILLS }
-                }
-
-                // Spacer
-                item { Space() }
-
-                // Settings | Profile
-                item {
-                    val sucText = successUpdateText(
-                        R.string.account_settings_access_profile,
-                        stringResource(id = if (!canViewRating) R.string.account_settings_access_snackbar_allow else R.string.account_settings_access_snackbar_dont_allow)
-                    )
-
-                    val errText = errorUpdateText(R.string.account_settings_access_profile)
-
-                    WithCheckBoxListItem(
-                        mainText = stringResource(id = R.string.account_settings_access_profile),
-                        descText = stringResource(id = R.string.account_settings_access_profile_desc),
-                        canViewProfile,
-                        !viewModel.isLoading.value
-                    ) {
-                        viewModel.updateViewInfo(
-                            viewProfile = !canViewProfile,
-                            viewRating = null,
-                            viewJob = null,
-                            onSuccess = { showSnack(sucText); canViewProfile = !canViewProfile },
-                            onError = { showSnack(errText) }
-                        )
                     }
-                }
 
-                // Settings | Rating
-                item {
+                    // Picture
+                    item { ChangePhotoItem(photoUrl = userAccountData?.photoUrl ?: "") {} }
 
-                    val sucText = successUpdateText(
-                        R.string.account_settings_access_rating,
-                        stringResource(id = if (!canViewRating) R.string.account_settings_access_snackbar_allow else R.string.account_settings_access_snackbar_dont_allow)
-                    )
+                    // Email
+                    item {
+                        val email = if (emailViewModel.isLoading.value)
+                            stringResource(id = R.string.account_settings_email_loading)
+                        else
+                            emailViewModel.email.value.let { m ->
+                                m.ifBlank {
+                                    userBasicData?.email ?: ""
+                                }
+                            }
 
-                    val errText = errorUpdateText(R.string.account_settings_access_rating)
+                        BasicListItem(
+                            mainText = stringResource(id = R.string.account_settings_email),
+                            descText = stringResource(id = R.string.account_settings_email_desc),
+                            additionalText = stringResource(
+                                id = R.string.account_settings_email_info,
+                                email
+                            )
+                        ) { selectedDialog = DialogType.EMAIL }
+                    }
 
-                    WithCheckBoxListItem(
-                        mainText = stringResource(id = R.string.account_settings_access_rating),
-                        descText = stringResource(id = R.string.account_settings_access_rating_desc),
-                        canViewRating,
-                        canViewProfile && !viewModel.isLoading.value
-                    ) {
-                        viewModel.updateViewInfo(
-                            viewProfile = null,
-                            viewRating = !canViewRating,
-                            viewJob = null,
-                            onSuccess = {
-                                showSnack(sucText); canViewRating = !canViewRating
-                            },
-                            onError = { showSnack(errText) }
+                    // Phone
+                    item {
+                        val t = stringResource(id = R.string.account_settings_phone_desc)
+                        BasicListItem(
+                            mainText = stringResource(id = R.string.account_settings_phone),
+                            descText = t,
+                            additionalText = userBasicData?.phone?.let { data ->
+                                stringResource(id = R.string.account_settings_phone_info, data)
+                            } ?: ""
+                        ) { showSnack(t) }
+                    }
+
+                    // Password
+                    item {
+                        BasicListItem(
+                            mainText = stringResource(id = R.string.account_settings_password),
+                            descText = stringResource(id = R.string.account_settings_password_desc),
+                        ) { selectedDialog = DialogType.PASSWORD }
+                    }
+
+                    // Spacer
+                    item { Space() }
+
+                    // BIO
+                    item {
+                        BasicListItem(
+                            mainText = stringResource(id = R.string.account_settings_info_bio),
+                            descText = stringResource(id = R.string.account_settings_info_bio_desc),
+                            additionalText = if (userAccountData?.bio?.isNotEmpty() == true)
+                                stringResource(
+                                    id = R.string.account_settings_info_bio_info,
+                                    userAccountData?.bio.toString()
+                                ) else null
+                        ) { selectedDialog = DialogType.BIO }
+                    }
+
+                    // Links
+                    item {
+                        BasicListItem(
+                            mainText = stringResource(id = R.string.account_settings_info_links),
+                            descText = stringResource(id = R.string.account_settings_info_links_desc),
+                        ) { selectedDialog = DialogType.LINKS }
+                    }
+
+                    // Skills
+                    item {
+                        BasicListItem(
+                            mainText = stringResource(id = R.string.account_settings_info_skills),
+                            descText = stringResource(id = R.string.account_settings_info_skills_desc),
+                        ) { selectedDialog = DialogType.SKILLS }
+                    }
+
+                    // Spacer
+                    item { Space() }
+
+                    // Settings | Profile
+                    item {
+                        val sucText = successUpdateText(
+                            R.string.account_settings_access_profile,
+                            stringResource(id = if (!canViewProfile) R.string.account_settings_access_snackbar_allow else R.string.account_settings_access_snackbar_dont_allow)
                         )
+
+                        val errText = errorUpdateText(R.string.account_settings_access_profile)
+
+                        WithCheckBoxListItem(
+                            mainText = stringResource(id = R.string.account_settings_access_profile),
+                            descText = stringResource(id = R.string.account_settings_access_profile_desc),
+                            canViewProfile,
+                            !viewModel.isLoading.value
+                        ) {
+                            viewModel.updateViewInfo(
+                                viewProfile = !canViewProfile,
+                                viewRating = null,
+                                viewJob = null,
+                                onSuccess = {
+                                    showSnack(sucText); canViewProfile = !canViewProfile
+                                },
+                                onError = { showSnack(errText) }
+                            )
+                        }
                     }
-                }
 
-                // Settings | Work
-                item {
+                    // Settings | Rating
+                    item {
 
-                    val sucText = successUpdateText(
-                        R.string.account_settings_access_work,
-                        stringResource(id = if (!canSearchJob) R.string.account_settings_access_snackbar_allow else R.string.account_settings_access_snackbar_dont_allow)
-                    )
-
-                    val errText = errorUpdateText(R.string.account_settings_access_work)
-
-                    WithCheckBoxListItem(
-                        mainText = stringResource(id = R.string.account_settings_access_work),
-                        descText = stringResource(id = R.string.account_settings_access_work_desc),
-                        canSearchJob,
-                        canViewProfile && !viewModel.isLoading.value
-                    ) {
-                        viewModel.updateViewInfo(
-                            viewProfile = null,
-                            viewRating = null,
-                            viewJob = !canSearchJob,
-                            onSuccess = { showSnack(sucText); canSearchJob = !canSearchJob },
-                            onError = { showSnack(errText) }
+                        val sucText = successUpdateText(
+                            R.string.account_settings_access_rating,
+                            stringResource(id = if (!canViewRating) R.string.account_settings_access_snackbar_allow else R.string.account_settings_access_snackbar_dont_allow)
                         )
+
+                        val errText = errorUpdateText(R.string.account_settings_access_rating)
+
+                        WithCheckBoxListItem(
+                            mainText = stringResource(id = R.string.account_settings_access_rating),
+                            descText = stringResource(id = R.string.account_settings_access_rating_desc),
+                            canViewRating,
+                            canViewProfile && !viewModel.isLoading.value
+                        ) {
+                            viewModel.updateViewInfo(
+                                viewProfile = null,
+                                viewRating = !canViewRating,
+                                viewJob = null,
+                                onSuccess = {
+                                    showSnack(sucText); canViewRating = !canViewRating
+                                },
+                                onError = { showSnack(errText) }
+                            )
+                        }
                     }
-                }
 
-                // Spacer
-                item { Space() }
+                    // Settings | Work
+                    item {
 
-                // Office info
-                item {
-                    BasicListItem(
-                        mainText = stringResource(id = R.string.account_settings_outlook),
-                        descText = stringResource(id = R.string.account_settings_outlook_desc),
-                    ) { selectedDialog = DialogType.OUTLOOK }
-                }
+                        val sucText = successUpdateText(
+                            R.string.account_settings_access_work,
+                            stringResource(id = if (!canSearchJob) R.string.account_settings_access_snackbar_allow else R.string.account_settings_access_snackbar_dont_allow)
+                        )
 
-                // Spacer
-                item { Space() }
+                        val errText = errorUpdateText(R.string.account_settings_access_work)
 
-                // Clear cache
-                item {
-                    val textDone =
-                        stringResource(id = R.string.account_settings_advanced_clear_cache_done)
-                    BasicListItem(
-                        mainText = stringResource(id = R.string.account_settings_advanced_clear_cache),
-                        descText = stringResource(id = R.string.account_settings_advanced_clear_cache_desc),
-                    ) {
-                        coil.ImageLoader(cnt).diskCache?.clear()
-                        coil.ImageLoader(cnt).memoryCache?.clear()
-                        toast(textDone)
+                        WithCheckBoxListItem(
+                            mainText = stringResource(id = R.string.account_settings_access_work),
+                            descText = stringResource(id = R.string.account_settings_access_work_desc),
+                            canSearchJob,
+                            canViewProfile && !viewModel.isLoading.value
+                        ) {
+                            viewModel.updateViewInfo(
+                                viewProfile = null,
+                                viewRating = null,
+                                viewJob = !canSearchJob,
+                                onSuccess = { showSnack(sucText); canSearchJob = !canSearchJob },
+                                onError = { showSnack(errText) }
+                            )
+                        }
                     }
-                }
 
+                    // Spacer
+                    item { Space() }
+
+                    // Office info
+                    item {
+                        BasicListItem(
+                            mainText = stringResource(id = R.string.account_settings_outlook),
+                            descText = stringResource(id = R.string.account_settings_outlook_desc),
+                        ) { selectedDialog = DialogType.OUTLOOK }
+                    }
+
+                    // Spacer
+                    item { Space() }
+
+                    // Clear cache
+                    item {
+                        val textDone =
+                            stringResource(id = R.string.account_settings_advanced_clear_cache_done)
+                        BasicListItem(
+                            mainText = stringResource(id = R.string.account_settings_advanced_clear_cache),
+                            descText = stringResource(id = R.string.account_settings_advanced_clear_cache_desc),
+                        ) {
+                            coil.ImageLoader(cnt).diskCache?.clear()
+                            coil.ImageLoader(cnt).memoryCache?.clear()
+                            toast(textDone)
+                        }
+                    }
+
+                }
             }
         }
     }

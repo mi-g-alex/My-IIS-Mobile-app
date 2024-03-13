@@ -11,6 +11,7 @@ import retrofit2.awaitResponse
 import java.io.IOException
 import javax.inject.Inject
 
+/** WRONG_CODE **/
 class EmailSettingsConfirmCodeUseCase @Inject constructor(
     private val api: IisAPIRepository,
     private val db: UserDatabaseRepository
