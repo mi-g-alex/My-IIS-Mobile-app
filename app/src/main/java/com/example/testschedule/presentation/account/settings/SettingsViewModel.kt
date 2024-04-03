@@ -1,5 +1,7 @@
 package com.example.testschedule.presentation.account.settings
 
+import android.graphics.Bitmap
+import android.util.Base64
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +11,7 @@ import com.example.testschedule.domain.model.auth.UserBasicDataModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.account.profile.GetAccountProfileUseCase
 import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsBioUseCase
+import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsImageUseCase
 import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsLinksUseCase
 import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsPasswordUseCase
 import com.example.testschedule.domain.use_case.account.settings.UpdateSettingsSkillsUseCase
@@ -18,6 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +32,7 @@ class SettingsViewModel @Inject constructor(
     private val updateSettingsBioUseCase: UpdateSettingsBioUseCase,
     private val updateSettingsSkillsUseCase: UpdateSettingsSkillsUseCase,
     private val updateSettingsLinksUseCase: UpdateSettingsLinksUseCase,
+    private val updateSettingsImageUseCase: UpdateSettingsImageUseCase,
     private val db: UserDatabaseRepository,
 ) : ViewModel() {
 
@@ -263,6 +268,37 @@ class SettingsViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun updatePhoto(
+        bt: Bitmap
+    ) {
+        var s = ""
+        viewModelScope.launch {
+            try {
+                val baos = ByteArrayOutputStream()
+                bt.compress(Bitmap.CompressFormat.JPEG, 10, baos)
+                val b = baos.toByteArray()
+                s = Base64.encodeToString(b, Base64.NO_WRAP)
+            } catch (e: Exception) {
+                return@launch
+            }
+            updateSettingsImageUseCase(s).onEach { res ->
+
+                when (res) {
+                    is Resource.Success -> {
+                        userInfo.value = userInfo.value?.copy(photoUrl = res.data.toString())
+                    }
+
+                    is Resource.Loading -> {}
+                    is Resource.Error -> {
+                        errorText.value = res.message.toString()
+                    }
+                }
+
+            }.launchIn(viewModelScope)
+
+        }
     }
 
 }

@@ -1,6 +1,15 @@
 package com.example.testschedule.presentation.account.settings
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import android.util.Base64
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -45,7 +54,9 @@ import com.example.testschedule.presentation.account.settings.features.DialogLin
 import com.example.testschedule.presentation.account.settings.features.DialogOutlook
 import com.example.testschedule.presentation.account.settings.features.DialogPassword
 import com.example.testschedule.presentation.account.settings.features.DialogSkills
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 
 @OptIn(ExperimentalCoilApi::class, ExperimentalFoundationApi::class)
 @Composable
@@ -99,6 +110,29 @@ fun SettingsScreen(
             duration = SnackbarDuration.Short
         )
     }
+
+//    var imageUri by remember { mutableStateOf<Uri?>(null) }
+//    val context = LocalContext.current
+//    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+//    val launcher = rememberLauncherForActivityResult(
+//        contract = ActivityResultContracts.GetContent()
+//    ) { uri: Uri? -> imageUri = uri }
+//
+//    LaunchedEffect(imageUri) {
+//        imageUri?.let {
+//            if (Build.VERSION.SDK_INT < 28) {
+//                bitmap.value = MediaStore.Images
+//                    .Media.getBitmap(context.contentResolver, it)
+//
+//            } else {
+//                val source = ImageDecoder
+//                    .createSource(context.contentResolver, it)
+//                bitmap.value = ImageDecoder.decodeBitmap(source)
+//            }
+//        }
+//        if(bitmap.value != null) viewModel.updatePhoto(bitmap.value!!)
+//    }
+
 
 
     Scaffold(
@@ -337,7 +371,11 @@ fun SettingsScreen(
                     }
 
                     // Picture
-                    item { ChangePhotoItem(photoUrl = userAccountData?.photoUrl ?: "") {} }
+                    item {
+                        ChangePhotoItem(photoUrl = userAccountData?.photoUrl ?: "") {
+                      //      launcher.launch("image/*")
+                        }
+                    }
 
                     // Email
                     item {

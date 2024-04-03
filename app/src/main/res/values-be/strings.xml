@@ -230,6 +230,17 @@
     <string name="account_settings_email_update_success">"Почта обновлена. Текущая: "</string>
     <string name="account_settings_email_update_error_connection">Ошибка подключения к серверу</string>
     <string name="account_settings_email_update_error_other">Что-то пошло не так…</string>
+    <string name="account_settings_unconfirmed_email">Почта не подтверждена\nНажмите, чтобы подтвердить</string>
+    <string name="account_settings_email_confirm_title">Подтвердить почту</string>
+    <string name="account_settings_email_confirm_get_code">Получить код (%d осталось)</string>
+    <string name="account_settings_email_confirm_left_time">%s сек осталось</string>
+    <string name="account_settings_email_confirm_input_code_hint">Введите код</string>
+    <string name="account_settings_email_confirm_input_code_label">Код</string>
+    <string name="account_settings_email_confirm_button_ok">Подтвердить</string>
+    <string name="account_settings_email_confirm_error_wrong_code">Неверный код</string>
+    <string name="account_settings_email_confirm_error_connection">Ошибка подключения к серверу</string>
+    <string name="account_settings_email_confirm_error_other">Что-то пошло не так…</string>
+    <string name="account_settings_email_confirm_success">Почта подтверждена</string>
     <string name="account_settings_password">Пароль</string>
     <string name="account_settings_password_desc">Нажмите, чтобы изменить Ваш пароль</string>
     <string name="copy_tap">Нажмите, чтобы скопировать</string>

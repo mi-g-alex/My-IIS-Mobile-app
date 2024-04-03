@@ -29,6 +29,7 @@ import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
 import com.example.testschedule.data.remote.dto.schedule_view.ListOfEmployeesDto
 import com.example.testschedule.data.remote.dto.schedule_view.ListOfGroupsDto
 import com.example.testschedule.data.remote.dto.schedule_view.ScheduleDto
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -271,6 +272,12 @@ interface IisAPI {
         @Body code: SendConfirmCodeRequestDto,
         @Header("Cookie") cookies: String
     ): Call<ResponseBody?>
+
+    @POST("profiles/my-photo")
+    /** update profile photo **/
+    fun settingsUpdatePhoto(
+        @Body image: RequestBody, @Header("Cookie") cookies: String
+    ): Call<String?>
 
 }
 

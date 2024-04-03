@@ -11,10 +11,27 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 18,
-      "versionName": "0.0.0-18",
-      "outputFile": "My IIS 0.0.0-18.apk"
+      "versionCode": 19,
+      "versionName": "0.0.0-19",
+      "outputFile": "My IIS 0.0.0-19.apk"
     }
   ],
-  "elementType": "File"
+  "elementType": "File",
+  "baselineProfiles": [
+    {
+      "minApi": 28,
+      "maxApi": 30,
+      "baselineProfiles": [
+        "baselineProfiles/1/My IIS 0.0.0-19.dm"
+      ]
+    },
+    {
+      "minApi": 31,
+      "maxApi": 2147483647,
+      "baselineProfiles": [
+        "baselineProfiles/0/My IIS 0.0.0-19.dm"
+      ]
+    }
+  ],
+  "minSdkVersionForDexing": 21
 }

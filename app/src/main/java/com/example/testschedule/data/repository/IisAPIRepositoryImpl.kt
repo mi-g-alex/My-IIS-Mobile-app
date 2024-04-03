@@ -1,5 +1,6 @@
 package com.example.testschedule.data.repository
 
+import android.util.Log
 import com.example.testschedule.data.remote.IisAPI
 import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.account.notifications.ReadNotificationDto
@@ -33,6 +34,8 @@ import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.example.testschedule.domain.model.schedule.scheduleFromDtoToModel
 import com.example.testschedule.domain.repository.IisAPIRepository
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import javax.inject.Inject
@@ -230,4 +233,9 @@ class IisAPIRepositoryImpl @Inject constructor(
         cookies: String
     ): Call<ResponseBody?> =
         api.settingsEmailConfirmMessage(code.toDto(), cookies)
+
+    override suspend fun settingsUpdatePhoto(base64: String, cookies: String): Call<String?> {
+        val requestBody = (base64).toRequestBody("text/plain".toMediaType())
+        return api.settingsUpdatePhoto(requestBody, cookies)
+    }
 }

@@ -155,4 +155,9 @@ interface IisAPIRepository {
         cookies: String
     ): Call<ResponseBody?>
 
+    suspend fun settingsUpdatePhoto(
+        base64: String,
+        cookies: String
+    ): Call<String?>
+
 }
