@@ -2,6 +2,7 @@ package com.example.testschedule.data.repository
 
 import android.util.Log
 import com.example.testschedule.data.remote.IisAPI
+import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanCreateOmissionsDto
 import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.account.notifications.ReadNotificationDto
 import com.example.testschedule.data.remote.dto.account.settings.email.SendConfirmMessageResponseDto
@@ -13,6 +14,7 @@ import com.example.testschedule.domain.model.account.announcement.AnnouncementMo
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
 import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
 import com.example.testschedule.domain.model.account.group.GroupModel
+import com.example.testschedule.domain.model.account.headman.create_omissions.HeadmanGetOmissionsModel
 import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.omissions.OmissionsModel
@@ -238,4 +240,14 @@ class IisAPIRepositoryImpl @Inject constructor(
         val requestBody = (base64).toRequestBody("text/plain".toMediaType())
         return api.settingsUpdatePhoto(requestBody, cookies)
     }
+
+    override suspend fun headmanGetOmissionsByDate(
+        date: String,
+        cookies: String
+    ): HeadmanGetOmissionsModel = api.headmanGetOmissionsByDate(date, cookies).toModel(date)
+
+    override suspend fun headmanSaveOmissions(
+        omissions: HeadmanCreateOmissionsDto,
+        cookies: String
+    ): Call<ResponseBody?> = api.headmanSaveOmissions(omissions, cookies)
 }

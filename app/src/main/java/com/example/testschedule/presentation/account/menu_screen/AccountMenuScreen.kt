@@ -64,6 +64,7 @@ fun AccountMenuScreen(
     goToRating: () -> Unit,
     goToStudy: () -> Unit,
     goToSettings: () -> Unit,
+    goToHeadman: () -> Unit,
     viewModel: AccountProfileViewModel = hiltViewModel()
 ) {
     val cnt = LocalContext.current
@@ -114,12 +115,12 @@ fun AccountMenuScreen(
                         stringResource(id = R.string.account_menu_card_study),
                     ) { goToStudy() }
                 }
-                if (viewModel.basicInfo.value?.isGroupHead == true) {
+                if (viewModel.basicInfo.value?.isGroupHead == true || viewModel.basicInfo.value?.canStudentNote == true) {
                     item {
                         MenuItem(
                             R.drawable.acc_menu_headman,
                             stringResource(id = R.string.account_menu_card_headman),
-                        ) { }
+                        ) { goToHeadman() }
                     }
                 }
                 item {

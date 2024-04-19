@@ -4,6 +4,8 @@ import com.example.testschedule.data.remote.dto.account.announcement.Announcemen
 import com.example.testschedule.data.remote.dto.account.dormitory.DormitoryDto
 import com.example.testschedule.data.remote.dto.account.dormitory.PrivilegesDto
 import com.example.testschedule.data.remote.dto.account.group.GroupDto
+import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanCreateOmissionsDto
+import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanGetOmissionsDto
 import com.example.testschedule.data.remote.dto.account.mark_book.MarkBookDto
 import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.account.notifications.ReadNotificationDto
@@ -253,31 +255,46 @@ interface IisAPI {
     ): ContactsDto
 
     @POST("settings/contact/update")
-    /** Отправвка нового Email **/
+            /** Отправвка нового Email **/
     fun settingsEmailUpdate(
         @Body mail: ContactsUpdateRequestDto,
         @Header("Cookie") cookies: String
     ): Call<ResponseBody?>
 
     @POST("settings/contact/send-confirm-message")
-    /** Отправка кода на почту **/
+            /** Отправка кода на почту **/
     fun settingsEmailGetConfirmCode(
         @Body id: Int,
         @Header("Cookie") cookies: String
     ): Call<SendConfirmMessageResponseDto>
 
     @POST("settings/contact/confirm")
-    /** Отправка кода для проверки **/
+            /** Отправка кода для проверки **/
     fun settingsEmailConfirmMessage(
         @Body code: SendConfirmCodeRequestDto,
         @Header("Cookie") cookies: String
     ): Call<ResponseBody?>
 
     @POST("profiles/my-photo")
-    /** update profile photo **/
+            /** update profile photo **/
     fun settingsUpdatePhoto(
         @Body image: RequestBody, @Header("Cookie") cookies: String
     ): Call<String?>
+
+
+    @GET("grade-book/by-date")
+    /** Headman | Get omissions | Date: yyyy-MM-ddTHH:mm:ss.msZ **/
+    suspend fun headmanGetOmissionsByDate(
+        @Query("date") date: String,
+        @Header("Cookie") cookies: String
+    ): HeadmanGetOmissionsDto
+
+    @POST("grade-book/create")
+            /** Headman | Save omissions **/
+    fun headmanSaveOmissions(
+        @Body omissions: HeadmanCreateOmissionsDto,
+        @Header("Cookie") cookies: String
+    ): Call<ResponseBody?>
 
 }
 

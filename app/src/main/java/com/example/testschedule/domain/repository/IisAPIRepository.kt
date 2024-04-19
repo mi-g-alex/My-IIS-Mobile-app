@@ -1,5 +1,6 @@
 package com.example.testschedule.domain.repository
 
+import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanCreateOmissionsDto
 import com.example.testschedule.data.remote.dto.account.settings.email.SendConfirmMessageResponseDto
 import com.example.testschedule.data.remote.dto.account.settings.password.ChangePasswordDto
 import com.example.testschedule.data.remote.dto.account.study.mark_sheet.additional.MarkSheetTypeModel
@@ -8,6 +9,7 @@ import com.example.testschedule.domain.model.account.announcement.AnnouncementMo
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
 import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
 import com.example.testschedule.domain.model.account.group.GroupModel
+import com.example.testschedule.domain.model.account.headman.create_omissions.HeadmanGetOmissionsModel
 import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.model.account.omissions.OmissionsModel
@@ -159,5 +161,15 @@ interface IisAPIRepository {
         base64: String,
         cookies: String
     ): Call<String?>
+
+    suspend fun headmanGetOmissionsByDate(
+        date: String,
+        cookies: String
+    ): HeadmanGetOmissionsModel
+
+    suspend fun headmanSaveOmissions(
+        omissions: HeadmanCreateOmissionsDto,
+        cookies: String
+    ): Call<ResponseBody?>
 
 }

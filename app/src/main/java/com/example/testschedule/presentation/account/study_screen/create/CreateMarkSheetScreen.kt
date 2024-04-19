@@ -92,7 +92,7 @@ fun CreateMarkSheetScreen(
         calTmp.get(Calendar.YEAR),
         calTmp.get(Calendar.MONTH),
         calTmp.get(Calendar.DAY_OF_MONTH),
-        0, 0, 0
+        3, 0, 0
     )
 
     val calIsView = remember {

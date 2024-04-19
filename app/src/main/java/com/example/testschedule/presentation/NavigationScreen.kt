@@ -18,6 +18,7 @@ import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.example.testschedule.presentation.account.announcement_screen.AnnouncementsScreen
 import com.example.testschedule.presentation.account.dormitory_screen.DormitoryScreen
 import com.example.testschedule.presentation.account.group_screen.GroupScreen
+import com.example.testschedule.presentation.account.headman.HeadmanScreen
 import com.example.testschedule.presentation.account.mark_book_screen.MarkBookScreen
 import com.example.testschedule.presentation.account.menu_screen.AccountMenuScreen
 import com.example.testschedule.presentation.account.notifications_screen.NotificationsScreen
@@ -56,6 +57,7 @@ object Routes {
     const val ACCOUNT_STUDY_MAIN_ROUTE = "ACCOUNT_STUDY_MAIN_ROUTE"
     const val ACCOUNT_STUDY_CREATE_CERTIFICATE_ROUTE = "ACCOUNT_STUDY_CREATE_CERTIFICATE_ROUTE"
     const val ACCOUNT_STUDY_CREATE_MARK_SHEET_ROUTE = "ACCOUNT_STUDY_CREATE_MARK_SHEET_ROUTE"
+    const val ACCOUNT_HEADMAN = "ACCOUNT_HEADMAN"
 }
 
 @Composable
@@ -240,6 +242,9 @@ fun NavigationScreen(
                     },
                     goToSettings = {
                         navController.navigate(Routes.ACCOUNT_SETTINGS_ROUTE)
+                    },
+                    goToHeadman = {
+                        navController.navigate(Routes.ACCOUNT_HEADMAN)
                     }
                 )
             }
@@ -260,6 +265,21 @@ fun NavigationScreen(
                         navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
                     }
                 )
+            }
+
+            composable(
+                route = Routes.ACCOUNT_HEADMAN,
+                enterTransition = { enter },
+                exitTransition = { out }
+            ) {
+                HeadmanScreen(
+                    onBackPressed = { popNav() },
+                    onLogOut = {
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.popBackStack()
+                        navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                    })
             }
 
             composable(

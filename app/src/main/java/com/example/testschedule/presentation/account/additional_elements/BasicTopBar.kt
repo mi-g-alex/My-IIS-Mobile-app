@@ -22,13 +22,16 @@ import com.example.testschedule.R
  * __**Не забыть в onBackPressed пропусать установку на false**__
  *
  * `isOfflineMode` -> отображать ли кнопку, что данные из бд
+ *
+ * `additionalButtons` -> доп кнопкм
  */
 @Composable
 fun BasicTopBar(
     onBackPressed: () -> Unit,
     title: String,
     enabled: Boolean,
-    isOfflineResult: Boolean
+    isOfflineResult: Boolean,
+    additionalButtons: @Composable () -> Unit = {}
 ) {
     val cnt = LocalContext.current
     val toastText = stringResource(id = R.string.offline_mode_desc)
@@ -53,6 +56,7 @@ fun BasicTopBar(
                     )
                 }
             }
+            additionalButtons()
         }
     )
 }
