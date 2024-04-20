@@ -18,7 +18,7 @@ import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.example.testschedule.presentation.account.announcement_screen.AnnouncementsScreen
 import com.example.testschedule.presentation.account.dormitory_screen.DormitoryScreen
 import com.example.testschedule.presentation.account.group_screen.GroupScreen
-import com.example.testschedule.presentation.account.headman.HeadmanScreen
+import com.example.testschedule.presentation.account.headman_screen.HeadmanScreen
 import com.example.testschedule.presentation.account.mark_book_screen.MarkBookScreen
 import com.example.testschedule.presentation.account.menu_screen.AccountMenuScreen
 import com.example.testschedule.presentation.account.notifications_screen.NotificationsScreen

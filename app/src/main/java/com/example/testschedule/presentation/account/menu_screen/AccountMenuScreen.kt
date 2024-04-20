@@ -147,12 +147,12 @@ fun AccountMenuScreen(
                         stringResource(id = R.string.account_menu_card_announcements),
                     ) { goToAnnouncements() }
                 }
-                item {
+/*                item {
                     MenuItem(
                         R.drawable.acc_menu_graduate,
                         stringResource(id = R.string.account_menu_card_graduate),
                         {})
-                }
+                }*/
                 item {
                     MenuItem(
                         R.drawable.acc_menu_dormitory,
@@ -243,7 +243,7 @@ fun AccountMenuTopAppBar(
 @Composable
 fun AccountMenuProfileCard(user: AccountProfileModel) {
     OutlinedCard(
-        onClick = {},
+//        onClick = {},
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)

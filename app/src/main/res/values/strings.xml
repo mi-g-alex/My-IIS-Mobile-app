@@ -55,6 +55,7 @@
     <string name="account_headman_create_dialog_lesson_info">%d students. %d hours</string>
     <string name="account_headman_create_dialog_lesson_time">%s-%s (%dh)</string>
     <string name="account_headman_create_dialog_person">%s - %d</string>
+    <string name="account_headman_create_no_lessons">No lessons today</string>
     <string name="account_mark_book_exam_average_mark_four_year">Average mark: %s</string>
     <string name="account_mark_book_exam_average_retakes_four_year">Retake chance: %s%%</string>
     <string name="account_mark_book_exam_credit">Credits: %s</string>

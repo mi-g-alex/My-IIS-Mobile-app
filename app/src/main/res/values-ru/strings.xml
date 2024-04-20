@@ -49,6 +49,12 @@
     <string name="account_headman_create_lesson_time">%s-%s (%dч)</string>
     <string name="account_headman_create_by_lesson_info">%d человек(а) (%dч) выбрано</string>
     <string name="account_headman_create_by_lesson_name">%s (%s)</string>
+    <string name="account_headman_create_dialog_title">Сохранить пропуски</string>
+    <string name="account_headman_create_dialog_lesson_name">%s (%s)</string>
+    <string name="account_headman_create_dialog_lesson_info">%d студентов. %d часов</string>
+    <string name="account_headman_create_dialog_lesson_time">%s-%s (%dч)</string>
+    <string name="account_headman_create_dialog_person">%s - %d</string>
+    <string name="account_headman_create_no_lessons">Сегодня чилим</string>
     <string name="account_mark_book_exam_average_mark_four_year">Средний балл: %s</string>
     <string name="account_mark_book_exam_average_retakes_four_year">Шанс пересдачи: %s%%</string>
     <string name="account_mark_book_exam_credit">Зач. Единиц: %d</string>

@@ -1,15 +1,6 @@
 package com.example.testschedule.presentation.account.settings
 
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
-import android.util.Base64
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -46,7 +37,6 @@ import com.example.testschedule.presentation.account.settings.additional.ButtonE
 import com.example.testschedule.presentation.account.settings.additional.DialogType
 import com.example.testschedule.presentation.account.settings.additional.Space
 import com.example.testschedule.presentation.account.settings.additional.WithCheckBoxListItem
-import com.example.testschedule.presentation.account.settings.additional.ChangePhotoItem
 import com.example.testschedule.presentation.account.settings.features.DialogBio
 import com.example.testschedule.presentation.account.settings.features.DialogChangeEmail
 import com.example.testschedule.presentation.account.settings.features.DialogConfirmEmail
@@ -54,9 +44,7 @@ import com.example.testschedule.presentation.account.settings.features.DialogLin
 import com.example.testschedule.presentation.account.settings.features.DialogOutlook
 import com.example.testschedule.presentation.account.settings.features.DialogPassword
 import com.example.testschedule.presentation.account.settings.features.DialogSkills
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 
 @OptIn(ExperimentalCoilApi::class, ExperimentalFoundationApi::class)
 @Composable
@@ -370,12 +358,12 @@ fun SettingsScreen(
                         }
                     }
 
-                    // Picture
-                    item {
-                        ChangePhotoItem(photoUrl = userAccountData?.photoUrl ?: "") {
-                      //      launcher.launch("image/*")
-                        }
-                    }
+//                    // Picture
+//                    item {
+//                        ChangePhotoItem(photoUrl = userAccountData?.photoUrl ?: "") {
+//                      //      launcher.launch("image/*")
+//                        }
+//                    }
 
                     // Email
                     item {

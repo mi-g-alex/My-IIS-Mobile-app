@@ -8,6 +8,7 @@ object Constants {
     const val LAST_UPDATE_CURRENT_WEEK: String = "LAST_UPDATE_CURRENT_WEEK"
     const val CURRENT_WEEK: String = "CURRENT_WEEK"
     const val SELECTED_SUBGROUP: String = "SELECTED_SUBGROUP"
+    const val SELECTED_HEADMAN_SORT_BY_LESSON: String = "SELECTED_HEADMAN_SORT_BY_LESSON"
 
     const val MY_PREF: String = "MY_PREF"
 }
