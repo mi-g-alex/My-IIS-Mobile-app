@@ -79,7 +79,7 @@ class HeadmanViewModel @Inject constructor(
         onError: (lessonId: Int) -> Unit
     ) {
         savedLessons.intValue = 0
-        val tmpOmissions = selectedOmissions
+        val tmpOmissions = selectedOmissions.toMap()
         for (lessons in tmpOmissions) {
             saveOmissionsByDateUseCase(lessons.key, lessons.value).onEach { res ->
                 when (res) {

@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.headman.components.create_omissions.SaveConfirmDialog
 import com.example.testschedule.presentation.account.headman.components.create_omissions.SetHoursItem
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -91,6 +92,8 @@ fun HeadmanScreen(
 
     var sortByLesson by remember { mutableStateOf(true) }
 
+    var showConfirmDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -105,28 +108,7 @@ fun HeadmanScreen(
             ) {
                 IconButton(
                     onClick = {
-                        viewModel.saveOmissions(
-                            onSuccess = { id ->
-                                scope.launch {
-                                    showSnack(
-                                        snackTextSaveSuccess.format(
-                                            viewModel.lessonsList.first { it.id == id }.nameAbbrev,
-                                            viewModel.lessonsList.first { it.id == id }.lessonTypeAbbrev
-                                        )
-                                    )
-                                }
-                            },
-                            onError = { id ->
-                                scope.launch {
-                                    showSnack(
-                                        snackTextSaveError.format(
-                                            viewModel.lessonsList.first { it.id == id }.nameAbbrev,
-                                            viewModel.lessonsList.first { it.id == id }.lessonTypeAbbrev
-                                        )
-                                    )
-                                }
-                            }
-                        )
+                        showConfirmDialog = true
                     },
                     enabled = !viewModel.isSaving.value && viewModel.selectedOmissions.isNotEmpty()
                 ) {
@@ -159,6 +141,38 @@ fun HeadmanScreen(
         }
     ) {
         SetHoursItem(it, viewModel, sortByLesson)
+
+        if(showConfirmDialog) {
+            SaveConfirmDialog(
+                onConfirm = {
+                    viewModel.saveOmissions(
+                        onSuccess = { id ->
+                            scope.launch {
+                                showSnack(
+                                    snackTextSaveSuccess.format(
+                                        viewModel.lessonsList.first { it.id == id }.nameAbbrev,
+                                        viewModel.lessonsList.first { it.id == id }.lessonTypeAbbrev
+                                    )
+                                )
+                            }
+                        },
+                        onError = { id ->
+                            scope.launch {
+                                showSnack(
+                                    snackTextSaveError.format(
+                                        viewModel.lessonsList.first { it.id == id }.nameAbbrev,
+                                        viewModel.lessonsList.first { it.id == id }.lessonTypeAbbrev
+                                    )
+                                )
+                            }
+                        }
+                    )
+                },
+                onDismiss = { showConfirmDialog = false},
+                lessonList = viewModel.lessonsList,
+                selectedOmissions = viewModel.selectedOmissions
+            )
+        }
     }
 
 }

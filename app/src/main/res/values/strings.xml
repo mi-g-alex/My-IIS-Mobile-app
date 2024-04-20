@@ -47,9 +47,14 @@
     <string name="account_headman_create_calendar_next_day">Next day</string>
     <string name="account_headman_create_by_student_info">%d new hours selected</string>
     <string name="account_headman_create_by_student_lesson_name">%s (%s)</string>
-    <string name="account_headman_create_lesson_time">%s-%s (%sh)</string>
+    <string name="account_headman_create_lesson_time">%s-%s (%dh)</string>
     <string name="account_headman_create_by_lesson_info">%d students (%dh) new selected</string>
     <string name="account_headman_create_by_lesson_name">%s (%s)</string>
+    <string name="account_headman_create_dialog_title">Save omissions</string>
+    <string name="account_headman_create_dialog_lesson_name">%s (%s)</string>
+    <string name="account_headman_create_dialog_lesson_info">%d students. %d hours</string>
+    <string name="account_headman_create_dialog_lesson_time">%s-%s (%dh)</string>
+    <string name="account_headman_create_dialog_person">%s - %d</string>
     <string name="account_mark_book_exam_average_mark_four_year">Average mark: %s</string>
     <string name="account_mark_book_exam_average_retakes_four_year">Retake chance: %s%%</string>
     <string name="account_mark_book_exam_credit">Credits: %s</string>
