@@ -17,8 +17,8 @@ android {
         applicationId 'by.g_alex.my_iis'
         minSdk 21
         targetSdk 34
-        versionCode 100
-        versionName '0.0.1'
+        versionCode 101
+        versionName '0.1.1'
 
         vectorDrawables {
             useSupportLibrary true

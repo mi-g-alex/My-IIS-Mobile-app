@@ -2,8 +2,6 @@ package com.example.testschedule.domain.use_case.account.headman.create_omission
 
 import com.example.testschedule.common.Resource
 import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanCreateOmissionsDto
-import com.example.testschedule.domain.model.account.headman.create_omissions.HeadmanGetOmissionsModel
-import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.repository.IisAPIRepository
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import kotlinx.coroutines.flow.Flow
@@ -33,8 +31,8 @@ class SaveOmissionsByDateUseCase @Inject constructor(
             emit(Resource.Loading())
             val cookie = db.getCookie()
 
-
-            val data = api.headmanSaveOmissions(oms, cookie).awaitResponse()
+            val response = api.headmanSaveOmissions(oms, cookie).awaitResponse()
+            if (!response.isSuccessful) throw HttpException(response)
             emit(Resource.Success(true))
         } catch (e: HttpException) {
             if (e.code() == 403) {
@@ -46,7 +44,7 @@ class SaveOmissionsByDateUseCase @Inject constructor(
                     val cookie = response.headers()["Set-Cookie"].toString()
                     response.body()?.toModel(cookie)?.let { db.setUserBasicData(it) }
 
-                    val data = api.headmanSaveOmissions(oms, cookie).awaitResponse()
+                    api.headmanSaveOmissions(oms, cookie).awaitResponse()
 
                     emit(Resource.Success(true))
                 } catch (e: HttpException) {
