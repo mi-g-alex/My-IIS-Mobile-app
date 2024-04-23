@@ -28,7 +28,7 @@ fun ViewOmissionsByStudent(
     val listOfStudents: MutableMap<String, List<StudentLessonOmissionModel>> = mutableMapOf()
     val userIdMap = mutableMapOf<String, Int>()
     for (i in omissions) {
-        for (j in i.students.sortedBy { it.fio })
+        for (j in i.students)
             i.toStudentModel(j.omission).also {
                 listOfStudents[j.fio] = ((listOfStudents[j.fio]
                     ?: emptyList()) + listOf(it)).sortedBy { itt -> itt.lessonPeriod.startTime }
@@ -37,7 +37,7 @@ fun ViewOmissionsByStudent(
     }
 
     Column {
-        for ((i, j) in listOfStudents) {
+        for ((i, j) in listOfStudents.toSortedMap()) {
             StudentCard(
                 list = j,
                 fio = i,
