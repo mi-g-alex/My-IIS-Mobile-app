@@ -37,7 +37,7 @@
     <string name="account_headman_title">Headman | %s</string>
     <string name="account_headman_create_save_desc">Save omissions</string>
     <string name="account_headman_create_sort_by_student_desc">Sort by student</string>
-    <string name="account_headman_create_sort_by_lessson_desc">Sort by lesson</string>
+    <string name="account_headman_create_sort_by_lesson_desc">Sort by lesson</string>
     <string name="account_headman_create_snack_sorted_by_student">Sorted by student</string>
     <string name="account_headman_create_snack_sorted_by_lesson">Sorted by lesson</string>
     <string name="account_headman_create_snack_saved_success">%s (%s) saved</string>
@@ -311,7 +311,7 @@
     <string name="schedule_announcement">Announcement</string>
     <string name="schedule_bottom_sheet_edit_btn_desc">Change saved schedules</string>
     <string name="schedule_bottom_sheet_title">Select schedule</string>
-    <string name="schedule_dialog_auditories">Auditories: %s</string>
+    <string name="schedule_dialog_auditoriums">Auditoriums: %s</string>
     <string name="schedule_dialog_date">Date: %s</string>
     <string name="schedule_dialog_date_pattern">dd.MM</string>
     <string name="schedule_dialog_dates">Dates: %s – %s</string>

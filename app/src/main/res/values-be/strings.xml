@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="account_announcement_date">Дата: %s</string>
     <string name="account_announcement_no_announcement">События не найдены</string>
@@ -37,14 +36,14 @@
     <string name="account_headman_title">Староста | %s</string>
     <string name="account_headman_create_save_desc">Сохранить пропуски</string>
     <string name="account_headman_create_sort_by_student_desc">Сортировать по ФИО</string>
-    <string name="account_headman_create_sort_by_lessson_desc">Сортировать по предметам</string>
+    <string name="account_headman_create_sort_by_lesson_desc">Сортировать по предметам</string>
     <string name="account_headman_create_snack_sorted_by_student">Отсортировано по ФИО</string>
     <string name="account_headman_create_snack_sorted_by_lesson">Отсортировано по предметам</string>
     <string name="account_headman_create_snack_saved_success">%s (%s) сохранено</string>
     <string name="account_headman_create_snack_saved_error">%s (%s) не сохранено!!!</string>
     <string name="account_headman_create_calendar_select_date">Выбрать дату</string>
     <string name="account_headman_create_calendar_prev_day">Предыдущий день</string>
-    <string name="account_headman_create_calendar_next_day">Следуюший день</string>
+    <string name="account_headman_create_calendar_next_day">Следующий день</string>
     <string name="account_headman_create_by_student_info">%d новых часов выбрано</string>
     <string name="account_headman_create_by_student_lesson_name">%s (%s)</string>
     <string name="account_headman_create_lesson_time">%s-%s (%dч)</string>
@@ -214,7 +213,7 @@
     <string name="schedule_announcement">Событие</string>
     <string name="schedule_bottom_sheet_edit_btn_desc">Изменить сохраненные расписания</string>
     <string name="schedule_bottom_sheet_title">Выберите расписание</string>
-    <string name="schedule_dialog_auditories">Аудитории: %s</string>
+    <string name="schedule_dialog_auditoriums">Аудитории: %s</string>
     <string name="schedule_dialog_date">Дата: %s</string>
     <string name="schedule_dialog_date_pattern">dd.MM</string>
     <string name="schedule_dialog_dates">Даты: %s – %s</string>
@@ -225,7 +224,7 @@
     <string name="schedule_dialog_weeks">Недели: %s</string>
     <string name="schedule_exams_fab">Экзамены</string>
     <string name="schedule_no_added_start_screen">Не добавлено ни одного расписания!\nНажмите ≡, а потом ✏️</string>
-    <string name="schedule_no_lessons">Занятия и экзамены закончились.\nВремя отдахнуть и заняться саморазвитием:)</string>
+    <string name="schedule_no_lessons">Занятия и экзамены закончились.\nВремя отдохнуть и заняться саморазвитием:)</string>
     <string name="schedule_no_saved_title">Нет сохранённых расписаний</string>
     <string name="schedule_nothing_selected">Ничего не выбрано</string>
     <string name="schedule_open_list_of_saved_desc">Открыть список сохраненных расписаний</string>
@@ -275,7 +274,7 @@
     <string name="account_settings_access_rating">Рейтинг</string>
     <string name="account_settings_access_rating_desc">Показывать ваш рейтинг на странице \"Студенты\"</string>
     <string name="account_settings_access_work">Ищу работу</string>
-    <string name="account_settings_access_work_desc">Для фильтра \"В поисках работы\" на старнице \"Студенты\"</string>
+    <string name="account_settings_access_work_desc">Для фильтра \"В поисках работы\" на странице \"Студенты\"</string>
     <string name="account_settings_access_snackbar_allow">Показывать</string>
     <string name="account_settings_access_snackbar_dont_allow">Скрывать</string>
     <string name="account_settings_access_snackbar_error">Ошибка применения изменения %s</string>
@@ -293,7 +292,7 @@
     <string name="account_settings_password_error_connection">Ошибка подключения к серверу</string>
     <string name="account_settings_password_error_other">Что-то пошло не так…</string>
     <string name="account_settings_info_bio">О себе</string>
-    <string name="account_settings_info_bio_desc">Нажите, чтобы изменить \"О себе\"</string>
+    <string name="account_settings_info_bio_desc">Нажмите, чтобы изменить \"О себе\"</string>
     <string name="account_settings_info_bio_title">Изменить \"О себе\"</string>
     <string name="account_settings_info_bio_set_bio">О себе</string>
     <string name="account_settings_info_bio_set_empty">Пусто</string>
@@ -307,10 +306,10 @@
     <string name="account_settings_info_skills_title">Навыки</string>
     <string name="account_settings_info_skills_desc">Нажмите, чтобы увидеть или изменить Ваши навыки</string>
     <string name="account_settings_info_skills_remove_desc">Удалить навык: %s</string>
-    <string name="account_settings_info_skills_add_hint">Добвывить навык</string>
-    <string name="account_settings_info_skills_add_desc">Добвыить навык: %s</string>
+    <string name="account_settings_info_skills_add_hint">Добавить навык</string>
+    <string name="account_settings_info_skills_add_desc">Добавить навык: %s</string>
     <string name="account_settings_info_skills_add_err">Такой навык уже существует</string>
-    <string name="account_settings_info_skills_success">Успешно. Новыки обновлены</string>
+    <string name="account_settings_info_skills_success">Успешно. Навыки обновлены</string>
     <string name="account_settings_info_skills_error_connection">Ошибка подключения к серверу</string>
     <string name="account_settings_info_skills_error_other">Что-то пошло не так…</string>
     <string name="account_settings_info_links">Ссылки</string>
@@ -320,7 +319,7 @@
     <string name="account_settings_info_links_title">Ссылки</string>
     <string name="account_settings_info_links_remove_desc">Удалить ссылку %s: %s</string>
     <string name="account_settings_info_links_add_label">Создать новую ссылку</string>
-    <string name="account_settings_info_links_add_hint1">Заголовок ссылки</string>
+    <string name="account_settings_info_links_add_hint1">Создать новую ссылку</string>
     <string name="account_settings_info_links_add_hint2">Адрес ссылки</string>
     <string name="account_settings_info_links_add_desc">Добавить ссылку %s: %s</string>
     <string name="account_settings_info_links_add_err">Уже существует</string>

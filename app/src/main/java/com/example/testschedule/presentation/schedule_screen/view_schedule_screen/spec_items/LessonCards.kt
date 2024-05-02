@@ -200,7 +200,7 @@ fun LessonCard(
                             )
                         }
                     }
-                    if (lesson.note != null)
+                    if (lesson.note?.isNotBlank() == true)
                         Text(
                             text = lesson.note,
                             modifier = Modifier.fillMaxWidth(),
@@ -439,7 +439,7 @@ fun MoreDetailCard(
                             lesson.auditories.toString().removeSuffix("]").removePrefix("[")
                         Text(
                             stringResource(
-                                id = R.string.schedule_dialog_auditories,
+                                id = R.string.schedule_dialog_auditoriums,
                                 weeksString,
                             ),
                             style = MaterialTheme.typography.titleLarge

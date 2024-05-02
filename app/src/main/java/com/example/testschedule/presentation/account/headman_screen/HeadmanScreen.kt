@@ -134,7 +134,7 @@ fun HeadmanScreen(
                         painter = painterResource(id = R.drawable.sort),
                         contentDescription = stringResource(
                             id = if (sortByLesson) R.string.account_headman_create_sort_by_student_desc
-                            else R.string.account_headman_create_sort_by_lessson_desc
+                            else R.string.account_headman_create_sort_by_lesson_desc
                         )
                     )
                 }

@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 101,
-      "versionName": "0.1.1",
-      "outputFile": "My IIS 0.1.1.apk"
+      "versionCode": 102,
+      "versionName": "0.1.2",
+      "outputFile": "My IIS 0.1.2.apk"
     }
   ],
   "elementType": "File",
@@ -22,14 +22,14 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
-        "baselineProfiles/1/My IIS 0.1.1.dm"
+        "baselineProfiles/1/My IIS 0.1.2.dm"
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
-        "baselineProfiles/0/My IIS 0.1.1.dm"
+        "baselineProfiles/0/My IIS 0.1.2.dm"
       ]
     }
   ],
