@@ -48,9 +48,10 @@ fun LessonsDatePicker(
         DatePickerState(
             yearRange = ((cal.get(GregorianCalendar.YEAR) - 10)..
                     (cal.get(GregorianCalendar.YEAR) + 10)),
-            initialDisplayedMonthMillis = cal.timeInMillis + 3 * 60 * 60 * 1000L,
+            initialDisplayedMonthMillis = cal.timeInMillis,
             initialDisplayMode = DisplayMode.Picker,
-            initialSelectedDateMillis = cal.timeInMillis + 3 * 60 * 60 * 1000L
+            initialSelectedDateMillis = cal.timeInMillis,
+            locale = Locale.getDefault()
         )
     }
 
@@ -74,10 +75,10 @@ fun LessonsDatePicker(
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(
                 onClick = {
-                    datePickerState.setSelection(
+                    datePickerState.selectedDateMillis =
                         (datePickerState.selectedDateMillis
                             ?: cal.timeInMillis) - 24 * 60 * 60 * 1000L
-                    )
+
                 },
                 modifier = Modifier.fillMaxWidth(0.1f)
             ) {
@@ -103,7 +104,7 @@ fun LessonsDatePicker(
             )
             IconButton(
                 onClick = {
-                    datePickerState.setSelection(
+                    datePickerState.selectedDateMillis = (
                         (datePickerState.selectedDateMillis
                             ?: cal.timeInMillis) + 24 * 60 * 60 * 1000L
                     )

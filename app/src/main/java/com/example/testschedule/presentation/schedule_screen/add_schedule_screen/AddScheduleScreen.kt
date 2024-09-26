@@ -20,13 +20,13 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -377,7 +377,7 @@ fun SavedListView(
                             )
                         }
                         Icon(
-                            Icons.Outlined.KeyboardArrowRight,
+                            Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                             stringResource(id = R.string.schedule_add_saved_title)
                         )
                     }
@@ -413,7 +413,7 @@ fun SavedListView(
                             )
                         }
                         Icon(
-                            Icons.Outlined.KeyboardArrowRight,
+                            Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                             stringResource(id = R.string.schedule_select_subgroup_title)
                         )
                     }
@@ -421,7 +421,7 @@ fun SavedListView(
             }
 
             item {
-                Divider(
+                HorizontalDivider(
                     Modifier
                         .fillMaxWidth()
                         .padding(12.dp, 8.dp)

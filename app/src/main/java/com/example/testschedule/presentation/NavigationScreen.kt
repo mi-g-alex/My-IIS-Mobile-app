@@ -165,8 +165,12 @@ fun NavigationScreen(
             ) { entry ->
                 val id = entry.arguments?.getString("id") ?: ""
                 val exams = examsData[id]
+                if(exams == null) {
+                    popNav()
+                    return@composable
+                }
                 ViewExamsScreen(
-                    scheduleExams = exams!!,
+                    scheduleExams = exams,
                     navBack = {
                         popNav()
                     },

@@ -3,24 +3,23 @@ buildscript {
         mavenCentral()
     }
     ext {
-        compose_ui_version = '1.6.0'
+        compose_ui_version = '1.6.7'
         room_version = '2.6.1'
         lifecycle_version = '2.7.0'
-        m3_version = '1.1.2'
+        m3_version = '1.2.1'
         accompanist_version = '0.34.0'
-        retrofit2_version = '2.9.0'
-        okhttp3_version = '5.0.0-alpha.12'
-        kotlinx_coroutines_version = '1.7.3'
-        compose_material_version = '1.6.1'
+        retrofit2_version = '2.11.0'
+        okhttp3_version = '5.0.0-alpha.14'
+        kotlinx_coroutines_version = '1.8.0'
+        compose_material_version = '1.6.7'
     }
     dependencies {
         classpath "com.google.dagger:hilt-android-gradle-plugin:2.50"
-        classpath "com.kyleduo.android-apk-naming:plugin:1.0.0"
     }
 }
 plugins {
-    id 'com.android.application' version '8.3.1' apply false
-    id 'com.android.library' version '8.3.1' apply false
-    id 'org.jetbrains.kotlin.android' version '1.9.21' apply false
-    id 'com.google.devtools.ksp' version '1.9.21-1.0.16' apply false
+    id 'com.android.application' version '8.5.0' apply false
+    id 'com.android.library' version '8.5.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.23' apply false
+    id 'com.google.devtools.ksp' version '1.9.23-1.0.20' apply false
 }

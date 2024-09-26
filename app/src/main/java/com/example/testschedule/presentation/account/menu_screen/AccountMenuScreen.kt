@@ -17,11 +17,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ListItem
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.ExitToApp
-import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,6 +30,8 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -80,6 +82,20 @@ fun AccountMenuScreen(
         viewModel.getNotifications()
     }
 
+    val state = rememberPullToRefreshState()
+    if (state.isRefreshing) {
+        LaunchedEffect(true) {
+            viewModel.getNotifications()
+            viewModel.getUserAccountInfo()
+            if (!viewModel.isLoading.value)
+                state.endRefresh()
+        }
+        LaunchedEffect(viewModel.isLoading.value) {
+            if (!viewModel.isLoading.value)
+                state.endRefresh()
+        }
+    }
+
     Scaffold(
         topBar = {
             AccountMenuTopAppBar(
@@ -93,88 +109,85 @@ fun AccountMenuScreen(
             if (viewModel.isLoading.value) {
                 LinearProgressIndicator(Modifier.fillMaxWidth())
             }
-        }
+        },
+        modifier = Modifier.nestedScroll(state.nestedScrollConnection),
     ) {
-        if (viewModel.userInfo.value != null) {
-            LazyColumn(
-                Modifier
-                    .fillMaxSize()
-                    .padding(it)
-            ) {
-                item { AccountMenuProfileCard(user = viewModel.userInfo.value!!) }
-                item { Spacer(modifier = Modifier.height(10.dp)) }
-                item {
-                    MenuItem(
-                        R.drawable.acc_menu_markbook,
-                        stringResource(id = R.string.account_menu_card_markbook),
-                    ) { goToMarkBook() }
-                }
-                item {
-                    MenuItem(
-                        R.drawable.acc_menu_study,
-                        stringResource(id = R.string.account_menu_card_study),
-                    ) { goToStudy() }
-                }
-                if (viewModel.basicInfo.value?.isGroupHead == true || viewModel.basicInfo.value?.canStudentNote == true) {
+        Box(Modifier.padding(it)) {
+            if (viewModel.userInfo.value != null) {
+                LazyColumn(
+                    Modifier
+                        .fillMaxSize()
+                ) {
+                    item { AccountMenuProfileCard(user = viewModel.userInfo.value!!) }
+                    item { Spacer(modifier = Modifier.height(10.dp)) }
                     item {
                         MenuItem(
-                            R.drawable.acc_menu_headman,
-                            stringResource(id = R.string.account_menu_card_headman),
-                        ) { goToHeadman() }
+                            R.drawable.acc_menu_markbook,
+                            stringResource(id = R.string.account_menu_card_markbook),
+                        ) { goToMarkBook() }
+                    }
+                    item {
+                        MenuItem(
+                            R.drawable.acc_menu_study,
+                            stringResource(id = R.string.account_menu_card_study),
+                        ) { goToStudy() }
+                    }
+                    if (viewModel.basicInfo.value?.isGroupHead == true || viewModel.basicInfo.value?.canStudentNote == true) {
+                        item {
+                            MenuItem(
+                                R.drawable.acc_menu_headman,
+                                stringResource(id = R.string.account_menu_card_headman),
+                            ) { goToHeadman() }
+                        }
+                    }
+                    item {
+                        MenuItem(
+                            R.drawable.acc_menu_rating,
+                            stringResource(id = R.string.account_menu_card_rating),
+                        ) { goToRating() }
+                    }
+                    item {
+                        MenuItem(
+                            R.drawable.acc_menu_omissions,
+                            stringResource(id = R.string.account_menu_card_omissions),
+                        ) { goToOmissions() }
+                    }
+                    item {
+                        MenuItem(
+                            R.drawable.acc_menu_group,
+                            stringResource(id = R.string.account_menu_card_group),
+                        ) { goToGroup() }
+                    }
+                    item {
+                        MenuItem(
+                            R.drawable.acc_menu_announcements,
+                            stringResource(id = R.string.account_menu_card_announcements),
+                        ) { goToAnnouncements() }
+                    }
+                    /*                item {
+                                        MenuItem(
+                                            R.drawable.acc_menu_graduate,
+                                            stringResource(id = R.string.account_menu_card_graduate),
+                                            {})
+                                    }*/
+                    item {
+                        MenuItem(
+                            R.drawable.acc_menu_dormitory,
+                            stringResource(id = R.string.account_menu_card_dormitory),
+                        ) { goToDormitory() }
+                    }
+                    item {
+                        MenuItem(
+                            R.drawable.acc_menu_penalty,
+                            stringResource(id = R.string.account_menu_card_penalty),
+                        ) { goToPenalty() }
                     }
                 }
-                item {
-                    MenuItem(
-                        R.drawable.acc_menu_rating,
-                        stringResource(id = R.string.account_menu_card_rating),
-                    ) { goToRating() }
-                }
-                item {
-                    MenuItem(
-                        R.drawable.acc_menu_omissions,
-                        stringResource(id = R.string.account_menu_card_omissions),
-                    ) { goToOmissions() }
-                }
-                item {
-                    MenuItem(
-                        R.drawable.acc_menu_group,
-                        stringResource(id = R.string.account_menu_card_group),
-                    ) { goToGroup() }
-                }
-                item {
-                    MenuItem(
-                        R.drawable.acc_menu_announcements,
-                        stringResource(id = R.string.account_menu_card_announcements),
-                    ) { goToAnnouncements() }
-                }
-/*                item {
-                    MenuItem(
-                        R.drawable.acc_menu_graduate,
-                        stringResource(id = R.string.account_menu_card_graduate),
-                        {})
-                }*/
-                item {
-                    MenuItem(
-                        R.drawable.acc_menu_dormitory,
-                        stringResource(id = R.string.account_menu_card_dormitory),
-                    ) { goToDormitory() }
-                }
-                item {
-                    MenuItem(
-                        R.drawable.acc_menu_penalty,
-                        stringResource(id = R.string.account_menu_card_penalty),
-                    ) { goToPenalty() }
-                }
             }
-        } else {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                IconButton(onClick = { viewModel.getUserAccountInfo() }) {
-                    Icon(
-                        Icons.Outlined.Refresh,
-                        null
-                    )
-                }
-            }
+            PullToRefreshContainer(
+                state = state,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
@@ -213,7 +226,7 @@ fun AccountMenuTopAppBar(
             }
             IconButton(onClick = { onExitClicked() }) {
                 Icon(
-                    Icons.Outlined.ExitToApp,
+                    Icons.AutoMirrored.Outlined.ExitToApp,
                     stringResource(id = R.string.account_menu_exit_desc)
                 )
             }
@@ -243,7 +256,6 @@ fun AccountMenuTopAppBar(
 @Composable
 fun AccountMenuProfileCard(user: AccountProfileModel) {
     OutlinedCard(
-//        onClick = {},
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
@@ -329,7 +341,7 @@ fun MenuItem(
         },
         trailing = {
             Icon(
-                Icons.Default.KeyboardArrowRight,
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = title,
             )
         }

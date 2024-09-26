@@ -231,7 +231,6 @@ fun SettingsScreen(
                                 userBasicData?.email ?: ""
                             }
                         },
-                        isLoading = emailViewModel.isLoadingForDialog.value,
                         errorText = emailViewModel.errorTextForDialog.value
                     ) {
                         selectedDialog = DialogType.NONE

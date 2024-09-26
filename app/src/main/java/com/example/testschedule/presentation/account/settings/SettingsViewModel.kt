@@ -273,7 +273,7 @@ class SettingsViewModel @Inject constructor(
     fun updatePhoto(
         bt: Bitmap
     ) {
-        var s = ""
+        var s: String
         viewModelScope.launch {
             try {
                 val baos = ByteArrayOutputStream()

@@ -35,7 +35,9 @@
 
                 <data android:scheme="https" />
                 <data android:host="iis.bsuir.by" />
-                <data android:pathAdvancedPattern="/schedule/[0-9a-z\-]+/*" />
+                <data
+                    android:pathAdvancedPattern="/schedule/[0-9a-z\-]+/*"
+                    tools:targetApi="s" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

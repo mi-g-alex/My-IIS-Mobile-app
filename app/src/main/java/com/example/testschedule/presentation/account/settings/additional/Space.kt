@@ -3,7 +3,7 @@ package com.example.testschedule.presentation.account.settings.additional
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
@@ -13,7 +13,7 @@ fun Space() {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        Divider()
+        HorizontalDivider()
     }
 
 }

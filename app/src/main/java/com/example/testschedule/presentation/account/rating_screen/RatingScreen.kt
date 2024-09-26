@@ -97,14 +97,14 @@ fun TabScreen(data: RatingModel) {
     listOfTabs.addAll(data.points.keys.filter { it != "all_points" })
 
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        RatingTabs(pagerState = pagerState, data = data, listOfTabs = listOfTabs)
+        RatingTabs(pagerState = pagerState, listOfTabs = listOfTabs)
         TabsContent(pagerState = pagerState, data = data, listOfTabs = listOfTabs)
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RatingTabs(data: RatingModel, pagerState: PagerState, listOfTabs: List<String>) {
+fun RatingTabs(pagerState: PagerState, listOfTabs: List<String>) {
 
     val scope = rememberCoroutineScope()
     val listOfTabsName = listOfTabs.map {

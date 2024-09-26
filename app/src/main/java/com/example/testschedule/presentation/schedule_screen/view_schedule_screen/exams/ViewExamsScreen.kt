@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -56,7 +56,10 @@ fun ViewExamsScreen(
                             navBack()
                         }
                     ) {
-                        Icon(Icons.Outlined.ArrowBack, stringResource(id = R.string.back))
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ArrowBack,
+                            stringResource(id = R.string.back)
+                        )
                     }
                 }
             )

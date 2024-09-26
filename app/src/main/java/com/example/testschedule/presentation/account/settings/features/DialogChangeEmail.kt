@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -21,7 +20,6 @@ import com.example.testschedule.R
 fun DialogChangeEmail(
     onSaveClick: (email: String) -> Unit,
     curEmail: String,
-    isLoading: Boolean,
     errorText: String,
     onDismiss: () -> Unit
 ) {
