@@ -34,6 +34,7 @@ import java.util.Locale
 
 @Composable
 fun LessonsDatePicker(
+    datePickerState: DatePickerState,
     onDateSelect: (date: Date) -> Unit
 ) {
     val cal = Calendar.getInstance().apply {
@@ -44,16 +45,7 @@ fun LessonsDatePicker(
             0, 0, 0
         )
     }
-    val datePickerState = remember {
-        DatePickerState(
-            yearRange = ((cal.get(GregorianCalendar.YEAR) - 10)..
-                    (cal.get(GregorianCalendar.YEAR) + 10)),
-            initialDisplayedMonthMillis = cal.timeInMillis,
-            initialDisplayMode = DisplayMode.Picker,
-            initialSelectedDateMillis = cal.timeInMillis,
-            locale = Locale.getDefault()
-        )
-    }
+
 
     val calIsView = remember {
         mutableStateOf(false)

@@ -1,5 +1,7 @@
 package com.example.testschedule.presentation.account.headman_screen
 
+import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.DisplayMode
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -14,7 +16,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
+import java.util.GregorianCalendar
 import java.util.Locale
 import javax.inject.Inject
 
@@ -25,6 +29,24 @@ class HeadmanViewModel @Inject constructor(
 ) : ViewModel() {
     val isLoading = mutableStateOf(false)
     val errorText = mutableStateOf("")
+
+    private val cal = Calendar.getInstance().apply {
+        GregorianCalendar(
+            get(Calendar.YEAR),
+            get(Calendar.MONTH),
+            get(Calendar.DAY_OF_MONTH),
+            0, 0, 0
+        )
+    }
+
+    val selectedDate = mutableStateOf<DatePickerState>(DatePickerState(
+        yearRange = ((cal.get(GregorianCalendar.YEAR) - 10)..
+                (cal.get(GregorianCalendar.YEAR) + 10)),
+        initialDisplayedMonthMillis = cal.timeInMillis,
+        initialDisplayMode = DisplayMode.Picker,
+        initialSelectedDateMillis = cal.timeInMillis,
+        locale = Locale.getDefault()
+    ))
 
     private val lastRequiredDate = mutableStateOf("")
     private val lrd = mutableStateOf(Date())

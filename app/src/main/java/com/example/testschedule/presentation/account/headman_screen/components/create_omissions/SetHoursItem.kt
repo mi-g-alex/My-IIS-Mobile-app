@@ -22,14 +22,14 @@ import com.example.testschedule.presentation.account.headman_screen.HeadmanViewM
 fun SetHoursItem(
     padVal: PaddingValues,
     viewModel: HeadmanViewModel,
-    isSortByLesson: Boolean
+    isSortByLesson: Boolean,
 ) {
 
     LaunchedEffect(viewModel.cnt.intValue) {}
 
     Column(modifier = Modifier.padding(padVal)) {
 
-        LessonsDatePicker { date ->
+        LessonsDatePicker(viewModel.selectedDate.value) { date ->
             viewModel.getOmissionsByDate(date)
         }
 
