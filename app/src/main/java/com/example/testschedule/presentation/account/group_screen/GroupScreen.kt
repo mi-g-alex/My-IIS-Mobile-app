@@ -51,6 +51,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.additional_elements.ListDataSection
+import com.example.testschedule.presentation.account.additional_elements.SectionItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -90,57 +92,39 @@ fun GroupScreen(
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
         }
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            if (viewModel.group.value?.studentGroupCurator != null) {
-                stickyHeader {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.background)
-                    ) {
-                        Text(
-                            stringResource(id = R.string.account_group_curator),
-                            style = MaterialTheme.typography.displaySmall
-                        )
-                    }
-                }
-                item {
+    ) { padVal ->
+
+        val listOfItem = mutableListOf<SectionItem>()
+
+        if (viewModel.group.value?.studentGroupCurator != null) {
+            listOfItem += SectionItem(
+                title = stringResource(id = R.string.account_group_curator),
+                emptyText = "",
+                itemList = listOf {
                     CuratorCard(
                         item = viewModel.group.value!!.studentGroupCurator!!,
                         goToSchedule = goToSchedule
                     )
                 }
-                item {
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-            }
-            if (viewModel.group.value?.groupInfoStudent?.isNotEmpty() == true) {
-                stickyHeader {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.background)
-                    ) {
-                        Text(
-                            stringResource(id = R.string.account_group_title),
-                            style = MaterialTheme.typography.displaySmall
-                        )
-                    }
-                }
-                viewModel.group.value?.groupInfoStudent!!.sortedBy { i -> i.fio }
-                    .forEach { groupInfoStudent ->
-                        item {
-                            StudentCard(groupInfoStudent)
-                        }
-                    }
-            }
+            )
         }
+
+        if (viewModel.group.value?.groupInfoStudent?.isNotEmpty() == true) {
+            listOfItem += SectionItem(
+                title = stringResource(id = R.string.account_group_title),
+                emptyText = "",
+                itemList = viewModel.group.value?.groupInfoStudent!!.sortedBy { i -> i.fio }
+                    .map { groupInfoStudent ->
+                        { StudentCard(groupInfoStudent) }
+                    }
+            )
+        }
+
+        ListDataSection(
+            listOfItems = listOfItem,
+            paddingValues = padVal
+        )
+
     }
 }
 
@@ -156,7 +140,6 @@ fun CuratorCard(
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp)
     ) {
         Column(
             Modifier
@@ -279,9 +262,7 @@ fun StudentCard(item: GroupModel.GroupInfoStudent) {
         else -> item.position
     }
     OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 5.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
             Modifier

@@ -29,6 +29,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.additional_elements.ListDataSection
+import com.example.testschedule.presentation.account.additional_elements.SectionItem
 
 @Composable
 fun PenaltyScreen(
@@ -58,28 +60,20 @@ fun PenaltyScreen(
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
         }
-    ) {
-        if (viewModel.penalty.value.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                viewModel.penalty.value.sortedByDescending { i -> i.id }.forEach {
-                    item {
-                        PenaltyItem(item = it)
-                    }
-                }
-            }
-        } else {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = stringResource(id = R.string.account_penalty_no_penalty),
-                    style = MaterialTheme.typography.displaySmall
-                )
-            }
-        }
+    ) { padVal ->
+
+        val listOfItem = mutableListOf<SectionItem>(
+            SectionItem(
+                title = null,
+                emptyText = stringResource(id = R.string.account_penalty_no_penalty),
+                itemList = viewModel.penalty.value.map { { PenaltyItem(item = it) } }
+            )
+        )
+
+        ListDataSection(
+            listOfItems = listOfItem,
+            paddingValues = padVal
+        )
     }
 }
 
@@ -90,7 +84,6 @@ fun PenaltyItem(
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp),
     ) {
         Column(
             Modifier

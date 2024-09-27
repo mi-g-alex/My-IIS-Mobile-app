@@ -2,14 +2,11 @@ package com.example.testschedule.presentation.account.notifications_screen
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Info
@@ -35,6 +32,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.additional_elements.ListDataSection
+import com.example.testschedule.presentation.account.additional_elements.SectionItem
 
 @Composable
 fun NotificationsScreen(
@@ -64,28 +63,22 @@ fun NotificationsScreen(
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
         }
-    ) {
-        if (viewModel.notifications.value.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                viewModel.notifications.value.sortedByDescending { it.id }.forEach {
-                    item {
-                        NotificationItem(item = it)
-                    }
+    ) { padVal ->
+
+        val listOfItem = mutableListOf(
+            SectionItem(
+                null,
+                stringResource(id = R.string.account_notification_no_notifications),
+                viewModel.notifications.value.sortedByDescending { it.id }.map {
+                    { NotificationItem(item = it) }
                 }
-            }
-        } else {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = stringResource(id = R.string.account_notification_no_notifications),
-                    style = MaterialTheme.typography.displaySmall
-                )
-            }
-        }
+            )
+        )
+
+        ListDataSection(
+            listOfItems = listOfItem,
+            paddingValues = padVal
+        )
     }
 }
 
@@ -96,7 +89,6 @@ fun NotificationItem(
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp)
     ) {
         Column(
             Modifier

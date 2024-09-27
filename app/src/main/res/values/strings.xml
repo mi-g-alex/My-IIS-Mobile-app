@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="account_announcement_date">Date: %s</string>
-    <string name="account_announcement_no_announcement">No announcement found!</string>
+    <string name="account_announcement_no_announcement">No announcement yet</string>
     <string name="account_announcement_place">Place: %s</string>
     <string name="account_announcement_time">Time: %s - %s</string>
     <string name="account_announcement_title">Announcements</string>
@@ -93,7 +93,7 @@
     <string name="account_omissions_date">Date: %s</string>
     <string name="account_omissions_date_format">dd.MM.yyyy</string>
     <string name="account_omissions_dates">Dates: %s – %s</string>
-    <string name="account_omissions_no_omissions">No omissions found</string>
+    <string name="account_omissions_no_omissions">No omissions</string>
     <string name="account_omissions_note">Note: %s</string>
     <string name="account_omissions_semester_number">%s semester</string>
     <string name="account_omissions_title">Omissions</string>

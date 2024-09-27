@@ -97,7 +97,7 @@
     <string name="account_omissions_semester_number">%s семестр</string>
     <string name="account_omissions_title">Пропуски</string>
     <string name="account_penalty_date">Дата: %s</string>
-    <string name="account_penalty_no_penalty">Не найдено взысканий или привилегий</string>
+    <string name="account_penalty_no_penalty">Нет взысканий и привилегий</string>
     <string name="account_penalty_note">Заметка: %s</string>
     <string name="account_penalty_status">Статус: %s</string>
     <string name="account_penalty_title">Поощрения и Взыскания</string>

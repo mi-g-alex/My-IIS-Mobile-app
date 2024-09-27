@@ -31,6 +31,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.omissions.OmissionsModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.additional_elements.ListDataSection
+import com.example.testschedule.presentation.account.additional_elements.SectionItem
 import com.example.testschedule.presentation.account.dormitory_screen.timeLongToString
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -63,49 +65,39 @@ fun OmissionsScreen(
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
         }
-    ) {
-        if (viewModel.omissions.value.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                val omissions = viewModel.omissions.value.sortedWith(
-                    compareBy({ i -> i.term }, { i -> i.dateFrom })
-                ).reversed()
+    ) { padVal ->
 
-                omissions.forEachIndexed { i, item ->
-                    if (i == 0 || omissions[i - 1].term != item.term) {
-                        stickyHeader {
-                            Box(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.background)
-                            ) {
-                                Text(
-                                    stringResource(
-                                        id = R.string.account_omissions_semester_number,
-                                        item.term
-                                    ),
-                                    style = MaterialTheme.typography.displaySmall
-                                )
-                            }
-                        }
-                    }
-                    item {
-                        OmissionsItem(item = item)
-                    }
-                }
+
+        val omissions = viewModel.omissions.value.sortedWith(
+            compareBy({ i -> i.term }, { i -> i.dateFrom })
+        ).reversed()
+
+        val mapOfTerms = mutableMapOf<String, MutableList<OmissionsModel>>()
+
+        omissions.forEach {
+            if (mapOfTerms[it.term] == null) {
+                mapOfTerms[it.term] = mutableListOf()
             }
-        } else {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = stringResource(id = R.string.account_omissions_no_omissions),
-                    style = MaterialTheme.typography.displaySmall
-                )
-            }
+            mapOfTerms[it.term]!!.add(it)
         }
+
+        val listOfItem = mutableListOf<SectionItem>()
+
+        mapOfTerms.forEach { item ->
+            listOfItem += SectionItem(
+                title = stringResource(
+                    id = R.string.account_omissions_semester_number,
+                    item.key
+                ),
+                emptyText = "",
+                itemList = item.value.map { { OmissionsItem(item = it) } }
+            )
+        }
+
+        ListDataSection(
+            listOfItems = listOfItem,
+            paddingValues = padVal
+        )
     }
 }
 
@@ -114,9 +106,7 @@ fun OmissionsItem(
     item: OmissionsModel
 ) {
     OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 5.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
             Modifier

@@ -36,6 +36,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.additional_elements.ListDataSection
+import com.example.testschedule.presentation.account.additional_elements.SectionItem
 
 @Composable
 fun AnnouncementsScreen(
@@ -67,29 +69,26 @@ fun AnnouncementsScreen(
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
         }
-    ) {
-        if (viewModel.announcement.value.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                val announcements = viewModel.announcement.value
-                announcements.forEach { item ->
-                    item {
-                        AnnouncementItem(item = item, goToSchedule = goToSchedule)
-                    }
+    ) { padVal ->
+        val listOfItem = mutableListOf<SectionItem>()
+
+        listOfItem += SectionItem(
+            null,
+            stringResource(id = R.string.account_announcement_no_announcement),
+            viewModel.announcement.value.map { item ->
+                {
+                    AnnouncementItem(
+                        item = item,
+                        goToSchedule = goToSchedule
+                    )
                 }
             }
-        } else {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = stringResource(id = R.string.account_announcement_no_announcement),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-        }
+        )
+
+        ListDataSection(
+            listOfItems = listOfItem,
+            paddingValues = padVal
+        )
     }
 }
 
@@ -99,9 +98,7 @@ fun AnnouncementItem(
     goToSchedule: (urlId: String, title: String) -> Unit
 ) {
     OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 5.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
             Modifier

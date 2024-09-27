@@ -2,18 +2,13 @@ package com.example.testschedule.presentation.account.dormitory_screen
 
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -36,10 +31,11 @@ import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
 import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.additional_elements.ListDataSection
+import com.example.testschedule.presentation.account.additional_elements.SectionItem
 import java.util.Calendar
 import java.util.GregorianCalendar
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DormitoryScreen(
     onBackPressed: () -> Unit,
@@ -69,98 +65,39 @@ fun DormitoryScreen(
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
         }
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            if (viewModel.dormitory.value != null) {
-                stickyHeader {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.background)
-                    ) {
-                        Text(
-                            stringResource(id = R.string.account_dormitory_dormitory_title),
-                            style = MaterialTheme.typography.displaySmall
-                        )
-                    }
-                }
-                if (viewModel.dormitory.value!!.isEmpty()) {
-                    item {
-                        Box(
-                            Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.background)
-                                .padding(8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.account_dormitory_dormitory_no_requests),
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                        }
-                    }
-                } else {
-                    viewModel.dormitory.value!!.sortedByDescending { i -> i.acceptedDate }.forEach {
-                        item {
-                            DormitoryCard(item = it)
-                        }
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-                }
-            }
-            if (viewModel.privileges.value != null) {
-                stickyHeader {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.background)
-                    ) {
-                        Text(
-                            stringResource(id = R.string.account_dormitory_privileges_title),
-                            style = MaterialTheme.typography.displaySmall
-                        )
-                    }
-                }
-                if (viewModel.privileges.value!!.isEmpty()) {
-                    item {
-                        Box(
-                            Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.background)
-                                .padding(8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.account_dormitory_privileges_no_privileges),
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                        }
-                    }
-                } else {
-                    viewModel.privileges.value!!.sortedByDescending { i -> i.year }.forEach {
-                        item {
-                            PrivilegeCard(item = it)
-                        }
-                    }
-                }
-            }
+    ) { padVal ->
+
+        val listOfItem = mutableListOf<SectionItem>()
+
+        if (viewModel.dormitory.value != null) {
+            listOfItem += SectionItem(
+                title = stringResource(id = R.string.account_dormitory_dormitory_title),
+                emptyText = stringResource(id = R.string.account_dormitory_dormitory_no_requests),
+                itemList = viewModel.dormitory.value!!.sortedByDescending { i -> i.acceptedDate }
+                    .map { { DormitoryCard(it) } }
+            )
         }
+
+        if (viewModel.privileges.value != null) {
+            listOfItem += SectionItem(
+                title = stringResource(id = R.string.account_dormitory_privileges_title),
+                emptyText = stringResource(id = R.string.account_dormitory_privileges_no_privileges),
+                itemList = viewModel.privileges.value!!.sortedByDescending { i -> i.year }
+                    .map { { PrivilegeCard(item = it) } }
+            )
+        }
+
+        ListDataSection(
+            listOfItems = listOfItem,
+            paddingValues = padVal
+        )
     }
 }
 
 @Composable
 fun DormitoryCard(item: DormitoryModel) {
     OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 5.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         val status = when (item.status) {
             "Документы приняты" -> stringResource(id = R.string.account_dormitory_dormitory_card_status_doc_accepted)
@@ -257,9 +194,7 @@ fun DormitoryCard(item: DormitoryModel) {
 @Composable
 fun PrivilegeCard(item: PrivilegesModel) {
     OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 5.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         val type = when (item.dormitoryPrivilegeCategoryName) {
             "Внеочередное право" -> stringResource(id = R.string.account_dormitory_privileges_type_0)

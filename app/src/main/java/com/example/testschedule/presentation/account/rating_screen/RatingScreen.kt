@@ -5,7 +5,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,6 +41,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.rating.RatingModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.additional_elements.ListDataSection
+import com.example.testschedule.presentation.account.additional_elements.SectionItem
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -161,50 +162,64 @@ fun PointSubjectList(
     dialogData: MutableState<RatingModel.Point.LessonByName?>,
     showDialog: MutableState<Boolean>
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-    ) {
 
-        var sum = 0f
-        data.listOfMarks.forEach { sum += it }
-        if (data.listOfMarks.isNotEmpty())
-            sum /= data.listOfMarks.size
-        val round = (sum * 100).roundToInt() / 100.0
-        if (data.listOfMarks.isNotEmpty())
-            item {
-                Text(
-                    stringResource(
-                        id = R.string.account_rating_average_mark,
-                        round.toString()
-                    ),
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
-        item {
-            Text(
-                stringResource(
-                    id = R.string.account_rating_omissions,
-                    data.countOfOmissions
-                ),
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 5.dp)
-            )
-        }
+    var sum = 0f
+    data.listOfMarks.forEach { sum += it }
+    if (data.listOfMarks.isNotEmpty())
+        sum /= data.listOfMarks.size
+    val round = (sum * 100).roundToInt() / 100.0
 
-        data.listOfSubjects.sorted().forEach { lesson ->
-            data.subjects[lesson]?.let {
-                item {
-                    SubjectCard(
-                        data = it,
-                        lessonName = lesson,
-                        dialogData,
-                        showDialog
-                    )
+    val listOfItem = mutableListOf(
+        SectionItem(
+            title = null,
+            emptyText = "",
+            itemList = data.listOfSubjects.sorted()
+                .map { lesson ->
+                    {
+                        data.subjects[lesson]?.let {
+                            SubjectCard(
+                                data = it,
+                                lessonName = lesson,
+                                dialogData,
+                                showDialog
+                            )
+                        }
+                    }
                 }
-            }
-        }
+        )
+    )
+
+    Column {
+        ListDataSection(
+            listOfItems = listOfItem,
+            additionTopItem = listOf(
+                { if (data.listOfMarks.isNotEmpty()) RatingText(round) },
+                { OmissionText(data.countOfOmissions) }
+            )
+        )
     }
+}
+
+@Composable
+fun RatingText(round: Double) {
+    Text(
+        stringResource(
+            id = R.string.account_rating_average_mark,
+            round.toString()
+        ),
+        style = MaterialTheme.typography.headlineMedium
+    )
+}
+
+@Composable
+fun OmissionText(count: Int) {
+    Text(
+        stringResource(
+            id = R.string.account_rating_omissions,
+            count
+        ),
+        style = MaterialTheme.typography.headlineMedium
+    )
 }
 
 @Composable
@@ -221,12 +236,11 @@ fun SubjectCard(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp)
     ) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             Text(
                 text = lessonName,
@@ -317,7 +331,7 @@ fun RatingDialog(data: RatingModel.Point.LessonByName, closeDialog: () -> Unit) 
                                 style = MaterialTheme.typography.titleLarge
                             )
                         }
-                        i.value.all.filter { it.marks.isNotEmpty() }.forEach { it ->
+                        i.value.all.filter { it.marks.isNotEmpty() }.forEach {
                             item {
                                 Text(
                                     text = it.date + " – " + it.marks.toString().removePrefix("[")

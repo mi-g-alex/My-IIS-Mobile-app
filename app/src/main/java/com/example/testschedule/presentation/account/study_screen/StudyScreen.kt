@@ -2,19 +2,12 @@ package com.example.testschedule.presentation.account.study_screen
 
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Clear
@@ -55,6 +48,8 @@ import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
 import com.example.testschedule.domain.model.account.study.mark_sheet.MarkSheetModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.additional_elements.ListDataSection
+import com.example.testschedule.presentation.account.additional_elements.SectionItem
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -102,197 +97,153 @@ fun StudyScreen(
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState)
         }
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-        ) {
+    ) { padVal ->
 
-            stickyHeader {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable { collapseMarkSheet = !collapseMarkSheet }
-                        .background(MaterialTheme.colorScheme.background)
-                ) {
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+        val listOfItem = mutableListOf<SectionItem>()
+
+        val markSheets: MutableList<@Composable () -> Unit> = mutableListOf()
+        viewModel.markSheets.forEachIndexed { index, markSheet ->
+                if (index > 2 && collapseMarkSheet) return@forEachIndexed
+                markSheets.add {
+                    val textSuccess = stringResource(
+                        id = R.string.account_study_mark_sheet_close_success,
+                        markSheet.number
+                    )
+                    val textError = stringResource(
+                        id = R.string.account_study_mark_sheet_close_error,
+                        markSheet.number
+                    )
+                    MarkSheetItemView(
+                        markSheet,
                     ) {
-                        Text(
-                            stringResource(id = R.string.account_study_mark_sheet_title),
-                            style = MaterialTheme.typography.displaySmall
+                        viewModel.closeMarkSheet(
+                            markSheet.id,
+                            success = {
+                                scope.launch {
+                                    snackBarHostState.showSnackbar(
+                                        message = textSuccess,
+                                        withDismissAction = true,
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            },
+                            error = {
+                                scope.launch {
+                                    snackBarHostState.showSnackbar(
+                                        message = textError,
+                                        withDismissAction = true,
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            }
                         )
-
-                        FilledIconButton(
-                            onClick = { goToCreateMarkSheet() }
-                        ) {
-                            Icon(
-                                Icons.Outlined.Add,
-                                stringResource(id = R.string.account_study_mark_sheet_create)
-                            )
-                        }
                     }
+                }
+        }
+
+        if (viewModel.markSheets.size > 3)
+            markSheets.add {
+                TextButton(onClick = { collapseMarkSheet = !collapseMarkSheet }) {
+                    Icon(
+                        if (collapseMarkSheet)
+                            Icons.Outlined.KeyboardArrowDown
+                        else
+                            Icons.Outlined.KeyboardArrowUp,
+                        null
+                    )
+                    Text(stringResource(id = if (!collapseMarkSheet) R.string.less else R.string.more))
                 }
             }
-            if (viewModel.markSheets.isNotEmpty()) {
-                viewModel.markSheets.forEachIndexed { index, markSheet ->
-                    if (index > 2 && collapseMarkSheet) return@forEachIndexed
-                    item {
-                        val textSuccess = stringResource(
-                            id = R.string.account_study_mark_sheet_close_success,
-                            markSheet.number
-                        )
-                        val textError = stringResource(
-                            id = R.string.account_study_mark_sheet_close_error,
-                            markSheet.number
-                        )
-                        MarkSheetItemView(
-                            markSheet,
-                        ) {
-                            viewModel.closeMarkSheet(
-                                markSheet.id,
-                                success = {
-                                    scope.launch {
-                                        snackBarHostState.showSnackbar(
-                                            message = textSuccess,
-                                            withDismissAction = true,
-                                            duration = SnackbarDuration.Short
-                                        )
-                                    }
-                                },
-                                error = {
-                                    scope.launch {
-                                        snackBarHostState.showSnackbar(
-                                            message = textError,
-                                            withDismissAction = true,
-                                            duration = SnackbarDuration.Short
-                                        )
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-                if (viewModel.markSheets.size > 3) {
-                    item {
-                        TextButton(onClick = { collapseMarkSheet = !collapseMarkSheet }) {
-                            Icon(
-                                if (collapseMarkSheet)
-                                    Icons.Outlined.KeyboardArrowDown
-                                else
-                                    Icons.Outlined.KeyboardArrowUp,
-                                null
-                            )
-                            Text(stringResource(id = if (!collapseMarkSheet) R.string.less else R.string.more))
-                        }
-                    }
-                }
-            } else {
-                item {
-                    Text(
-                        stringResource(id = R.string.account_study_mark_sheet_no_yet),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+
+
+        listOfItem += SectionItem(
+            title = stringResource(id = R.string.account_study_mark_sheet_title),
+            emptyText = stringResource(id = R.string.account_study_mark_sheet_no_yet),
+            itemList = markSheets,
+            icon = {
+                FilledIconButton(onClick = { goToCreateCertificate() }) {
+                    Icon(
+                        Icons.Outlined.Add,
+                        stringResource(id = R.string.account_study_certificates_create)
                     )
                 }
             }
+        )
 
+        var certificates: MutableList<@Composable () -> Unit> = mutableListOf()
 
-            item { Spacer(modifier = Modifier.height(20.dp)) }
-
-            stickyHeader {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable { collapseCertificates = !collapseCertificates }
-                        .background(MaterialTheme.colorScheme.background)
+        viewModel.certificates.forEachIndexed { index, certificate ->
+            if (index > 2 && collapseCertificates) return@forEachIndexed
+            certificates.add {
+                val textSuccess = stringResource(
+                    id = R.string.account_study_certificates_close_success,
+                    certificate.id
+                )
+                val textError = stringResource(
+                    id = R.string.account_study_certificates_close_error,
+                    certificate.id
+                )
+                CertificateItemView(
+                    certificate = certificate,
                 ) {
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-
-                        Text(
-                            stringResource(id = R.string.account_study_certificates_title),
-                            style = MaterialTheme.typography.displaySmall
-                        )
-
-
-                        FilledIconButton(onClick = { goToCreateCertificate() }) {
-                            Icon(
-                                Icons.Outlined.Add,
-                                stringResource(id = R.string.account_study_certificates_create)
-                            )
+                    viewModel.closeCertificate(
+                        certificate.id,
+                        success = {
+                            scope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = textSuccess,
+                                    withDismissAction = true,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        },
+                        error = {
+                            scope.launch {
+                                snackBarHostState.showSnackbar(
+                                    message = textError,
+                                    withDismissAction = true,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
                         }
-                    }
-                }
-            }
-            if (viewModel.certificates.isNotEmpty()) {
-                viewModel.certificates.forEachIndexed { index, certificate ->
-                    if (index > 2 && collapseCertificates) return@forEachIndexed
-                    item {
-                        val textSuccess = stringResource(
-                            id = R.string.account_study_certificates_close_success,
-                            certificate.id
-                        )
-                        val textError = stringResource(
-                            id = R.string.account_study_certificates_close_error,
-                            certificate.id
-                        )
-                        CertificateItemView(
-                            certificate = certificate,
-                        ) {
-                            viewModel.closeCertificate(
-                                certificate.id,
-                                success = {
-                                    scope.launch {
-                                        snackBarHostState.showSnackbar(
-                                            message = textSuccess,
-                                            withDismissAction = true,
-                                            duration = SnackbarDuration.Short
-                                        )
-                                    }
-                                },
-                                error = {
-                                    scope.launch {
-                                        snackBarHostState.showSnackbar(
-                                            message = textError,
-                                            withDismissAction = true,
-                                            duration = SnackbarDuration.Short
-                                        )
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-                if (viewModel.certificates.size > 3) {
-                    item {
-                        TextButton(onClick = { collapseCertificates = !collapseCertificates }) {
-                            Icon(
-                                if (collapseCertificates)
-                                    Icons.Outlined.KeyboardArrowDown
-                                else
-                                    Icons.Outlined.KeyboardArrowUp,
-                                null
-                            )
-                            Text(stringResource(id = if (!collapseCertificates) R.string.less else R.string.more))
-                        }
-                    }
-                }
-            } else {
-                item {
-                    Text(
-                        stringResource(id = R.string.account_study_certificates_no_yet),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
                     )
                 }
             }
         }
+
+        if (viewModel.certificates.size > 3) {
+            certificates.add {
+                TextButton(onClick = { collapseCertificates = !collapseCertificates }) {
+                    Icon(
+                        if (collapseCertificates)
+                            Icons.Outlined.KeyboardArrowDown
+                        else
+                            Icons.Outlined.KeyboardArrowUp,
+                        null
+                    )
+                    Text(stringResource(id = if (!collapseCertificates) R.string.less else R.string.more))
+                }
+            }
+        }
+
+        listOfItem += SectionItem(
+            title = stringResource(id = R.string.account_study_certificates_title),
+            emptyText = stringResource(id = R.string.account_study_certificates_no_yet),
+            itemList = certificates,
+            icon = {
+                FilledIconButton(onClick = { goToCreateCertificate() }) {
+                    Icon(
+                        Icons.Outlined.Add,
+                        stringResource(id = R.string.account_study_certificates_create)
+                    )
+                }
+            }
+        )
+
+        ListDataSection(
+            listOfItems = listOfItem,
+            paddingValues = padVal
+        )
     }
 }
 
@@ -304,7 +255,6 @@ fun CertificateItemView(
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp)
     ) {
         Column(
             Modifier
@@ -413,7 +363,6 @@ fun MarkSheetItemView(
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp)
     ) {
         Column(
             Modifier

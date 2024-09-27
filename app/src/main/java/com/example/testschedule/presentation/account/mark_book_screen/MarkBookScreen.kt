@@ -46,6 +46,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
 import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.additional_elements.ListDataSection
+import com.example.testschedule.presentation.account.additional_elements.SectionItem
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -70,10 +72,11 @@ fun MarkBookScreen(
         topBar = {
             BasicTopBar(
                 onBackPressed = { onBackPressed(); enabled = false },
-                title = if (viewModel.markBook.value?.averageMark != 0.0 && viewModel.markBook.value != null) stringResource(
-                    id = R.string.account_mark_book_title_with_mark,
-                    viewModel.markBook.value?.averageMark!!.toString()
-                ) else stringResource(id = R.string.account_mark_book_title),
+                title = if (viewModel.markBook.value?.averageMark != 0.0 && viewModel.markBook.value != null)
+                    stringResource(
+                        id = R.string.account_mark_book_title_with_mark,
+                        viewModel.markBook.value?.averageMark!!.toString()
+                    ) else stringResource(id = R.string.account_mark_book_title),
                 enabled = enabled,
                 isOfflineResult = viewModel.isLoading.value || viewModel.errorText.value.isNotEmpty()
             )
@@ -180,43 +183,32 @@ fun TabsContent(pagerState: PagerState, item: MarkBookModel) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SemesterPage(
     item: MarkBookModel.Semester,
     dialogData: MutableState<MarkBookModel.Semester.Mark?>,
     showDialog: MutableState<Boolean>
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        if (item.averageMark > 0)
-            stickyHeader {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                ) {
-                    Text(
-                        stringResource(
-                            id = R.string.account_mark_book_semester_average_mark,
-                            item.averageMark.toString()
-                        ),
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
+
+    val listOfItem = mutableListOf(
+        SectionItem(
+            if (item.averageMark > 0) stringResource(
+                id = R.string.account_mark_book_semester_average_mark,
+                item.averageMark.toString()
+            ) else null,
+            emptyText = "",
+            itemList = item.marks.map {
+                {
+                    MarkBookExamCard(it) {
+                        dialogData.value = it
+                        showDialog.value = true
+                    }
                 }
             }
-        item {
-            item.marks.forEach {
-                MarkBookExamCard(it) {
-                    dialogData.value = it
-                    showDialog.value = true
-                }
-            }
-        }
-    }
+        )
+    )
+
+    ListDataSection(listOfItem)
 }
 
 @Composable
@@ -331,12 +323,11 @@ fun MarkBookExamCard(item: MarkBookModel.Semester.Mark, onClick: () -> Unit) {
         onClick = { onClick() },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp)
     ) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 6.dp)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth(),
