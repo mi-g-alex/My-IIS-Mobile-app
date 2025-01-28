@@ -37,7 +37,9 @@ class OmissionsViewModel @Inject constructor(
             when (res) {
                 is Resource.Success -> {
                     isLoading.value = false
-                    res.data?.let { omissions.value = it }
+                    res.data?.let {
+                        omissions.value = it
+                    }
                     errorText.value = ""
                 }
 
