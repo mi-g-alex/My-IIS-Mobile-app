@@ -367,7 +367,7 @@ class ScheduleWidget : GlanceAppWidget() {
             }
         }
 
-        Box(GlanceModifier.wrapContentHeight().padding(vertical = 4.dp)) {
+        Box(GlanceModifier.clickable(actionStartActivity<MainActivity>()).wrapContentHeight().padding(vertical = 4.dp)) {
             Row {
                 Box(
                     GlanceModifier.wrapContentWidth().fillMaxHeight().padding(end = 10.dp),

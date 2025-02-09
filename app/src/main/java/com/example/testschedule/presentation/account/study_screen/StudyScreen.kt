@@ -161,7 +161,7 @@ fun StudyScreen(
             emptyText = stringResource(id = R.string.account_study_mark_sheet_no_yet),
             itemList = markSheets,
             icon = {
-                FilledIconButton(onClick = { goToCreateCertificate() }) {
+                FilledIconButton(onClick = { goToCreateMarkSheet() }) {
                     Icon(
                         Icons.Outlined.Add,
                         stringResource(id = R.string.account_study_certificates_create)
