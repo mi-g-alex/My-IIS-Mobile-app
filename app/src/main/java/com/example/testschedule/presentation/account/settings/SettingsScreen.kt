@@ -341,21 +341,21 @@ fun SettingsScreen(
                         .padding(it)
                 ) {
 
-                    stickyHeader {
-                        AnimatedVisibility(
-                            visible = userBasicData?.hasNotConfirmedContact == true,
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.background)
-                            ) {
-                                ButtonEmailUnconfirmedItem {
-                                    selectedDialog = DialogType.CONFIRM_EMAIL
-                                }
-                            }
-                        }
-                    }
+//                    stickyHeader {
+//                        AnimatedVisibility(
+//                            visible = userBasicData?.hasNotConfirmedContact == true,
+//                        ) {
+//                            Box(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .background(MaterialTheme.colorScheme.background)
+//                            ) {
+//                                ButtonEmailUnconfirmedItem {
+//                                    selectedDialog = DialogType.CONFIRM_EMAIL
+//                                }
+//                            }
+//                        }
+//                    }
 
 //                    // Picture
 //                    item {
@@ -377,24 +377,21 @@ fun SettingsScreen(
 
                         BasicListItem(
                             mainText = stringResource(id = R.string.account_settings_email),
-                            descText = stringResource(id = R.string.account_settings_email_desc),
-                            additionalText = stringResource(
+                            descText = stringResource(
                                 id = R.string.account_settings_email_info,
                                 email
-                            )
-                        ) { selectedDialog = DialogType.EMAIL }
+                            ),
+                        )
                     }
 
                     // Phone
                     item {
-                        val t = stringResource(id = R.string.account_settings_phone_desc)
                         BasicListItem(
                             mainText = stringResource(id = R.string.account_settings_phone),
-                            descText = t,
-                            additionalText = userBasicData?.phone?.let { data ->
+                            descText = userBasicData?.phone?.let { data ->
                                 stringResource(id = R.string.account_settings_phone_info, data)
-                            } ?: ""
-                        ) { showSnack(t) }
+                            } ?: "",
+                        )
                     }
 
                     // Password
@@ -525,12 +522,12 @@ fun SettingsScreen(
                     item { Space() }
 
                     // Office info
-                    item {
-                        BasicListItem(
-                            mainText = stringResource(id = R.string.account_settings_outlook),
-                            descText = stringResource(id = R.string.account_settings_outlook_desc),
-                        ) { selectedDialog = DialogType.OUTLOOK }
-                    }
+//                    item {
+//                        BasicListItem(
+//                            mainText = stringResource(id = R.string.account_settings_outlook),
+//                            descText = stringResource(id = R.string.account_settings_outlook_desc),
+//                        ) { selectedDialog = DialogType.OUTLOOK }
+//                    }
 
                     // Spacer
                     item { Space() }

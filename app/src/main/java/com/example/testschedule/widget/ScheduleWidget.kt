@@ -2,19 +2,15 @@ package com.example.testschedule.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastJoinToString
-import androidx.core.content.ContextCompat.startActivity
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -91,7 +87,7 @@ class ScheduleWidget : GlanceAppWidget() {
                 }
 
                 val state by remember { viewModel.state }
-                MyContent(state, viewModel.id, context) {
+                MyContent(state, context) {
                     cnt++
                 }
             }
@@ -100,7 +96,7 @@ class ScheduleWidget : GlanceAppWidget() {
 
 
     @Composable
-    fun MyContent(data: WidgetState, id: String?, context: Context, onUpdate: () -> Unit) {
+    fun MyContent(data: WidgetState, context: Context, onUpdate: () -> Unit) {
 
         val cal = GregorianCalendar()
         cal.timeInMillis = data.scheduleList?.date ?: 0L

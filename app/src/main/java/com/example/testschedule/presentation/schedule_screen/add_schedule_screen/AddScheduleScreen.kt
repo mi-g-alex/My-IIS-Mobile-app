@@ -70,6 +70,7 @@ import com.example.testschedule.widget.ScheduleWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import androidx.core.content.edit
 
 @Composable
 fun AddScheduleScreen(
@@ -323,7 +324,6 @@ fun SavedListView(
     val sharedPref =
         LocalContext.current.getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE)
 
-    val cnt = LocalContext.current
     var openDialog by remember { mutableStateOf(false) }
     var openSubgroupSettingsDialog by remember { mutableStateOf(false) }
     saved.value?.let {
@@ -332,10 +332,10 @@ fun SavedListView(
                 closeDialog = { openDialog = false },
                 clickOk = { item ->
                     if (item != null) {
-                        sharedPref.edit()
-                            .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, item.id)
-                            .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, item.title)
-                            .apply()
+                        sharedPref.edit {
+                            putString(Constants.PREF_OPEN_BY_DEFAULT_ID, item.id)
+                                .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, item.title)
+                        }
                     }
                     openDialog = false
                 },

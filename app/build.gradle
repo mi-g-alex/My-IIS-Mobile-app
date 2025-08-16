@@ -10,14 +10,14 @@ plugins {
 
 android {
     namespace 'com.example.testschedule'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId 'by.g_alex.my_iis'
         minSdk 21
-        targetSdk 35
-        versionCode 200
-        versionName '0.2.0'
+        targetSdk 36
+        versionCode 202
+        versionName '0.2.2'
 
         vectorDrawables {
             useSupportLibrary true
@@ -30,10 +30,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = '17'
         allWarningsAsErrors = false
@@ -50,9 +52,11 @@ android {
     buildFeatures {
         compose true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion '1.5.13'
     }
+
     packagingOptions {
         resources {
             excludes += '**'
@@ -114,12 +118,6 @@ dependencies {
     ksp "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
-    testImplementation 'org.mockito:mockito-core:5.11.0'
-    testImplementation 'org.mockito.kotlin:mockito-kotlin:5.3.1'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0'
-    testImplementation 'junit:junit:4.13.2'
-
     // For AppWidgets support
     implementation "androidx.glance:glance-appwidget:1.1.1"
 
@@ -127,12 +125,4 @@ dependencies {
     implementation "androidx.glance:glance-material3:1.1.1"
 
     implementation "androidx.work:work-runtime-ktx:2.10.0"
-
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
-
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
-
 }

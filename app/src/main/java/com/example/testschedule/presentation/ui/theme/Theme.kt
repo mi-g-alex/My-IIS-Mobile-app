@@ -2,6 +2,8 @@ package com.example.testschedule.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -57,8 +59,7 @@ fun TestScheduleTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.background.toArgb()
-            window.navigationBarColor = colorScheme.background.toArgb()
+            window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
             WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
                 !darkTheme

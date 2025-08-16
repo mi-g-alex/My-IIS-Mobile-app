@@ -16,7 +16,7 @@ fun BasicListItem(
     mainText: String,
     descText: String,
     additionalText: String? = null,
-    toDo: () -> Unit
+    toDo: (() -> Unit)? = null
 ) {
     ListItem(
         headlineContent = { Text(mainText) },
@@ -30,13 +30,15 @@ fun BasicListItem(
             }
         },
         supportingContent = { Text(descText) },
-        modifier = Modifier.clickable { toDo() },
+        modifier = Modifier.clickable { toDo?.invoke() },
         trailingContent = {
-            Icon(
-                Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                descText,
-                modifier = Modifier.minimumInteractiveComponentSize()
-            )
+            toDo?.let {
+                Icon(
+                    Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                    descText,
+                    modifier = Modifier.minimumInteractiveComponentSize()
+                )
+            }
         }
     )
 }
