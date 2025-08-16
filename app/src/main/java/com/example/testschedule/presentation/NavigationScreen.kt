@@ -98,10 +98,10 @@ fun NavigationScreen(
             composable(
                 route = Routes.SCHEDULE_HOME_ROUTE
             ) { entry ->
-                var id = entry.savedStateHandle.get<String>("id")
-                var title = entry.savedStateHandle.get<String>("title") ?: id
+                var id = entry.savedStateHandle.get<String>("id").takeIf { it != "{id}" }
+                var title = entry.savedStateHandle.get<String>("title").takeIf { it != "{title}" } ?: id
 
-                val isPreview = entry.arguments?.getString("isPreview") ?: "false"
+                val isPreview = entry.arguments?.getString("isPreview").takeIf { it != "{isPreview}" } ?: "false"
                 if (isPreview == "true") {
                     id = entry.arguments?.getString("id") ?: id
                     title = entry.arguments?.getString("title") ?: title

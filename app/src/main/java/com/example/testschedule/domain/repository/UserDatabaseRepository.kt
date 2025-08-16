@@ -51,7 +51,7 @@ interface UserDatabaseRepository {
 
     suspend fun setExams(model: ScheduleModel)
 
-    suspend fun getExams(): ScheduleModel
+    suspend fun getExams(): ScheduleModel?
 
 
     // User Auth

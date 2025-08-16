@@ -6,20 +6,20 @@ import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
 import com.example.testschedule.data.local.entity.account.profile.AccountProfileEntity
 import com.example.testschedule.data.local.entity.account.study.certificate.NewCertificatePlacesEntity
-import com.example.testschedule.data.util.JsonParser
+import com.example.testschedule.data.util.GsonParser
 import com.example.testschedule.domain.model.schedule.ScheduleModel
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-@ProvidedTypeConverter
-class Converters(
-    private val jsonParser: JsonParser
-) {
+class Converters() {
+
+    private val jsonParser = GsonParser(Gson())
 
     @TypeConverter
     fun employeeInfoToJson(meaning: ScheduleModel.EmployeeInfo?): String =
         jsonParser.toJson(
             meaning,
-            object : TypeToken<ScheduleModel.EmployeeInfo>() {}.type
+            object : TypeToken<ScheduleModel.EmployeeInfo?>() {}.type
         ) ?: ""
 
     @TypeConverter
@@ -33,7 +33,7 @@ class Converters(
     fun studentGroupInfoToJson(meaning: ScheduleModel.StudentGroupInfo?): String =
         jsonParser.toJson(
             meaning,
-            object : TypeToken<ScheduleModel.StudentGroupInfo>() {}.type
+            object : TypeToken<ScheduleModel.StudentGroupInfo?>() {}.type
         ) ?: ""
 
     @TypeConverter
@@ -62,14 +62,14 @@ class Converters(
     fun listOfLessonsToJson(meaning: List<ScheduleModel.WeeksSchedule.Lesson>?): String =
         jsonParser.toJson(
             meaning,
-            object : TypeToken<ArrayList<ScheduleModel.WeeksSchedule.Lesson>>() {}.type
+            object : TypeToken<ArrayList<ScheduleModel.WeeksSchedule.Lesson>?>() {}.type
         ) ?: ""
 
     @TypeConverter
     fun listOfLessonsFromJson(json: String): List<ScheduleModel.WeeksSchedule.Lesson>? =
         jsonParser.fromJson<ArrayList<ScheduleModel.WeeksSchedule.Lesson>>(
             json,
-            object : TypeToken<ArrayList<ScheduleModel.WeeksSchedule.Lesson>>() {}.type
+            object : TypeToken<ArrayList<ScheduleModel.WeeksSchedule.Lesson>?>() {}.type
         )
 
     @TypeConverter

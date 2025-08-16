@@ -26,8 +26,8 @@ import javax.inject.Inject
 class UserDatabaseRepositoryImpl @Inject constructor(
     private val dao: UserDao
 ) : UserDatabaseRepository {
-    override suspend fun getSchedule(id: String): ScheduleModel =
-        dao.getSchedule(id = id)
+    override suspend fun getSchedule(id: String): ScheduleModel? =
+        dao.getSchedule(id = id)?.toModel()
 
     override suspend fun setSchedule(model: ScheduleModel) {
         dao.setSchedule(
@@ -112,7 +112,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getExams(): ScheduleModel = dao.getSchedule("EXAM")
+    override suspend fun getExams(): ScheduleModel? = dao.getSchedule("EXAM")?.toModel()
 
 
     // User Auth

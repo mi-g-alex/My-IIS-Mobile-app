@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.testschedule.common.Constants
 import com.example.testschedule.data.local.Converters
+import com.example.testschedule.data.local.UserDao
 import com.example.testschedule.data.local.UserDataBase
 import com.example.testschedule.data.remote.IisAPI
 import com.example.testschedule.data.repository.IisAPIRepositoryImpl
@@ -24,6 +25,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 import javax.inject.Singleton
+import androidx.core.content.edit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -52,7 +54,6 @@ object AppModule {
     @Singleton
     fun provideIisAPIRepository(api: IisAPI): IisAPIRepository = IisAPIRepositoryImpl(api)
 
-
     @Provides
     @Singleton
     fun provideUserDatabase(app: Application): UserDataBase =
@@ -60,9 +61,7 @@ object AppModule {
             app,
             UserDataBase::class.java,
             UserDataBase.DATABASE_NAME
-        )
-            .addTypeConverter(Converters(GsonParser(Gson())))
-            .build()
+        ).build()
 
 
     @Provides
@@ -81,17 +80,17 @@ object AppModule {
         fun getCurrentWeek(): Int = prefs.getInt(Constants.CURRENT_WEEK, 0)
 
         fun setCurrentWeek(date: Long, week: Int) {
-            prefs.edit()
-                .putLong(Constants.LAST_UPDATE_CURRENT_WEEK, date)
-                .putInt(Constants.CURRENT_WEEK, week)
-                .apply()
+            prefs.edit {
+                putLong(Constants.LAST_UPDATE_CURRENT_WEEK, date)
+                    .putInt(Constants.CURRENT_WEEK, week)
+            }
         }
 
         fun setOpenByDefault(id: String, title: String) {
-            prefs.edit()
-                .putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, title)
-                .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, id)
-                .apply()
+            prefs.edit {
+                putString(Constants.PREF_OPEN_BY_DEFAULT_TITLE, title)
+                    .putString(Constants.PREF_OPEN_BY_DEFAULT_ID, id)
+            }
         }
 
 

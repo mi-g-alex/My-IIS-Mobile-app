@@ -50,7 +50,7 @@ import java.util.Locale
 
 
 @Composable
-fun StickySchedule(lesson: LessonDay): Unit = Row(
+fun StickySchedule(lesson: LessonDay) = Row(
     Modifier
         .fillMaxWidth()
         .background(MaterialTheme.colorScheme.background)
@@ -75,7 +75,7 @@ fun StickySchedule(lesson: LessonDay): Unit = Row(
 }
 
 @Composable
-fun StickySchedule(exam: ExamDay): Unit = Row(
+fun StickySchedule(exam: ExamDay) = Row(
     Modifier
         .fillMaxWidth()
         .background(MaterialTheme.colorScheme.background)

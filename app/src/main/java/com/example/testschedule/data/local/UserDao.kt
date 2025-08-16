@@ -20,20 +20,19 @@ import com.example.testschedule.data.local.entity.schedule.ListOfEmployeesEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfGroupsEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
-import com.example.testschedule.domain.model.schedule.ScheduleModel
 
 @Dao
 interface UserDao {
 
     // Schedule
     @Query("SELECT * FROM ScheduleEntity WHERE id = :id")
-    suspend fun getSchedule(id: String): ScheduleModel
+    suspend fun getSchedule(id: String): ScheduleEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setSchedule(model: ScheduleEntity)
 
     @Query("DELETE FROM ScheduleEntity WHERE id = :id")
-    suspend fun deleteSchedule(id: String)
+    suspend fun deleteSchedule(id: String): Int
 
     @Query("SELECT * FROM ListOfSavedEntity")
     suspend fun getAllSavedScheduleList(): List<ListOfSavedEntity>
@@ -42,7 +41,7 @@ interface UserDao {
     suspend fun addNewSavedScheduleToList(model: ListOfSavedEntity)
 
     @Query("DELETE FROM ListOfSavedEntity WHERE id = :id")
-    suspend fun deleteFromSavedScheduleList(id: String)
+    suspend fun deleteFromSavedScheduleList(id: String): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllGroupsList(group: List<ListOfGroupsEntity>)
@@ -63,10 +62,10 @@ interface UserDao {
     suspend fun getAllEmployeesList(): List<ListOfEmployeesEntity>
 
     @Query("DELETE FROM ListOfGroupsEntity")
-    suspend fun deleteAllGroupsList()
+    suspend fun deleteAllGroupsList(): Int
 
     @Query("DELETE FROM ListOfEmployeesEntity")
-    suspend fun deleteAllEmployeesList()
+    suspend fun deleteAllEmployeesList(): Int
 
 
     // User Auth
@@ -77,7 +76,7 @@ interface UserDao {
     suspend fun getLoginAndPassword(): LoginAndPasswordEntity
 
     @Query("DELETE FROM LoginAndPasswordEntity WHERE `key`=0")
-    suspend fun deleteLoginAndPassword()
+    suspend fun deleteLoginAndPassword(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setUserBasicData(data: UserBasicDataEntity)
@@ -86,7 +85,7 @@ interface UserDao {
     suspend fun getUserBasicData(): UserBasicDataEntity?
 
     @Query("DELETE FROM UserBasicDataEntity WHERE `key`=0")
-    suspend fun deleteUserBasicData()
+    suspend fun deleteUserBasicData(): Int
 
 
     // Account
@@ -99,7 +98,7 @@ interface UserDao {
     suspend fun getAccountProfile(): AccountProfileEntity?
 
     @Query("DELETE FROM AccountProfileEntity WHERE `key`=0")
-    suspend fun deleteAccountProfile()
+    suspend fun deleteAccountProfile(): Int
 
     // Notification
 
@@ -107,13 +106,13 @@ interface UserDao {
     suspend fun addNotification(data: List<NotificationEntity>)
 
     @Query("UPDATE NotificationEntity SET isViewed=:status WHERE id=:id")
-    suspend fun updateNotificationStatus(id: Int, status: Boolean = true)
+    suspend fun updateNotificationStatus(id: Int, status: Boolean = true): Int
 
     @Query("SELECT * FROM NotificationEntity")
     suspend fun getNotifications(): List<NotificationEntity>
 
     @Query("DELETE FROM NotificationEntity")
-    suspend fun deleteNotifications()
+    suspend fun deleteNotifications(): Int
 
     // Group
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -123,7 +122,7 @@ interface UserDao {
     suspend fun getUserGroup(): GroupEntity?
 
     @Query("DELETE FROM GroupEntity")
-    suspend fun deleteUserGroup()
+    suspend fun deleteUserGroup(): Int
 
     // Mark book
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -133,7 +132,7 @@ interface UserDao {
     suspend fun getMarkBook(): MarkBookEntity?
 
     @Query("DELETE FROM MarkBookEntity")
-    suspend fun deleteMarkBook()
+    suspend fun deleteMarkBook(): Int
 
     // Omissions
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -143,7 +142,7 @@ interface UserDao {
     suspend fun getOmissions(): List<OmissionsEntity>?
 
     @Query("DELETE FROM OmissionsEntity")
-    suspend fun deleteOmissions()
+    suspend fun deleteOmissions(): Int
 
     // Penalty
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -153,7 +152,7 @@ interface UserDao {
     suspend fun getPenalty(): List<PenaltyEntity>?
 
     @Query("DELETE FROM PenaltyEntity")
-    suspend fun deletePenalty()
+    suspend fun deletePenalty(): Int
 
     // Announcements
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -163,7 +162,7 @@ interface UserDao {
     suspend fun getAnnouncements(): List<AnnouncementEntity>
 
     @Query("DELETE FROM AnnouncementEntity")
-    suspend fun deleteAnnouncements()
+    suspend fun deleteAnnouncements(): Int
 
     // Study
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -173,7 +172,7 @@ interface UserDao {
     suspend fun getCertificates(): List<CertificateEntity>
 
     @Query("DELETE FROM CertificateEntity")
-    suspend fun deleteCertificates()
+    suspend fun deleteCertificates(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addCertificatePlaces(data: List<NewCertificatePlacesEntity>)
@@ -182,7 +181,7 @@ interface UserDao {
     suspend fun getCertificatesPlaces(): List<NewCertificatePlacesEntity>
 
     @Query("DELETE FROM NewCertificatePlacesEntity")
-    suspend fun deleteCertificatesPlaces()
+    suspend fun deleteCertificatesPlaces(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addMarkSheet(data: List<MarkSheetEntity>)
@@ -191,5 +190,5 @@ interface UserDao {
     suspend fun getMarkSheet(): List<MarkSheetEntity>
 
     @Query("DELETE FROM MarkSheetEntity")
-    suspend fun deleteMarkSheet()
+    suspend fun deleteMarkSheet(): Int
 }

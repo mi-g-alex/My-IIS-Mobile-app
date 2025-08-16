@@ -4,22 +4,23 @@ buildscript {
     }
     ext {
         compose_ui_version = '1.6.7'
-        room_version = '2.6.1'
-        lifecycle_version = '2.7.0'
+        room_version = '2.7.2'
+        lifecycle_version = '2.9.2'
         m3_version = '1.2.1'
-        accompanist_version = '0.34.0'
-        retrofit2_version = '2.11.0'
-        okhttp3_version = '5.0.0-alpha.14'
-        kotlinx_coroutines_version = '1.8.0'
+        accompanist_version = '0.36.0'
+        retrofit2_version = '3.0.0'
+        okhttp3_version = '5.1.0'
+        kotlinx_coroutines_version = '1.10.2'
         compose_material_version = '1.6.7'
     }
     dependencies {
-        classpath "com.google.dagger:hilt-android-gradle-plugin:2.50"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:2.57"
     }
 }
 plugins {
-    id 'com.android.application' version '8.5.0' apply false
-    id 'com.android.library' version '8.5.0' apply false
-    id 'org.jetbrains.kotlin.android' version '1.9.23' apply false
-    id 'com.google.devtools.ksp' version '1.9.23-1.0.20' apply false
+    id 'com.android.application' version '8.12.0' apply false
+    id 'com.android.library' version '8.12.0' apply false
+    id 'org.jetbrains.kotlin.android' version '2.2.0' apply false
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.2.0' apply false
+    id 'com.google.devtools.ksp' version '2.2.0-2.0.2' apply false
 }

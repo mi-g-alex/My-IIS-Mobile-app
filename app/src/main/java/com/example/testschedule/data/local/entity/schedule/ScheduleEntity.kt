@@ -18,4 +18,22 @@ data class ScheduleEntity(
     val studentGroupInfo: ScheduleModel.StudentGroupInfo?,
     val schedules: List<ScheduleModel.WeeksSchedule>,
     val exams: List<ScheduleModel.WeeksSchedule.Lesson>?
-)
+) {
+
+    fun toModel(): ScheduleModel {
+        return ScheduleModel(
+            id = this.id,
+            title = this.title,
+            isGroupSchedule = this.isGroupSchedule,
+            startLessonsDate = this.startLessonsDate,
+            endLessonsDate = this.endLessonsDate,
+            startExamsDate = this.startExamsDate,
+            endExamsDate = this.endExamsDate,
+            employeeInfo = this.employeeInfo,
+            studentGroupInfo = this.studentGroupInfo,
+            schedules = this.schedules,
+            exams = this.exams,
+        )
+    }
+
+}
