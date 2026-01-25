@@ -2,8 +2,11 @@ package com.example.testschedule.data.local
 
 import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.DeleteColumn
+import androidx.room.DeleteTable
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.AutoMigrationSpec
 import com.example.testschedule.data.local.entity.account.announcement.AnnouncementEntity
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
@@ -22,7 +25,7 @@ import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
 
 @Database(
-    version = 17,
+    version = 19,
     entities = [
         // Schedules
         ScheduleEntity::class,
@@ -69,12 +72,19 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
         AutoMigration(from = 14, to = 15),
         AutoMigration(from = 15, to = 16),
         AutoMigration(from = 16, to = 17),
+        AutoMigration(from = 17, to = 18),
+        AutoMigration(from = 18, to = 19, spec = UserDataBase.Migration18To19::class),
     ],
 )
 @TypeConverters(Converters::class)
 abstract class UserDataBase : RoomDatabase() {
 
     abstract val userDao: UserDao
+
+    @DeleteColumn(tableName = "UserBasicDataEntity", columnName = "photoUrl")
+    @DeleteColumn(tableName = "AccountProfileEntity", columnName = "photoUrl")
+    @DeleteTable("ActionLogEntity")
+    class Migration18To19 : AutoMigrationSpec
 
     companion object {
         const val DATABASE_NAME = "user_db"

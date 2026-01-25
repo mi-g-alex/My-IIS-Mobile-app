@@ -68,7 +68,6 @@ data class AccountProfileModel(
         middleName = middleName,
         outlookLogin = outlookLogin,
         outlookPassword = outlookPassword,
-        photoUrl = photoUrl,
         rating = rating,
         references = references.map { it.toEntity() },
         settingPublished = settingPublished,

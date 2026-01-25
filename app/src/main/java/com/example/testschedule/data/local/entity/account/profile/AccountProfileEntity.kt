@@ -12,7 +12,6 @@ data class AccountProfileEntity(
     val lastName: String?, // Иванов
     val firstName: String?, // Иван
     val middleName: String?, // Иванович
-    val photoUrl: String?, // https://drive.google.com/uc?id=1yRyNQ0sEVx3gnnzta...
     val birthDate: String?, // xx.xx.20xx
     val group: String?, // 25xxxx
     val faculty: String?, // ФКСиС
@@ -60,7 +59,7 @@ data class AccountProfileEntity(
         middleName = this.middleName,
         outlookLogin = this.outlookLogin,
         outlookPassword = this.outlookPassword,
-        photoUrl = this.photoUrl,
+        photoUrl = null,
         rating = this.rating,
         references = this.references.map { it.toModel() },
         settingPublished = this.settingPublished,

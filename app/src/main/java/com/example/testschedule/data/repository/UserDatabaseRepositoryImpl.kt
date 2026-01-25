@@ -154,7 +154,6 @@ class UserDatabaseRepositoryImpl @Inject constructor(
                 hasNotConfirmedContact = data.hasNotConfirmedContact,
                 isGroupHead = data.isGroupHead,
                 phone = data.phone,
-                photoUrl = data.photoUrl,
                 username = data.username,
                 cookie = data.cookie
             )
@@ -172,7 +171,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
             hasNotConfirmedContact = data.hasNotConfirmedContact,
             isGroupHead = data.isGroupHead,
             phone = data.phone,
-            photoUrl = data.photoUrl,
+            photoUrl = null,
             username = data.username,
             cookie = data.cookie
         )
