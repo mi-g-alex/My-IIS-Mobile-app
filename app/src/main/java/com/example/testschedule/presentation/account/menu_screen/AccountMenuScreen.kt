@@ -30,8 +30,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -82,19 +80,6 @@ fun AccountMenuScreen(
         viewModel.getNotifications()
     }
 
-    val state = rememberPullToRefreshState()
-    if (state.isRefreshing) {
-        LaunchedEffect(true) {
-            viewModel.getNotifications()
-            viewModel.getUserAccountInfo()
-            if (!viewModel.isLoading.value)
-                state.endRefresh()
-        }
-        LaunchedEffect(viewModel.isLoading.value) {
-            if (!viewModel.isLoading.value)
-                state.endRefresh()
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -110,7 +95,6 @@ fun AccountMenuScreen(
                 LinearProgressIndicator(Modifier.fillMaxWidth())
             }
         },
-        modifier = Modifier.nestedScroll(state.nestedScrollConnection),
     ) {
         Box(Modifier.padding(it)) {
             if (viewModel.userInfo.value != null) {
@@ -184,10 +168,6 @@ fun AccountMenuScreen(
                     }
                 }
             }
-            PullToRefreshContainer(
-                state = state,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
     }
 }

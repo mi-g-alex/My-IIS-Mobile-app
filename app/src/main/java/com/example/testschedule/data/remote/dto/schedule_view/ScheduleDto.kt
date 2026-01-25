@@ -13,6 +13,7 @@ data class ScheduleDto(
     val studentGroupDto: StudentGroupDto?,
     val schedules: SchedulesDto?,
     val previousSchedules: SchedulesDto?,
+    val nextSchedules: SchedulesDto?,
     val exams: List<SchedulesDto.SchedulesItemDto>?
 ) {
     data class EmployeeDto(

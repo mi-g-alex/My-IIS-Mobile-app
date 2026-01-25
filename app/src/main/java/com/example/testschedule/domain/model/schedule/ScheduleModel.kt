@@ -224,33 +224,40 @@ fun scheduleFromDtoToModel(schedule: ScheduleDto): ScheduleModel {
 
     var curSchedule = schedule.schedules
     val prevSchedule = schedule.previousSchedules
+    val nextSchedule = schedule.nextSchedules
 
     if (curSchedule != null) {
         var m = curSchedule.monday?.toMutableList() ?: mutableListOf()
         prevSchedule?.monday?.let { m += it }
+        nextSchedule?.monday?.let { m += it }
         curSchedule = curSchedule.copy(monday = m)
 
         m = curSchedule.tuesday?.toMutableList() ?: mutableListOf()
         prevSchedule?.tuesday?.let { m += it }
+        nextSchedule?.tuesday?.let { m += it }
         curSchedule = curSchedule.copy(tuesday = m)
 
         m = curSchedule.wednesday?.toMutableList() ?: mutableListOf()
         prevSchedule?.wednesday?.let { m += it }
+        nextSchedule?.wednesday?.let { m += it }
         curSchedule = curSchedule.copy(wednesday = m)
 
         m = curSchedule.thursday?.toMutableList() ?: mutableListOf()
         prevSchedule?.thursday?.let { m += it }
+        nextSchedule?.thursday?.let { m += it }
         curSchedule = curSchedule.copy(thursday = m)
 
         m = curSchedule.friday?.toMutableList() ?: mutableListOf()
         prevSchedule?.friday?.let { m += it }
+        nextSchedule?.friday?.let { m += it }
         curSchedule = curSchedule.copy(friday = m)
 
         m = curSchedule.saturday?.toMutableList() ?: mutableListOf()
         prevSchedule?.saturday?.let { m += it }
+        nextSchedule?.saturday?.let { m += it }
         curSchedule = curSchedule.copy(saturday = m)
     } else {
-        curSchedule = prevSchedule
+        curSchedule = prevSchedule ?: nextSchedule
     }
 
     curSchedule?.monday?.forEach { day ->
