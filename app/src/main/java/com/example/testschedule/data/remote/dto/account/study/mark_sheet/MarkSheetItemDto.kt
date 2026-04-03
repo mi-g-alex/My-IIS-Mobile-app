@@ -15,7 +15,7 @@ data class MarkSheetItemDto(
     val number: String?, // 435/0407 // Номер
     val paymentFormMap: Any?, // null // ХЗ
     val price: Double?, // 23.0 // ИТОГО
-    val reason: Int?, // 2 // Типо норм
+    val reason: Boolean?, // 2 // Типо норм
     val rejectionReason: String?, // Отозвана cтудентом
     val requestValidationDoc: Boolean?, // надо ли док, подтвержающий оф
     val retakeCount: Int?, // Кол-во пересдач
@@ -53,7 +53,7 @@ data class MarkSheetItemDto(
         type = markSheetType?.id ?: 0,
         number = number ?: "",
         price = price ?: 0.0,
-        isGoodReason = reason == 1,
+        isGoodReason = reason == true,
         rejectionReason = rejectionReason ?: "",
         retakeCount = retakeCount ?: 0,
         status = status ?: "",

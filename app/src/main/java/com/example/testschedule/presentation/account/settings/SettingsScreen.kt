@@ -70,10 +70,6 @@ fun SettingsScreen(
     /** phone | email | fio **/
     val userBasicData by remember { viewModel.basicInfo }
 
-    var canViewProfile by remember { viewModel.canViewProfile }
-    var canViewRating by remember { viewModel.canViewRating }
-    var canSearchJob by remember { viewModel.canSearchJob }
-
     var selectedDialog by remember { viewModel.selectedDialog }
 
     val clipboardManager = LocalClipboardManager.current
@@ -98,30 +94,6 @@ fun SettingsScreen(
             duration = SnackbarDuration.Short
         )
     }
-
-//    var imageUri by remember { mutableStateOf<Uri?>(null) }
-//    val context = LocalContext.current
-//    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
-//    val launcher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.GetContent()
-//    ) { uri: Uri? -> imageUri = uri }
-//
-//    LaunchedEffect(imageUri) {
-//        imageUri?.let {
-//            if (Build.VERSION.SDK_INT < 28) {
-//                bitmap.value = MediaStore.Images
-//                    .Media.getBitmap(context.contentResolver, it)
-//
-//            } else {
-//                val source = ImageDecoder
-//                    .createSource(context.contentResolver, it)
-//                bitmap.value = ImageDecoder.decodeBitmap(source)
-//            }
-//        }
-//        if(bitmap.value != null) viewModel.updatePhoto(bitmap.value!!)
-//    }
-
-
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -263,73 +235,6 @@ fun SettingsScreen(
                     ) { selectedDialog = DialogType.NONE; viewModel.errorPassText.value = "" }
                 }
 
-                DialogType.BIO -> {
-                    DialogBio(
-                        onSaveClick = { bio ->
-                            viewModel.updateBio(
-                                bio,
-                                onSuccess = {
-                                    selectedDialog = DialogType.NONE
-                                    showSnack(bioOk + bio)
-                                    viewModel.errorBioText.value = ""
-                                },
-                                onError = { isNetwork ->
-                                    toast(if (isNetwork) bioConnection else bioOther)
-                                    selectedDialog = DialogType.BIO
-                                }
-                            )
-                        },
-                        text = userAccountData?.bio ?: "",
-                        isLoading = viewModel.isLoadingBio.value,
-                    ) { selectedDialog = DialogType.NONE; viewModel.errorBioText.value = "" }
-                }
-
-                DialogType.LINKS -> {
-                    DialogLinks(
-                        onSaveClick = { links ->
-                            viewModel.updateLinks(
-                                links,
-                                onSuccess = {
-                                    selectedDialog = DialogType.NONE
-                                    showSnack(linksOk)
-                                    viewModel.errorLinksText.value = ""
-                                },
-                                onError = { isNetwork ->
-                                    toast(if (isNetwork) linksConnection else linksOther)
-                                    selectedDialog = DialogType.LINKS
-                                }
-                            )
-                        },
-                        curLinks = userAccountData?.references ?: emptyList(),
-                        isLoading = viewModel.isLoadingLinks.value,
-                        copy = copy,
-                        toast = toast
-                    ) { selectedDialog = DialogType.NONE; viewModel.errorLinksText.value = "" }
-                }
-
-                DialogType.SKILLS -> {
-                    DialogSkills(
-                        onSaveClick = { skills ->
-                            viewModel.updateSkills(
-                                skills,
-                                onSuccess = {
-                                    selectedDialog = DialogType.NONE
-                                    showSnack(skillsOk)
-                                    viewModel.errorSkillsText.value = ""
-                                },
-                                onError = { isNetwork ->
-                                    toast(if (isNetwork) skillsConnection else skillsOther)
-                                    selectedDialog = DialogType.SKILLS
-                                }
-                            )
-                        },
-                        curSkills = userAccountData?.skills ?: emptyList(),
-                        isLoading = viewModel.isLoadingSkills.value,
-                        copy = copy,
-                        toast = toast
-                    ) { selectedDialog = DialogType.NONE; viewModel.errorSkillsText.value = "" }
-                }
-
                 DialogType.NONE -> {}
             }
 
@@ -340,29 +245,6 @@ fun SettingsScreen(
                         .fillMaxSize()
                         .padding(it)
                 ) {
-
-//                    stickyHeader {
-//                        AnimatedVisibility(
-//                            visible = userBasicData?.hasNotConfirmedContact == true,
-//                        ) {
-//                            Box(
-//                                modifier = Modifier
-//                                    .fillMaxWidth()
-//                                    .background(MaterialTheme.colorScheme.background)
-//                            ) {
-//                                ButtonEmailUnconfirmedItem {
-//                                    selectedDialog = DialogType.CONFIRM_EMAIL
-//                                }
-//                            }
-//                        }
-//                    }
-
-//                    // Picture
-//                    item {
-//                        ChangePhotoItem(photoUrl = userAccountData?.photoUrl ?: "") {
-//                      //      launcher.launch("image/*")
-//                        }
-//                    }
 
                     // Email
                     item {
@@ -401,133 +283,6 @@ fun SettingsScreen(
                             descText = stringResource(id = R.string.account_settings_password_desc),
                         ) { selectedDialog = DialogType.PASSWORD }
                     }
-
-                    // Spacer
-                    item { Space() }
-
-                    // BIO
-                    item {
-                        BasicListItem(
-                            mainText = stringResource(id = R.string.account_settings_info_bio),
-                            descText = stringResource(id = R.string.account_settings_info_bio_desc),
-                            additionalText = if (userAccountData?.bio?.isNotEmpty() == true)
-                                stringResource(
-                                    id = R.string.account_settings_info_bio_info,
-                                    userAccountData?.bio.toString()
-                                ) else null
-                        ) { selectedDialog = DialogType.BIO }
-                    }
-
-                    // Links
-                    item {
-                        BasicListItem(
-                            mainText = stringResource(id = R.string.account_settings_info_links),
-                            descText = stringResource(id = R.string.account_settings_info_links_desc),
-                        ) { selectedDialog = DialogType.LINKS }
-                    }
-
-                    // Skills
-                    item {
-                        BasicListItem(
-                            mainText = stringResource(id = R.string.account_settings_info_skills),
-                            descText = stringResource(id = R.string.account_settings_info_skills_desc),
-                        ) { selectedDialog = DialogType.SKILLS }
-                    }
-
-                    // Spacer
-                    item { Space() }
-
-                    // Settings | Profile
-                    item {
-                        val sucText = successUpdateText(
-                            R.string.account_settings_access_profile,
-                            stringResource(id = if (!canViewProfile) R.string.account_settings_access_snackbar_allow else R.string.account_settings_access_snackbar_dont_allow)
-                        )
-
-                        val errText = errorUpdateText(R.string.account_settings_access_profile)
-
-                        WithCheckBoxListItem(
-                            mainText = stringResource(id = R.string.account_settings_access_profile),
-                            descText = stringResource(id = R.string.account_settings_access_profile_desc),
-                            canViewProfile,
-                            !viewModel.isLoading.value
-                        ) {
-                            viewModel.updateViewInfo(
-                                viewProfile = !canViewProfile,
-                                viewRating = null,
-                                viewJob = null,
-                                onSuccess = {
-                                    showSnack(sucText); canViewProfile = !canViewProfile
-                                },
-                                onError = { showSnack(errText) }
-                            )
-                        }
-                    }
-
-                    // Settings | Rating
-                    item {
-
-                        val sucText = successUpdateText(
-                            R.string.account_settings_access_rating,
-                            stringResource(id = if (!canViewRating) R.string.account_settings_access_snackbar_allow else R.string.account_settings_access_snackbar_dont_allow)
-                        )
-
-                        val errText = errorUpdateText(R.string.account_settings_access_rating)
-
-                        WithCheckBoxListItem(
-                            mainText = stringResource(id = R.string.account_settings_access_rating),
-                            descText = stringResource(id = R.string.account_settings_access_rating_desc),
-                            canViewRating,
-                            canViewProfile && !viewModel.isLoading.value
-                        ) {
-                            viewModel.updateViewInfo(
-                                viewProfile = null,
-                                viewRating = !canViewRating,
-                                viewJob = null,
-                                onSuccess = {
-                                    showSnack(sucText); canViewRating = !canViewRating
-                                },
-                                onError = { showSnack(errText) }
-                            )
-                        }
-                    }
-
-                    // Settings | Work
-                    item {
-
-                        val sucText = successUpdateText(
-                            R.string.account_settings_access_work,
-                            stringResource(id = if (!canSearchJob) R.string.account_settings_access_snackbar_allow else R.string.account_settings_access_snackbar_dont_allow)
-                        )
-
-                        val errText = errorUpdateText(R.string.account_settings_access_work)
-
-                        WithCheckBoxListItem(
-                            mainText = stringResource(id = R.string.account_settings_access_work),
-                            descText = stringResource(id = R.string.account_settings_access_work_desc),
-                            canSearchJob,
-                            canViewProfile && !viewModel.isLoading.value
-                        ) {
-                            viewModel.updateViewInfo(
-                                viewProfile = null,
-                                viewRating = null,
-                                viewJob = !canSearchJob,
-                                onSuccess = { showSnack(sucText); canSearchJob = !canSearchJob },
-                                onError = { showSnack(errText) }
-                            )
-                        }
-                    }
-
-                    // Spacer
-                    item { Space() }
-
-                    // Office info
-//                    item {
-//                        BasicListItem(
-//                            mainText = stringResource(id = R.string.account_settings_outlook),
-//                            descText = stringResource(id = R.string.account_settings_outlook_desc),
-//                        ) { selectedDialog = DialogType.OUTLOOK }
-//                    }
 
                     // Spacer
                     item { Space() }

@@ -76,7 +76,7 @@ interface IisAPI {
 
     // Работа с профилем
 
-    @GET("profiles/personal-cv")
+    @GET("profiles/personal-profile")
     /** Получение данных об аккаунте **/
     suspend fun getAccountProfile(@Header("Cookie") cookies: String): AccountProfileDto
 

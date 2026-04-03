@@ -200,7 +200,7 @@ fun PrivilegeCard(item: PrivilegesModel) {
             "Внеочередное право" -> stringResource(id = R.string.account_dormitory_privileges_type_0)
             "Первоочередное право" -> stringResource(id = R.string.account_dormitory_privileges_type_1)
             "Приоритетное право" -> stringResource(id = R.string.account_dormitory_privileges_type_2)
-            else -> item.dormitoryPrivilegeName ?: ""
+            else -> item.dormitoryPrivilegeCategoryName ?: ""
         }
 
         Column(
