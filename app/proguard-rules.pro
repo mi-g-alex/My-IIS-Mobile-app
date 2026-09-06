@@ -1,21 +1,24 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Keep line numbers so release crashes can be retraced with mapping.txt.
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Gson reads these fields reflectively. Their JSON names must stay stable after
+# obfuscation, including values persisted by Room type converters.
+-keepattributes Signature
+-keep,allowobfuscation class com.google.gson.reflect.TypeToken
+-keep,allowobfuscation class * extends com.google.gson.reflect.TypeToken
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+-keep,allowobfuscation class com.example.testschedule.data.remote.dto.**
+-keepclassmembers class com.example.testschedule.data.remote.dto.** {
+    <fields>;
+}
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+-keep,allowobfuscation class com.example.testschedule.data.local.entity.**
+-keepclassmembers class com.example.testschedule.data.local.entity.** {
+    <fields>;
+}
+
+-keep,allowobfuscation class com.example.testschedule.domain.model.schedule.ScheduleModel**
+-keepclassmembers class com.example.testschedule.domain.model.schedule.ScheduleModel** {
+    <fields>;
+}

@@ -5,7 +5,6 @@ import com.example.testschedule.data.remote.dto.account.settings.email.SendConfi
 import com.example.testschedule.data.remote.dto.account.settings.password.ChangePasswordDto
 import com.example.testschedule.data.remote.dto.account.study.mark_sheet.additional.MarkSheetTypeModel
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
-import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
 import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
 import com.example.testschedule.domain.model.account.group.GroupModel
@@ -56,6 +55,8 @@ interface IisAPIRepository {
     // Уведомлений
     suspend fun getNotifications(cookies: String): List<NotificationModel>
 
+    suspend fun getUnreadNotificationsCount(cookies: String): Int
+
     suspend fun readNotifications(cookies: String, data: List<Int>)
 
     // Общежитие и льготы
@@ -74,9 +75,6 @@ interface IisAPIRepository {
 
     // Взыскания
     suspend fun getPenalty(cookies: String): List<PenaltyModel>
-
-    // События
-    suspend fun getAnnouncements(cookies: String): List<AnnouncementModel>
 
     // Рейтинг
     suspend fun getRating(cookies: String): RatingModel

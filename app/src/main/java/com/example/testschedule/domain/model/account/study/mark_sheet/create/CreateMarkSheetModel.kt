@@ -6,10 +6,10 @@ import com.example.testschedule.data.remote.dto.account.study.mark_sheet.create.
 data class CreateMarkSheetModel(
     val price: Double,
     val markSheetType: MarkSheetTypeModel,
-    val reason: Int, // 1 - уваж, 2 - не уваж
+    val reason: Boolean,
     val hours: String,
     val subject: SubjectModel,
-    val absentDate: String, // "22.12.2022"
+    val absentDate: String?, // "22.12.2022"
     val employee: SearchEmployeeMarkSheetModel
 ) {
     data class SubjectModel(

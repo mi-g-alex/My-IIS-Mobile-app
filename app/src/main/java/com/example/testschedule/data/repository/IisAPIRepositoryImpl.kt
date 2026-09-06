@@ -3,6 +3,8 @@ package com.example.testschedule.data.repository
 import android.util.Log
 import com.example.testschedule.data.remote.IisAPI
 import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanCreateOmissionsDto
+import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanGetOmissionsDto
+import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanSubjectDto
 import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.account.notifications.ReadNotificationDto
 import com.example.testschedule.data.remote.dto.account.settings.email.SendConfirmMessageResponseDto
@@ -10,7 +12,6 @@ import com.example.testschedule.data.remote.dto.account.settings.password.Change
 import com.example.testschedule.data.remote.dto.account.study.mark_sheet.additional.MarkSheetTypeModel
 import com.example.testschedule.data.remote.dto.auth.LoginAndPasswordDto
 import com.example.testschedule.data.remote.dto.auth.UserBasicDataDto
-import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
 import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
 import com.example.testschedule.domain.model.account.group.GroupModel
@@ -39,12 +40,33 @@ import com.example.testschedule.domain.repository.IisAPIRepository
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Mutex
 import retrofit2.Call
 import javax.inject.Inject
 
 class IisAPIRepositoryImpl @Inject constructor(
     private val api: IisAPI
 ) : IisAPIRepository {
+
+    private data class HeadmanTermData(
+        val subjectName: String,
+        val subject: HeadmanSubjectDto,
+        val data: HeadmanGetOmissionsDto
+    )
+
+    private data class HeadmanDataCache(
+        val cookie: String,
+        val studentNames: Map<Int, String>,
+        val terms: List<HeadmanTermData>
+    )
+
+    private val headmanCacheMutex = Mutex()
+
+    @Volatile
+    private var headmanDataCache: HeadmanDataCache? = null
 
     // Расписание
     override suspend fun getListOfGroups(): List<ListOfGroupsModel> =
@@ -96,6 +118,9 @@ class IisAPIRepositoryImpl @Inject constructor(
         return list.toList()
     }
 
+    override suspend fun getUnreadNotificationsCount(cookies: String): Int =
+        api.getUnreadNotificationsCount(cookies)
+
     override suspend fun readNotifications(cookies: String, data: List<Int>) {
         val list = data.map { ReadNotificationDto(it, true) }
         api.readNotifications(cookies, list)
@@ -123,10 +148,6 @@ class IisAPIRepositoryImpl @Inject constructor(
     // Взыскания
     override suspend fun getPenalty(cookies: String): List<PenaltyModel> =
         api.getPenalty(cookies).map { it.toModel() }
-
-    // События
-    override suspend fun getAnnouncements(cookies: String): List<AnnouncementModel> =
-        api.getAnnouncements(cookies).map { it.toModel() }
 
     // Рейтинг
     override suspend fun getRating(cookies: String): RatingModel =
@@ -244,10 +265,62 @@ class IisAPIRepositoryImpl @Inject constructor(
     override suspend fun headmanGetOmissionsByDate(
         date: String,
         cookies: String
-    ): HeadmanGetOmissionsModel = api.headmanGetOmissionsByDate(date, cookies).toModel(date)
+    ): HeadmanGetOmissionsModel {
+        val cache = getHeadmanData(cookies)
+        val lessons = cache.terms
+            .flatMap { term ->
+                term.data.lessonsByDate(
+                    date = date,
+                    subjectName = term.subjectName,
+                    lessonTypeAbbrev = term.subject.lessonTypeAbbrev,
+                    studentNames = cache.studentNames
+                )
+            }
+            .sortedWith(compareBy({ it.nameAbbrev }, { it.lessonTypeAbbrev }, { it.subGroup }))
+
+        return HeadmanGetOmissionsModel(lessons = lessons, date = date)
+    }
 
     override suspend fun headmanSaveOmissions(
         omissions: HeadmanCreateOmissionsDto,
         cookies: String
-    ): Call<ResponseBody?> = api.headmanSaveOmissions(omissions, cookies)
+    ): Call<ResponseBody?> {
+        headmanDataCache = null
+        return api.headmanSaveOmissions(omissions, cookies)
+    }
+
+    private suspend fun getHeadmanData(cookies: String): HeadmanDataCache {
+        headmanDataCache?.takeIf { it.cookie == cookies }?.let { return it }
+
+        headmanCacheMutex.lock()
+        try {
+            headmanDataCache?.takeIf { it.cookie == cookies }?.let { return it }
+
+            val subjects = api.headmanGetSubjects(cookies)
+            val cache = coroutineScope {
+                val students = async { api.headmanGetStudents(cookies) }
+                val terms = subjects.flatMap { (subjectName, subjectItems) ->
+                    subjectItems.map { subject ->
+                        async {
+                            HeadmanTermData(
+                                subjectName = subjectName,
+                                subject = subject,
+                                data = api.headmanGetData(subject.id, cookies)
+                            )
+                        }
+                    }
+                }.awaitAll()
+
+                HeadmanDataCache(
+                    cookie = cookies,
+                    studentNames = students.await().associate { it.studentId to it.fullName },
+                    terms = terms
+                )
+            }
+            headmanDataCache = cache
+            return cache
+        } finally {
+            headmanCacheMutex.unlock()
+        }
+    }
 }

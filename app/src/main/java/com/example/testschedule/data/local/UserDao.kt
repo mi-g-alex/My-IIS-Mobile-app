@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.testschedule.data.local.entity.account.announcement.AnnouncementEntity
+import com.example.testschedule.data.local.entity.CacheUpdateEntity
 import com.example.testschedule.data.local.entity.account.group.GroupEntity
 import com.example.testschedule.data.local.entity.account.mark_book.MarkBookEntity
 import com.example.testschedule.data.local.entity.account.notifications.NotificationEntity
@@ -23,6 +23,15 @@ import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
 
 @Dao
 interface UserDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setLastUpdate(update: CacheUpdateEntity)
+
+    @Query("SELECT updatedAt FROM CacheUpdateEntity WHERE cacheKey = :cacheKey")
+    fun observeLastUpdate(cacheKey: String): kotlinx.coroutines.flow.Flow<Long?>
+
+    @Query("DELETE FROM CacheUpdateEntity WHERE cacheKey LIKE 'account:%'")
+    suspend fun deleteAccountLastUpdates(): Int
 
     // Schedule
     @Query("SELECT * FROM ScheduleEntity WHERE id = :id")
@@ -154,13 +163,7 @@ interface UserDao {
     @Query("DELETE FROM PenaltyEntity")
     suspend fun deletePenalty(): Int
 
-    // Announcements
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAnnouncement(data: List<AnnouncementEntity>)
-
-    @Query("SELECT * FROM AnnouncementEntity")
-    suspend fun getAnnouncements(): List<AnnouncementEntity>
-
+    // Kept while the legacy table remains in the database schema.
     @Query("DELETE FROM AnnouncementEntity")
     suspend fun deleteAnnouncements(): Int
 

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.domain.model.account.study.certificate.CertificateModel
 import com.example.testschedule.domain.model.account.study.mark_sheet.MarkSheetModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
@@ -48,6 +49,7 @@ class StudyViewModel @Inject constructor(
         getCertificatesUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {
+                    viewModelScope.launch { db.setLastUpdate(CacheUpdateKeys.STUDY) }
                     isLoading.value = false
                     res.data?.let {
                         certificates.clear()
@@ -83,6 +85,7 @@ class StudyViewModel @Inject constructor(
         getMarkSheetUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {
+                    viewModelScope.launch { db.setLastUpdate(CacheUpdateKeys.STUDY) }
                     isLoading.value = false
                     res.data?.let {
                         markSheets.clear()

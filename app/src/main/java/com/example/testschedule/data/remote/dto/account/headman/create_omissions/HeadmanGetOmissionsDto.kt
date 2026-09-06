@@ -3,68 +3,77 @@ package com.example.testschedule.data.remote.dto.account.headman.create_omission
 import com.example.testschedule.domain.model.account.headman.create_omissions.HeadmanGetOmissionsModel
 
 data class HeadmanGetOmissionsDto(
+    val attendance: List<AttendanceDto>,
     val lessons: List<LessonDto>
 ) {
-    data class LessonDto(
-        val dateString: String, // 03-04-2024
-        val id: Int, // 969064
-        val lessonPeriod: LessonPeriodDto,
-        val lessonTypeAbbrev: String, // ЛР
-        val nameAbbrev: String, // ИГИ
-        val students: List<StudentDto>,
-        val subGroup: Int // 0 | 1 | 2
+    data class AttendanceDto(
+        val studentId: Int,
+        val subGroup: Int?,
+        val lessonRecords: Map<String, OmissionDto?>
     ) {
-        data class LessonPeriodDto(
-            val endTime: String, // 11:55
-            val lessonPeriodHours: Int, // 2
-            val startTime: String // 10:35
+        data class OmissionDto(
+            val missedHours: Int,
+            val respectfulOmission: Boolean
         ) {
-            fun toModel() = HeadmanGetOmissionsModel.LessonModel.LessonPeriodModel(
-                startTime = startTime,
-                endTime = endTime,
-                lessonPeriodHours = lessonPeriodHours
-            )
-        }
-
-
-        data class StudentDto(
-            val fio: String, // Артиш Виктория Олеговна
-            val id: Int, // 543535
-            val omission: OmissionDto?
-        ) {
-            data class OmissionDto(
-                val id: Int, // 1080408
-                val missedHours: Int, // 2
-                val respectfulOmission: Boolean // false
-            ) {
-                fun toModel() = HeadmanGetOmissionsModel.LessonModel.StudentModel.OmissionModel(
-                    id = id,
+            fun toModel() =
+                HeadmanGetOmissionsModel.LessonModel.StudentModel.OmissionModel(
+                    id = 0,
                     missedHours = missedHours,
                     respectfulOmission = respectfulOmission
                 )
-            }
-
-            fun toModel() = HeadmanGetOmissionsModel.LessonModel.StudentModel(
-                id = id,
-                fio = fio,
-                omission = omission?.toModel()
-            )
         }
-
-        fun toModel() = HeadmanGetOmissionsModel.LessonModel(
-            id = id,
-            dateString = dateString,
-            nameAbbrev = nameAbbrev,
-            lessonTypeAbbrev = lessonTypeAbbrev,
-            subGroup = subGroup,
-            lessonPeriod = lessonPeriod.toModel(),
-            students = students.map { it.toModel() }
-
-        )
     }
 
-    fun toModel(date: String) = HeadmanGetOmissionsModel(
-        lessons = lessons.map { it.toModel() },
-        date = date
+    data class LessonDto(
+        val id: Int,
+        val date: String,
+        val subgroup: Int,
+        val numberOfHours: Int
     )
+
+    fun lessonsByDate(
+        date: String,
+        subjectName: String,
+        lessonTypeAbbrev: String,
+        studentNames: Map<Int, String>
+    ): List<HeadmanGetOmissionsModel.LessonModel> = lessons
+        .filter { it.date == date }
+        .map { lesson ->
+            val students = attendance
+                .asSequence()
+                .filter { lesson.subgroup == 0 || it.subGroup == lesson.subgroup }
+                .map { student ->
+                    HeadmanGetOmissionsModel.LessonModel.StudentModel(
+                        id = student.studentId,
+                        fio = studentNames[student.studentId] ?: student.studentId.toString(),
+                        omission = student.lessonRecords[lesson.id.toString()]?.toModel()
+                    )
+                }
+                .sortedBy { it.fio }
+                .toList()
+
+            HeadmanGetOmissionsModel.LessonModel(
+                id = lesson.id,
+                dateString = lesson.date,
+                nameAbbrev = subjectName,
+                lessonTypeAbbrev = lessonTypeAbbrev,
+                subGroup = lesson.subgroup,
+                lessonPeriod = HeadmanGetOmissionsModel.LessonModel.LessonPeriodModel(
+                    startTime = "",
+                    endTime = "",
+                    lessonPeriodHours = lesson.numberOfHours
+                ),
+                students = students
+            )
+        }
 }
+
+data class HeadmanSubjectDto(
+    val id: Int,
+    val lessonTypeAbbrev: String
+)
+
+data class HeadmanStudentDto(
+    val studentId: Int,
+    val fullName: String
+)

@@ -17,7 +17,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -43,7 +42,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.additional_elements.LastUpdateListItem
 import kotlinx.coroutines.launch
 
 @Composable
@@ -83,11 +84,8 @@ fun CreateCertificateScreen(
                 onBackPressed = { onBackPressed(); enabled = false },
                 title = stringResource(id = R.string.account_study_certificates_create_title),
                 enabled = enabled,
-                isOfflineResult = viewModel.isLoading.value || viewModel.errorText.value.isNotEmpty(),
+                isLoading = viewModel.isLoading.value
             )
-            if (viewModel.isLoading.value) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState)
@@ -247,6 +245,7 @@ fun CreateCertificateScreen(
                     }
                 }
             }
+            item { LastUpdateListItem(CacheUpdateKeys.STUDY) }
         }
     }
 }

@@ -14,6 +14,10 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.NavHost
@@ -31,19 +35,46 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private var requestedRoute by mutableStateOf<String?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedRoute = intent.getStringExtra(EXTRA_START_ROUTE)
 
         setContent {
+            val navController = rememberNavController()
+            LaunchedEffect(requestedRoute) {
+                requestedRoute?.let { route ->
+                    if (route == Routes.SCHEDULE_EDIT_LIST_ROUTE &&
+                        navController.currentDestination?.route != Routes.SCHEDULE_HOME_ROUTE
+                    ) {
+                        val returnedToSchedule = navController.popBackStack(
+                            Routes.SCHEDULE_HOME_ROUTE,
+                            inclusive = false
+                        )
+                        if (!returnedToSchedule) {
+                            navController.navigate(Routes.SCHEDULE_HOME_ROUTE)
+                        }
+                    }
+                    navController.navigate(route) { launchSingleTop = true }
+                    requestedRoute = null
+                }
+            }
             TestScheduleTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavigationScreen()
+                    NavigationScreen(navController)
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        requestedRoute = intent.getStringExtra(EXTRA_START_ROUTE)
     }
 
     override fun onPause() {
@@ -51,6 +82,13 @@ class MainActivity : ComponentActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             ScheduleWidget().updateAll(applicationContext)
         }
+    }
+
+    companion object {
+        private const val EXTRA_START_ROUTE = "start_route"
+
+        fun createIntent(context: ComponentActivity, route: String) =
+            Intent(context, MainActivity::class.java).putExtra(EXTRA_START_ROUTE, route)
     }
 }
 
@@ -94,9 +132,15 @@ class PreviewActivity : ComponentActivity() {
                                     examsData[exams.id] = exams
                                     navController.navigate("SCHEDULE_EXAMS_VIEW/" + exams.id)
                                 },
-                                goToAddSchedule = {},
-                                navToLogin = {},
-                                navToProfile = {},
+                                goToAddSchedule = {
+                                    openMain(Routes.SCHEDULE_EDIT_LIST_ROUTE)
+                                },
+                                navToLogin = {
+                                    openMain(Routes.LOGIN_SCREEN_ROUTE)
+                                },
+                                navToProfile = {
+                                    openMain(Routes.ACCOUNT_ROUTE)
+                                },
                                 isPrev = true,
                                 goToPreview = { urlId, uTitle ->
                                     navController.navigate("SCHEDULE_HOME_ROUTE/${urlId}/${uTitle}/${true}")
@@ -140,5 +184,10 @@ class PreviewActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun openMain(route: String) {
+        startActivity(MainActivity.createIntent(this, route))
+        finish()
     }
 }

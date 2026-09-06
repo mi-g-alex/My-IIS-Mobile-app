@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.account.group.GetGroupListUseCase
@@ -36,6 +37,7 @@ class GroupViewModel @Inject constructor(
         getGroupListUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {
+                    viewModelScope.launch { db.setLastUpdate(CacheUpdateKeys.GROUP) }
                     isLoading.value = false
                     group.value = res.data
                     errorText.value = ""

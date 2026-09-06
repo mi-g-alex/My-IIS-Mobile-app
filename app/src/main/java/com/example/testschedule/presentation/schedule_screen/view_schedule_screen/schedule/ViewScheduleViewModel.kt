@@ -8,11 +8,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.di.AppModule
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
+import com.example.testschedule.domain.model.schedule.ScheduleModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.schedule.get_schedule.GetCurrentWeekUseCase
 import com.example.testschedule.domain.use_case.schedule.get_schedule.GetScheduleUseCase
@@ -28,7 +30,7 @@ import javax.inject.Inject
 class ViewScheduleViewModel @Inject constructor(
     private val myPreference: AppModule.MyPreference,
     private val getScheduleUseCase: GetScheduleUseCase,
-    private val getCurrentWeek: GetCurrentWeekUseCase,
+    private val getCurrentWeekUseCase: GetCurrentWeekUseCase,
     private val db: UserDatabaseRepository
 
 ) : ViewModel() {
@@ -44,6 +46,10 @@ class ViewScheduleViewModel @Inject constructor(
     var userData: MutableState<UserBasicDataModel?> = mutableStateOf(null)
 
     var isFromExams by mutableStateOf(false)
+    var currentWeek by mutableStateOf(myPreference.getCurrentWeek())
+        private set
+    var lastWeekUpdate by mutableStateOf(myPreference.getLastUpdateCurrentWeek())
+        private set
 
     init {
         getSaved()
@@ -58,6 +64,9 @@ class ViewScheduleViewModel @Inject constructor(
                 is Resource.Success -> {
                     result.data?.let {
                         if (result.data.id == lastSelectedSchedule) {
+                            viewModelScope.launch {
+                                db.setLastUpdate(CacheUpdateKeys.schedule(it.id))
+                            }
                             db.setExams(it)
                             _state.value = ViewScheduleState(schedule = result.data)
                             title.value = result.data.title
@@ -108,8 +117,27 @@ class ViewScheduleViewModel @Inject constructor(
         }
     }
 
+    fun toggleFavorite(schedule: ScheduleModel) {
+        viewModelScope.launch {
+            val saved = savedSchedule.value.orEmpty()
+            if (saved.any { it.id == schedule.id }) {
+                db.deleteFromSavedScheduleList(schedule.id)
+            } else {
+                db.addNewSavedScheduleToList(
+                    ListOfSavedEntity(
+                        id = schedule.id,
+                        isGroup = schedule.isGroupSchedule,
+                        title = schedule.title
+                    )
+                )
+                db.setSchedule(schedule)
+            }
+            getSaved()
+        }
+    }
+
     private fun getCurrentWeek() {
-        getCurrentWeek.invoke().onEach { result ->
+        getCurrentWeekUseCase.invoke().onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     val week = result.data
@@ -128,6 +156,8 @@ class ViewScheduleViewModel @Inject constructor(
                             cal.timeInMillis -= (cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY) * 24 * 60 * 60 * 1000
                         }
                         myPreference.setCurrentWeek(cal.timeInMillis, week)
+                        currentWeek = week
+                        lastWeekUpdate = cal.timeInMillis
                     }
                 }
 

@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.domain.model.account.penalty.PenaltyModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.account.penalty.GetPenaltyUseCase
@@ -36,6 +37,7 @@ class PenaltyViewModel @Inject constructor(
         getPenaltyUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {
+                    viewModelScope.launch { db.setLastUpdate(CacheUpdateKeys.PENALTY) }
                     isLoading.value = false
                     res.data?.let { penalty.value = it }
                     errorText.value = ""

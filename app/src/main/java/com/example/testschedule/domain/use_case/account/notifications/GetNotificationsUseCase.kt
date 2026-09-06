@@ -57,4 +57,47 @@ class GetNotificationsUseCase @Inject constructor(
             emit(Resource.Error("OtherError"))
         }
     }
+
+    fun getUnreadCount(): Flow<Resource<Int>> = flow {
+        try {
+            emit(Resource.Loading())
+            val count = api.getUnreadNotificationsCount(db.getCookie())
+            emit(Resource.Success(count))
+        } catch (e: HttpException) {
+            if (e.code() == 403) {
+                val credentials = db.getLoginAndPassword()
+                try {
+                    val response = api.loginToAccount(
+                        credentials.username,
+                        credentials.password
+                    ).awaitResponse()
+                    if (!response.isSuccessful) throw HttpException(response)
+                    val cookie = response.headers()["Set-Cookie"].toString()
+                    response.body()?.toModel(cookie)?.let { db.setUserBasicData(it) }
+                    emit(Resource.Success(api.getUnreadNotificationsCount(cookie)))
+                } catch (e: HttpException) {
+                    if (e.code() == 401) {
+                        db.deleteUserBasicData()
+                        emit(Resource.Error("WrongPassword"))
+                    } else if (e.code() >= 500) {
+                        emit(Resource.Error("ConnectionFailed"))
+                    } else {
+                        emit(Resource.Error("OtherError"))
+                    }
+                } catch (e: IOException) {
+                    emit(Resource.Error("ConnectionFailed"))
+                } catch (e: Exception) {
+                    emit(Resource.Error("OtherError"))
+                }
+            } else if (e.code() >= 500) {
+                emit(Resource.Error("ConnectionFailed"))
+            } else {
+                emit(Resource.Error("OtherError"))
+            }
+        } catch (e: IOException) {
+            emit(Resource.Error("ConnectionFailed"))
+        } catch (e: Exception) {
+            emit(Resource.Error("OtherError"))
+        }
+    }
 }

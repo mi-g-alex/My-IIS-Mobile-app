@@ -1,11 +1,11 @@
 package com.example.testschedule.data.repository
 
 import com.example.testschedule.data.local.UserDao
+import com.example.testschedule.data.local.entity.CacheUpdateEntity
 import com.example.testschedule.data.local.entity.auth.LoginAndPasswordEntity
 import com.example.testschedule.data.local.entity.auth.UserBasicDataEntity
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
 import com.example.testschedule.data.local.entity.schedule.ScheduleEntity
-import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
@@ -26,6 +26,12 @@ import javax.inject.Inject
 class UserDatabaseRepositoryImpl @Inject constructor(
     private val dao: UserDao
 ) : UserDatabaseRepository {
+    override suspend fun setLastUpdate(cacheKey: String, updatedAt: Long) {
+        dao.setLastUpdate(CacheUpdateEntity(cacheKey = cacheKey, updatedAt = updatedAt))
+    }
+
+    override fun observeLastUpdate(cacheKey: String) = dao.observeLastUpdate(cacheKey)
+
     override suspend fun getSchedule(id: String): ScheduleModel? =
         dao.getSchedule(id = id)?.toModel()
 
@@ -188,6 +194,7 @@ class UserDatabaseRepositoryImpl @Inject constructor(
         dao.deleteAnnouncements()
         dao.deleteCertificates()
         dao.deleteMarkSheet()
+        dao.deleteAccountLastUpdates()
     }
 
 
@@ -269,19 +276,6 @@ class UserDatabaseRepositoryImpl @Inject constructor(
 
     override suspend fun deletePenalty() {
         dao.deletePenalty()
-    }
-
-    // Announcement
-    override suspend fun addAnnouncements(data: List<AnnouncementModel>) {
-        dao.deleteAnnouncements()
-        dao.addAnnouncement(data.map { it.toEntity() })
-    }
-
-    override suspend fun getAnnouncements(): List<AnnouncementModel> =
-        dao.getAnnouncements().map { it.toModel() }
-
-    override suspend fun deleteAnnouncements() {
-        dao.deleteAnnouncements()
     }
 
     override suspend fun addCertificate(data: List<CertificateModel>) {

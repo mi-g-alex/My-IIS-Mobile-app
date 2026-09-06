@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.domain.model.account.profile.AccountProfileModel
 import com.example.testschedule.domain.model.auth.UserBasicDataModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
@@ -86,6 +87,7 @@ class SettingsViewModel @Inject constructor(
         getAccountProfileUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {
+                    viewModelScope.launch { db.setLastUpdate(CacheUpdateKeys.SETTINGS) }
                     isLoading.value = false
                     userInfo.value = res.data
                     errorText.value = ""

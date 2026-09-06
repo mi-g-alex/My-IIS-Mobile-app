@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.domain.model.account.rating.RatingModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.account.rating.GetRatingUseCase
@@ -33,6 +34,7 @@ class RatingViewModel @Inject constructor(
         getRatingUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {
+                    viewModelScope.launch { db.setLastUpdate(CacheUpdateKeys.RATING) }
                     isLoading.value = false
                     res.data?.let { rating.value = it }
                     errorText.value = ""

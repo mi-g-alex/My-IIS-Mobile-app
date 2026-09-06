@@ -9,12 +9,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.common.CacheUpdateKeys
+import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.model.account.headman.create_omissions.HeadmanGetOmissionsModel
 import com.example.testschedule.domain.use_case.account.headman.create_omissions.GetOmissionsByDateUseCase
 import com.example.testschedule.domain.use_case.account.headman.create_omissions.SaveOmissionsByDateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -24,6 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HeadmanViewModel @Inject constructor(
+    private val db: UserDatabaseRepository,
     private val getOmissionsByDateUseCase: GetOmissionsByDateUseCase,
     private val saveOmissionsByDateUseCase: SaveOmissionsByDateUseCase
 ) : ViewModel() {
@@ -63,7 +67,7 @@ class HeadmanViewModel @Inject constructor(
         val tmpDate = date?.let {
             SimpleDateFormat(
                 "yyyy-MM-dd", Locale.getDefault()
-            ).format(it) + "T00:00:00.000Z"
+            ).format(it)
         } ?: lastRequiredDate.value
         lessonsList.clear()
         cnt.intValue = 0
@@ -75,6 +79,7 @@ class HeadmanViewModel @Inject constructor(
         getOmissionsByDateUseCase(tmpDate).onEach { res ->
             when (res) {
                 is Resource.Success -> {
+                    viewModelScope.launch { db.setLastUpdate(CacheUpdateKeys.HEADMAN) }
                     if (lastRequiredDate.value == res.data?.date) {
                         lessonsList.clear()
                         lessonsList.addAll(res.data.lessons)

@@ -28,19 +28,20 @@ class CreateMarkSheetUseCase @Inject constructor(
         absentDate: String,
         employee: SearchEmployeeMarkSheetModel
     ): Flow<Resource<Boolean>> = flow {
+        val markSheet = CreateMarkSheetModel(
+            price = price,
+            markSheetType = markSheetType,
+            reason = isGoodReason,
+            hours = hours,
+            subject = CreateMarkSheetModel.SubjectModel(focsId, thId),
+            absentDate = absentDate.takeIf { isGoodReason && it.isNotBlank() },
+            employee = employee
+        )
         try {
             emit(Resource.Loading())
             val cookie = db.getCookie()
-            val markSheet = CreateMarkSheetModel(
-                price = price,
-                markSheetType = markSheetType,
-                reason = if (isGoodReason) 1 else 2,
-                hours = hours,
-                subject = CreateMarkSheetModel.SubjectModel(focsId, thId),
-                absentDate = absentDate,
-                employee = employee
-            )
-            api.createMarkSheet(markSheet, cookie).awaitResponse()
+            val result = api.createMarkSheet(markSheet, cookie).awaitResponse()
+            if (!result.isSuccessful) throw HttpException(result)
             emit(Resource.Success(true))
         } catch (e: HttpException) {
             if (e.code() == 403) {
@@ -51,16 +52,8 @@ class CreateMarkSheetUseCase @Inject constructor(
                     if (!response.isSuccessful) throw HttpException(response)
                     val cookie = response.headers()["Set-Cookie"].toString()
                     response.body()?.toModel(cookie)?.let { db.setUserBasicData(it) }
-                    val markSheet = CreateMarkSheetModel(
-                        price = price,
-                        markSheetType = markSheetType,
-                        reason = if (isGoodReason) 1 else 2,
-                        hours = hours,
-                        subject = CreateMarkSheetModel.SubjectModel(focsId, thId),
-                        absentDate = absentDate,
-                        employee = employee
-                    )
-                    api.createMarkSheet(markSheet, cookie).awaitResponse()
+                    val result = api.createMarkSheet(markSheet, cookie).awaitResponse()
+                    if (!result.isSuccessful) throw HttpException(result)
                     emit(Resource.Success(true))
                 } catch (e: HttpException) {
                     if (e.code() == 401) {

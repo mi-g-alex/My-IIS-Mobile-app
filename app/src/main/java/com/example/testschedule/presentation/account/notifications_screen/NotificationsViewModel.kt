@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.account.notifications.GetNotificationsUseCase
@@ -40,6 +41,7 @@ class NotificationsViewModel @Inject constructor(
         getNotificationsUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {
+                    viewModelScope.launch { db.setLastUpdate(CacheUpdateKeys.NOTIFICATIONS) }
                     isLoading.value = false
                     res.data?.let { notifications.value = it }
                     val listOfUnread = notifications.value.filter { !it.isViewed }.map { it.id }

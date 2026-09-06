@@ -28,7 +28,10 @@ data class RatingModel(
                     val point: String,
                     val date: String,
                     val omissions: Int,
-                    val marks: List<Int>
+                    val marks: List<Int>,
+                    val deadline: String?,
+                    val deadlineOverdue: Boolean,
+                    val deadlineTaskNumber: Int?
                 )
             }
         }

@@ -16,6 +16,8 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.testschedule.R
+import com.example.testschedule.common.CacheUpdateKeys
+import com.example.testschedule.presentation.account.additional_elements.LastUpdateListItem
 import com.example.testschedule.presentation.account.headman_screen.HeadmanViewModel
 
 @Composable
@@ -69,7 +71,12 @@ fun SetHoursItem(
         if (!viewModel.isLoading.value && viewModel.errorText.value.isEmpty()) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    top = 8.dp,
+                    end = 16.dp,
+                    bottom = 88.dp
+                )
             ) {
 
                 if (viewModel.lessonsList.isEmpty()) {
@@ -99,6 +106,7 @@ fun SetHoursItem(
                             checkCheck = checkCheck
                         )
                 }
+                item { LastUpdateListItem(CacheUpdateKeys.HEADMAN) }
             }
         }
     }

@@ -3,14 +3,16 @@ package com.example.testschedule.presentation.account.headman_screen
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -108,19 +110,8 @@ fun HeadmanScreen(
                     SimpleDateFormat("dd.MM", Locale.getDefault()).format(Date(cal.timeInMillis))
                 ),
                 enabled = enabled,
-                isOfflineResult = viewModel.isLoading.value || viewModel.errorText.value.isNotEmpty(),
+                isLoading = viewModel.isLoading.value || viewModel.isSaving.value
             ) {
-                IconButton(
-                    onClick = {
-                        showConfirmDialog = true
-                    },
-                    enabled = !viewModel.isSaving.value && viewModel.selectedOmissions.isNotEmpty()
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.save),
-                        contentDescription = stringResource(id = R.string.account_headman_create_save_desc)
-                    )
-                }
                 IconButton(
                     onClick = {
                         sortByLesson = !sortByLesson
@@ -139,12 +130,23 @@ fun HeadmanScreen(
                     )
                 }
             }
-            if (viewModel.isLoading.value) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState)
+        },
+        floatingActionButton = {
+            if (viewModel.selectedOmissions.isNotEmpty() && !viewModel.isSaving.value) {
+                ExtendedFloatingActionButton(
+                    onClick = { showConfirmDialog = true },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Filled.Save,
+                            contentDescription = null
+                        )
+                    },
+                    text = { Text(stringResource(id = R.string.save)) }
+                )
+            }
         }
     ) {
         SetHoursItem(it, viewModel, sortByLesson)

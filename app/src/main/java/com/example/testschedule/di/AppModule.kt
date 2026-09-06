@@ -36,7 +36,7 @@ object AppModule {
     fun provideIisAPI(): IisAPI {
 
         val inspector = HttpLoggingInterceptor()
-        inspector.level = HttpLoggingInterceptor.Level.BODY
+        inspector.level = HttpLoggingInterceptor.Level.BASIC
 
         val clint = OkHttpClient.Builder()
             .addInterceptor(inspector)

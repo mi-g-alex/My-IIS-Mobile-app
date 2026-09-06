@@ -34,6 +34,8 @@ class AddScheduleViewModel @Inject constructor(
     var savedSchedule: MutableState<List<ListOfSavedEntity>?> = mutableStateOf(listOf())
     var savedGroups: MutableState<List<ListOfGroupsModel>> = mutableStateOf(listOf())
     var savedEmployees: MutableState<List<ListOfEmployeesModel>> = mutableStateOf(listOf())
+    private val _hasSavedLoaded = mutableStateOf(false)
+    val hasSavedLoaded: State<Boolean> = _hasSavedLoaded
 
     init {
         getLists()
@@ -90,6 +92,10 @@ class AddScheduleViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun retry() {
+        getLists()
+    }
+
     private fun getSaved() {
         viewModelScope.launch {
             savedSchedule.value = db.getAllSavedScheduleList()
@@ -104,16 +110,25 @@ class AddScheduleViewModel @Inject constructor(
             }
             savedGroups.value = tmpGroups.toList()
             savedEmployees.value = tmpEmployees.toList()
+            _hasSavedLoaded.value = true
         }
     }
 
     fun saveOrRemoveFromSaved(item: ListOfSavedEntity) {
         viewModelScope.launch {
-            if (savedSchedule.value?.contains(item) == true) {
+            if (savedSchedule.value.orEmpty().any { it.id == item.id }) {
                 db.deleteFromSavedScheduleList(item.id)
-            } else
+            } else {
                 db.addNewSavedScheduleToList(item)
+            }
             getSaved()
+        }
+    }
+
+    fun addToSaved(item: ListOfSavedEntity, onSaved: () -> Unit) {
+        viewModelScope.launch {
+            db.addNewSavedScheduleToList(item)
+            onSaved()
         }
     }
 

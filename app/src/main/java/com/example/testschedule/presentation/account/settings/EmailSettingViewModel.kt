@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.domain.repository.UserDatabaseRepository
 import com.example.testschedule.domain.use_case.account.settings.email.EmailSettingsConfirmCodeUseCase
 import com.example.testschedule.domain.use_case.account.settings.email.EmailSettingsGetConfirmCodeUseCase
@@ -14,12 +15,14 @@ import com.example.testschedule.domain.use_case.account.settings.email.EmailSett
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.GregorianCalendar
 import javax.inject.Inject
 
 @HiltViewModel
 class EmailSettingViewModel @Inject constructor(
+    private val db: UserDatabaseRepository,
     private val emailSettingsGetContactsUseCase: EmailSettingsGetContactsUseCase,
     private val emailSettingsUpdateUseCase: EmailSettingsUpdateUseCase,
     private val emailSettingsGetConfirmCodeUseCase: EmailSettingsGetConfirmCodeUseCase,
@@ -47,10 +50,11 @@ class EmailSettingViewModel @Inject constructor(
 
             when (res) {
                 is Resource.Success -> {
+                    viewModelScope.launch { db.setLastUpdate(CacheUpdateKeys.SETTINGS) }
                     res.data?.let {
-                        if (it.contactDtoList.isNotEmpty()) {
-                            id.intValue = it.contactDtoList[0].id
-                            email.value = it.contactDtoList[0].contactValue
+                        it.contactDtoList.firstOrNull { contact -> contact.contactTypeId == 6 }?.let { contact ->
+                            id.intValue = contact.id
+                            email.value = contact.contactValue
                             numberOfAttempts.intValue = it.numberOfAttempts
                         }
                     }

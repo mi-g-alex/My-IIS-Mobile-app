@@ -8,6 +8,7 @@ data class ContactsUpdateRequestModel(
 ) {
     fun toDto() = ContactsUpdateRequestDto(
         contactValue = contactValue,
-        id = id
+        id = id,
+        contactTypeId = 6
     )
 }

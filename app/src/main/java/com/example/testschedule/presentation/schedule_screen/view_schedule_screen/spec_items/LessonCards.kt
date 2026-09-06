@@ -8,25 +8,29 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -111,14 +115,8 @@ fun LessonCard(
         else -> colorResource(id = R.color.other)
     }
 
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Column(
-            Modifier,
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center
         ) {
@@ -135,33 +133,43 @@ fun LessonCard(
                 fontWeight = FontWeight.Bold
             )
         }
-        Card(
-            onClick = { click() },
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxSize()
-                .padding(start = 8.dp),
+        Spacer(Modifier.width(8.dp))
+        Surface(
+            onClick = click,
+            modifier = Modifier.weight(1f),
+            shape = MaterialTheme.shapes.small,
+            tonalElevation = 2.dp
         ) {
-            Row(
-                Modifier
-                    .fillMaxSize()
-                    .padding(8.dp)
-            ) {
-                Column(Modifier.fillMaxSize()) {
+            Row(Modifier.height(IntrinsicSize.Min)) {
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .padding(8.dp)
+                ) {
                     Row(
                         Modifier.fillMaxWidth(),
                         Arrangement.SpaceBetween,
                         Alignment.CenterVertically
                     ) {
                         Text(
-                            text = lesson.subject + if (lesson.lessonTypeAbbrev.isNotEmpty()) " (${lesson.lessonTypeAbbrev})" else "",
-                            style = MaterialTheme.typography.titleMedium
+                            text = if (lesson.announcement) {
+                                stringResource(R.string.schedule_announcement)
+                            } else {
+                                lesson.subject
+                            },
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
-                        if (lesson.auditories.isNotEmpty())
+                        if (lesson.auditories.isNotEmpty()) {
+                            Spacer(Modifier.width(6.dp))
                             Text(
-                                text = lesson.auditories[0],
-                                style = MaterialTheme.typography.titleMedium
+                                text = lesson.auditories.joinToString(", "),
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
+                        }
                     }
                     Row(
                         Modifier.fillMaxWidth(),
@@ -187,14 +195,20 @@ fun LessonCard(
                         }
                         Text(
                             text = fio,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
-                        if (lesson.numSubgroup != 0) {
+                        val lessonMetadata = listOfNotNull(
+                            lesson.lessonTypeAbbrev.takeIf(String::isNotBlank),
+                            lesson.numSubgroup.takeIf { it != 0 }?.let {
+                                stringResource(R.string.schedule_subgroup_text, it)
+                            }
+                        ).joinToString(" · ")
+                        if (lessonMetadata.isNotEmpty()) {
                             Text(
-                                text = stringResource(
-                                    id = R.string.schedule_subgroup_text,
-                                    lesson.numSubgroup
-                                ),
+                                text = lessonMetadata,
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -204,17 +218,17 @@ fun LessonCard(
                             text = lesson.note,
                             modifier = Modifier.fillMaxWidth(),
                             style = MaterialTheme.typography.bodySmall,
-                            maxLines = 1
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                 }
+                Box(
+                    Modifier
+                        .width(5.dp)
+                        .fillMaxHeight()
+                        .background(color)
+                )
             }
-
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(5.dp)
-                    .background(color)
-            )
         }
     }
 }
@@ -361,172 +375,129 @@ fun MoreDetailCard(
     onDismissRequest: () -> Unit,
     selectScheduleClicked: (id: String, title: String) -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(onClick = {
-                onDismissRequest()
-            }) {
-                Text(stringResource(id = R.string.close))
+    ModalBottomSheet(onDismissRequest = onDismissRequest) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = if (lesson.announcement) {
+                    stringResource(R.string.schedule_announcement)
+                } else {
+                    lesson.subjectFullName.ifBlank { lesson.subject }
+                },
+                style = MaterialTheme.typography.headlineSmall
+            )
+            if (lesson.lessonTypeAbbrev.isNotBlank()) {
+                Text(
+                    text = lesson.lessonTypeAbbrev,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
-        },
-        title = {
-            Text(lesson.subjectFullName)
-        },
-        text = {
-            LazyColumn {
-                item {
-                    val dateStart = Date(lesson.startLessonDate ?: lesson.dateLesson ?: 0)
-                    val dateEnd = Date(lesson.endLessonDate ?: lesson.dateLesson ?: 0)
-                    val format = SimpleDateFormat(
-                        stringResource(id = R.string.schedule_dialog_date_pattern),
-                        Locale.getDefault()
-                    )
-                    if (lesson.lessonTypeAbbrev.isNotEmpty()) {
-                        Text(
-                            stringResource(
-                                id = R.string.schedule_dialog_type_of_lesson,
-                                lesson.lessonTypeAbbrev
-                            ),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
-                    if ((lesson.startLessonDate ?: lesson.dateLesson ?: 0) != (lesson.endLessonDate
-                            ?: lesson.dateLesson ?: 0)
-                    )
-                        Text(
-                            stringResource(
-                                id = R.string.schedule_dialog_dates,
-                                format.format(dateStart),
-                                format.format(dateEnd)
-                            ),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    else if ((lesson.startLessonDate ?: lesson.dateLesson ?: 0) != 0L) {
-                        Text(
-                            stringResource(
-                                id = R.string.schedule_dialog_date,
-                                format.format(dateStart)
-                            ),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
-                    Text(
-                        stringResource(
-                            id = R.string.schedule_dialog_times,
-                            getTimeInString(lesson.startLessonTime),
-                            getTimeInString(lesson.endLessonTime),
-                        ),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    if (lesson.weekNumber.isNotEmpty()) {
-                        val weeksString =
-                            lesson.weekNumber.toString().removeSuffix("]").removePrefix("[")
-                        Text(
-                            stringResource(
-                                id = R.string.schedule_dialog_weeks,
-                                weeksString,
-                            ),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
+            androidx.compose.material3.HorizontalDivider(Modifier.padding(vertical = 8.dp))
 
-                    if (lesson.auditories.isNotEmpty()) {
-                        val weeksString =
-                            lesson.auditories.toString().removeSuffix("]").removePrefix("[")
-                        Text(
-                            stringResource(
-                                id = R.string.schedule_dialog_auditoriums,
-                                weeksString,
-                            ),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    }
+            LessonDetailRow(
+                label = stringResource(R.string.schedule_ui_lesson_time),
+                value = "${getTimeInString(lesson.startLessonTime)} - ${getTimeInString(lesson.endLessonTime)}"
+            )
+            if (lesson.auditories.isNotEmpty()) {
+                LessonDetailRow(
+                    label = stringResource(R.string.schedule_ui_auditoriums),
+                    value = lesson.auditories.joinToString(", ")
+                )
+            }
 
-                    if (lesson.note?.isNotEmpty() == true) {
-                        Text(
-                            stringResource(
-                                id = R.string.schedule_dialog_note,
-                                lesson.note,
-                            ),
-                            style = MaterialTheme.typography.titleLarge
+            val firstDate = lesson.startLessonDate ?: lesson.dateLesson
+            val lastDate = lesson.endLessonDate ?: lesson.dateLesson
+            if (firstDate != null) {
+                val formatter = SimpleDateFormat(
+                    stringResource(R.string.schedule_dialog_date_pattern),
+                    Locale.getDefault()
+                )
+                val value = if (firstDate == lastDate || lastDate == null) {
+                    formatter.format(Date(firstDate))
+                } else {
+                    "${formatter.format(Date(firstDate))} - ${formatter.format(Date(lastDate))}"
+                }
+                LessonDetailRow(stringResource(R.string.schedule_ui_dates), value)
+            }
+            if (lesson.weekNumber.isNotEmpty()) {
+                LessonDetailRow(
+                    stringResource(R.string.schedule_ui_weeks),
+                    lesson.weekNumber.joinToString(", ")
+                )
+            }
+            if (lesson.numSubgroup != 0) {
+                LessonDetailRow(
+                    stringResource(R.string.schedule_ui_subgroup),
+                    lesson.numSubgroup.toString()
+                )
+            }
+            if (!lesson.note.isNullOrBlank()) {
+                LessonDetailRow(stringResource(R.string.schedule_ui_note), lesson.note)
+            }
+
+            if (!lesson.employees.isNullOrEmpty()) {
+                Text(
+                    stringResource(R.string.schedule_add_employees_title),
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    lesson.employees.sortedBy { it.lastName }.forEach { employee ->
+                        AssistChip(
+                            onClick = {
+                                selectScheduleClicked(employee.urlId, employee.getFio())
+                                onDismissRequest()
+                            },
+                            label = { Text(employee.getFio()) }
                         )
                     }
-                    if (lesson.numSubgroup != 0) {
-                        Text(
-                            stringResource(
-                                id = R.string.schedule_dialog_sub_group,
-                                lesson.numSubgroup,
-                            ),
-                            style = MaterialTheme.typography.titleLarge
+                }
+            }
+            if (lesson.studentGroups.isNotEmpty()) {
+                Text(
+                    stringResource(R.string.schedule_add_groups_title),
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    lesson.studentGroups.sortedBy { it.name }.forEach { group ->
+                        AssistChip(
+                            onClick = {
+                                selectScheduleClicked(group.name, group.name)
+                                onDismissRequest()
+                            },
+                            label = { Text(group.name) }
                         )
-                    }
-                    if (lesson.employees?.isNotEmpty() == true) {
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text(
-                            stringResource(
-                                id = R.string.schedule_add_employees_title,
-                                lesson.numSubgroup,
-                            ),
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            lesson.employees.sortedBy { it.lastName }.forEach { employee ->
-                                val fio = employee.lastName + " " +
-                                        employee.firstName[0] + "." +
-                                        employee.middleName?.let { " ${it[0]}." } +
-                                        (employee.rank?.let { " (${it})" } ?: "")
-                                AssistChip(
-                                    onClick = {
-                                        selectScheduleClicked(employee.urlId, fio)
-                                        onDismissRequest()
-                                    },
-                                    label = {
-                                        Text(
-                                            text = employee.lastName + " " +
-                                                    employee.firstName +
-                                                    (employee.middleName?.let { " $it" } ?: "")
-                                        )
-                                    }
-                                )
-                            }
-                        }
-                    }
-                    if (lesson.studentGroups.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text(
-                            stringResource(
-                                id = R.string.schedule_add_groups_title,
-                                lesson.numSubgroup,
-                            ),
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            lesson.studentGroups.sortedBy { it.name }.forEach { group ->
-                                AssistChip(
-                                    onClick = {
-                                        selectScheduleClicked(group.name, group.name)
-                                        onDismissRequest()
-                                    },
-                                    label = {
-                                        Text(
-                                            text = group.name
-                                        )
-                                    }
-                                )
-                            }
-                        }
                     }
                 }
             }
         }
-    )
+    }
+}
+
+@Composable
+private fun LessonDetailRow(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(0.35f)
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(0.65f)
+        )
+    }
 }

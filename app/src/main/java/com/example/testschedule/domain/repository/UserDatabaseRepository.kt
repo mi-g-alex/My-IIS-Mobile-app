@@ -1,7 +1,6 @@
 package com.example.testschedule.domain.repository
 
 import com.example.testschedule.data.local.entity.schedule.ListOfSavedEntity
-import com.example.testschedule.domain.model.account.announcement.AnnouncementModel
 import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.domain.model.account.mark_book.MarkBookModel
 import com.example.testschedule.domain.model.account.notifications.NotificationModel
@@ -16,8 +15,13 @@ import com.example.testschedule.domain.model.auth.UserBasicDataModel
 import com.example.testschedule.domain.model.schedule.ListOfEmployeesModel
 import com.example.testschedule.domain.model.schedule.ListOfGroupsModel
 import com.example.testschedule.domain.model.schedule.ScheduleModel
+import kotlinx.coroutines.flow.Flow
 
 interface UserDatabaseRepository {
+
+    suspend fun setLastUpdate(cacheKey: String, updatedAt: Long = System.currentTimeMillis())
+
+    fun observeLastUpdate(cacheKey: String): Flow<Long?>
 
     // Schedule
 
@@ -115,13 +119,6 @@ interface UserDatabaseRepository {
     suspend fun getPenalty(): List<PenaltyModel>
 
     suspend fun deletePenalty()
-
-    // Announcement
-    suspend fun addAnnouncements(data: List<AnnouncementModel>)
-
-    suspend fun getAnnouncements(): List<AnnouncementModel>
-
-    suspend fun deleteAnnouncements()
 
     // Study
     suspend fun addCertificate(data: List<CertificateModel>)

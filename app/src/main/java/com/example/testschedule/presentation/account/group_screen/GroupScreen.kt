@@ -1,36 +1,29 @@
-@file:OptIn(ExperimentalLayoutApi::class)
-
 package com.example.testschedule.presentation.account.group_screen
 
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Call
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,22 +32,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.testschedule.R
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.domain.model.account.group.GroupModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
-import com.example.testschedule.presentation.account.additional_elements.ListDataSection
-import com.example.testschedule.presentation.account.additional_elements.SectionItem
+import com.example.testschedule.presentation.account.additional_elements.LastUpdateListItem
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GroupScreen(
     onBackPressed: () -> Unit,
@@ -62,12 +52,13 @@ fun GroupScreen(
     goToSchedule: (urlId: String, title: String) -> Unit,
     viewModel: GroupViewModel = hiltViewModel()
 ) {
-    val cnt = LocalContext.current
-    val errorText = stringResource(id = R.string.error_to_login)
-    var enabled by remember { mutableStateOf(true) }
+    val context = LocalContext.current
+    val loginError = stringResource(id = R.string.error_to_login)
+    var backEnabled by remember { mutableStateOf(true) }
+
     LaunchedEffect(viewModel.errorText.value) {
         if (viewModel.errorText.value == "WrongPassword") {
-            Toast.makeText(cnt, errorText, Toast.LENGTH_LONG).show()
+            Toast.makeText(context, loginError, Toast.LENGTH_LONG).show()
             onLogOut()
         }
     }
@@ -76,211 +67,148 @@ fun GroupScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             BasicTopBar(
-                onBackPressed = { onBackPressed(); enabled = false },
-                title =
-                if (viewModel.group.value?.numberOfGroup?.isNotEmpty() == true)
-                    stringResource(
-                        id = R.string.account_group_title_with_number,
-                        viewModel.group.value!!.numberOfGroup
-                    )
-                else
-                    stringResource(id = R.string.account_group_title),
-                enabled = enabled,
-                isOfflineResult = viewModel.isLoading.value || viewModel.errorText.value.isNotEmpty(),
+                onBackPressed = {
+                    onBackPressed()
+                    backEnabled = false
+                },
+                title = viewModel.group.value?.numberOfGroup
+                    ?.takeIf { it.isNotBlank() }
+                    ?.let { stringResource(R.string.account_group_title_with_number, it) }
+                    ?: stringResource(R.string.account_group_title),
+                enabled = backEnabled,
+                isLoading = viewModel.isLoading.value
             )
-            if (viewModel.isLoading.value) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        }
+    ) { innerPadding ->
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            viewModel.group.value?.let { group ->
+                GroupContent(group = group, goToSchedule = goToSchedule)
             }
         }
-    ) { padVal ->
-
-        val listOfItem = mutableListOf<SectionItem>()
-
-        if (viewModel.group.value?.studentGroupCurator != null) {
-            listOfItem += SectionItem(
-                title = stringResource(id = R.string.account_group_curator),
-                emptyText = "",
-                itemList = listOf {
-                    CuratorCard(
-                        item = viewModel.group.value!!.studentGroupCurator!!,
-                        goToSchedule = goToSchedule
-                    )
-                }
-            )
-        }
-
-        if (viewModel.group.value?.groupInfoStudent?.isNotEmpty() == true) {
-            listOfItem += SectionItem(
-                title = stringResource(id = R.string.account_group_title),
-                emptyText = "",
-                itemList = viewModel.group.value?.groupInfoStudent!!.sortedBy { i -> i.fio }
-                    .map { groupInfoStudent ->
-                        { StudentCard(groupInfoStudent) }
-                    }
-            )
-        }
-
-        ListDataSection(
-            listOfItems = listOfItem,
-            paddingValues = padVal
-        )
-
     }
 }
 
 @Composable
-fun CuratorCard(
-    item: GroupModel.StudentGroupCurator,
+private fun GroupContent(
+    group: GroupModel,
     goToSchedule: (urlId: String, title: String) -> Unit
 ) {
-    val ctx = LocalContext.current
-    val clipboardManager = LocalClipboardManager.current
-    val copiedPhone = stringResource(id = R.string.copy_success, item.phone.toString())
-    val copiedEmail = stringResource(id = R.string.copy_success, item.email.toString())
-    OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        group.studentGroupCurator?.let { curator ->
+            item {
+                CuratorCard(
+                    item = curator,
+                    goToSchedule = goToSchedule,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+            }
+        }
+        items(group.groupInfoStudent.sortedBy { it.fio }) { student ->
+            StudentCard(student)
+            HorizontalDivider(modifier = Modifier.padding(start = 16.dp))
+        }
+        item { LastUpdateListItem(CacheUpdateKeys.GROUP) }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun CuratorCard(
+    item: GroupModel.StudentGroupCurator,
+    goToSchedule: (urlId: String, title: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
         Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp)
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = item.fio,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                text = item.position,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary
             )
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                if (item.phone?.isNotEmpty() == true) {
+            Text(
+                text = item.fio,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                item.phone?.takeIf { it.isNotBlank() }?.let { phone ->
                     AssistChip(
                         onClick = {
-                            val u = Uri.parse("tel:" + item.phone)
-                            val i = Intent(Intent.ACTION_DIAL, u)
                             try {
-                                ctx.startActivity(i)
+                                context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
                             } catch (_: Exception) {
                             }
                         },
-                        label = {
-                            Text(text = item.phone)
-                        },
+                        label = { Text(phone) },
                         leadingIcon = {
-                            Icon(
-                                Icons.Outlined.Call,
-                                item.phone,
-                                Modifier.size(AssistChipDefaults.IconSize)
-                            )
+                            Icon(Icons.Filled.Phone, contentDescription = null)
                         },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    clipboardManager.setText(AnnotatedString(item.phone))
-                                    Toast.makeText(ctx, copiedPhone, Toast.LENGTH_SHORT).show()
-                                },
-                                modifier = Modifier.size(AssistChipDefaults.IconSize)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.copy_icon),
-                                    stringResource(id = R.string.copy),
-                                    Modifier.size(AssistChipDefaults.IconSize)
-                                )
-                            }
-                        }
+                        colors = AssistChipDefaults.assistChipColors(
+                            leadingIconContentColor = MaterialTheme.colorScheme.primary
+                        )
                     )
                 }
-                if (item.email?.isNotEmpty() == true) {
+                item.email?.takeIf { it.isNotBlank() }?.let { email ->
                     AssistChip(
                         onClick = {
-                            val emailIntent =
-                                Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + item.email))
                             try {
-                                ctx.startActivity(emailIntent)
+                                context.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$email")))
                             } catch (_: Exception) {
                             }
                         },
-                        label = {
-                            Text(text = item.email)
-                        },
+                        label = { Text(email) },
                         leadingIcon = {
-                            Icon(
-                                Icons.Outlined.Email,
-                                item.email,
-                                Modifier.size(AssistChipDefaults.IconSize)
-                            )
+                            Icon(Icons.Filled.Email, contentDescription = null)
                         },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    clipboardManager.setText(AnnotatedString(item.email))
-                                    Toast.makeText(ctx, copiedEmail, Toast.LENGTH_SHORT).show()
-                                },
-                                modifier = Modifier.size(AssistChipDefaults.IconSize)
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.copy_icon),
-                                    stringResource(id = R.string.copy),
-                                    Modifier.size(AssistChipDefaults.IconSize)
-                                )
-                            }
-                        }
+                        colors = AssistChipDefaults.assistChipColors(
+                            leadingIconContentColor = MaterialTheme.colorScheme.primary
+                        )
                     )
                 }
-                if (item.urlId?.isNotEmpty() == true) {
+                item.urlId?.takeIf { it.isNotBlank() }?.let { urlId ->
                     AssistChip(
-                        onClick = {
-                            goToSchedule(
-                                item.urlId, item.fio
-                            )
-                        },
-                        label = {
-                            Text(stringResource(id = R.string.account_group_curator_schedule))
-                        },
+                        onClick = { goToSchedule(urlId, item.fio) },
+                        label = { Text(stringResource(id = R.string.account_group_curator_schedule)) },
                         leadingIcon = {
-                            Icon(
-                                Icons.Outlined.DateRange,
-                                stringResource(id = R.string.account_group_curator_schedule),
-                                Modifier.size(AssistChipDefaults.IconSize)
-                            )
+                            Icon(Icons.Filled.CalendarMonth, contentDescription = null)
                         },
+                        colors = AssistChipDefaults.assistChipColors(
+                            leadingIconContentColor = MaterialTheme.colorScheme.primary
+                        )
                     )
                 }
             }
         }
-
     }
 }
 
 @Composable
 fun StudentCard(item: GroupModel.GroupInfoStudent) {
-    val status = when (item.position) {
+    val position = when (item.position) {
         "Староста группы" -> stringResource(id = R.string.account_group_monitor)
         "Заместитель старосты группы" -> stringResource(id = R.string.account_group_deputy_monitor)
         else -> item.position
     }
-    OutlinedCard(
-        modifier = Modifier.fillMaxWidth()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        ) {
+        Text(text = item.fio, style = MaterialTheme.typography.bodyLarge)
+        if (position.isNotBlank()) {
             Text(
-                text = item.fio,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                text = position,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary
             )
-
-            if (status.isNotEmpty()) {
-                Text(
-                    text = status,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
         }
     }
 }

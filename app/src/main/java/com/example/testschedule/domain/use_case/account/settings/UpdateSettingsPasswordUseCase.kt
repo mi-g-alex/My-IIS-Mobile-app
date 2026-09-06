@@ -33,7 +33,7 @@ class UpdateSettingsPasswordUseCase @Inject constructor(
                 throw HttpException(res)
             }
         } catch (e: HttpException) {
-            if (e.code() == 400) {
+            if (e.code() == 409) {
                 emit(Resource.Error<Boolean>("WrongOldPassword"))
                 return@flow
             }
@@ -59,7 +59,7 @@ class UpdateSettingsPasswordUseCase @Inject constructor(
                         emit(Resource.Success(true))
                     } else throw HttpException(res)
                 } catch (e: HttpException) {
-                    if (e.code() == 400) {
+                    if (e.code() == 409) {
                         emit(Resource.Error("WrongOldPassword"))
                         return@flow
                     }

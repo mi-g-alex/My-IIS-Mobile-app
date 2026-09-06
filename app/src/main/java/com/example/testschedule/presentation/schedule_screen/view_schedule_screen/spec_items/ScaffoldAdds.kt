@@ -1,6 +1,5 @@
 package com.example.testschedule.presentation.schedule_screen.view_schedule_screen.spec_items
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -25,8 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,13 +59,10 @@ fun MyTopAppBar(
     titleText: String,
     navIconClicked: () -> Unit,
     goToAuth: () -> Unit,
-    isOfflineResult: Boolean,
     userData: MutableState<UserBasicDataModel?>,
     goToProfile: () -> Unit,
     isPrev: Boolean = false
 ) {
-    val cnt = LocalContext.current
-    val toastText = stringResource(id = R.string.offline_mode_desc)
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -86,17 +80,6 @@ fun MyTopAppBar(
             }
         },
         actions = {
-            if (isOfflineResult) {
-                IconButton(onClick = {
-                    Toast.makeText(cnt, toastText, Toast.LENGTH_LONG).show()
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.offline_mode),
-                        contentDescription = stringResource(id = R.string.offline_mode_desc)
-
-                    )
-                }
-            }
             if (!isPrev) IconButton(onClick = {
                 if (userData.value != null) {
                     goToProfile()

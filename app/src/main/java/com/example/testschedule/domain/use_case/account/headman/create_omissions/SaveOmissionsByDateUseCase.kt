@@ -44,7 +44,8 @@ class SaveOmissionsByDateUseCase @Inject constructor(
                     val cookie = response.headers()["Set-Cookie"].toString()
                     response.body()?.toModel(cookie)?.let { db.setUserBasicData(it) }
 
-                    api.headmanSaveOmissions(oms, cookie).awaitResponse()
+                    val saveResponse = api.headmanSaveOmissions(oms, cookie).awaitResponse()
+                    if (!saveResponse.isSuccessful) throw HttpException(saveResponse)
 
                     emit(Resource.Success(true))
                 } catch (e: HttpException) {

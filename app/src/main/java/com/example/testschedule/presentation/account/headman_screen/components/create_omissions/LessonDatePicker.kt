@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -17,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -57,64 +59,67 @@ fun LessonsDatePicker(
     }
 
     Row(
-        Modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .clickable { calIsView.value = true }
-            .padding(horizontal = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(
-                onClick = {
-                    datePickerState.selectedDateMillis =
-                        (datePickerState.selectedDateMillis
-                            ?: cal.timeInMillis) - 24 * 60 * 60 * 1000L
-
-                },
-                modifier = Modifier.fillMaxWidth(0.1f)
-            ) {
-                Icon(
-                    Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = stringResource(id = R.string.account_headman_create_calendar_prev_day)
-                )
+        IconButton(
+            onClick = {
+                datePickerState.selectedDateMillis =
+                    (datePickerState.selectedDateMillis ?: cal.timeInMillis) - 24 * 60 * 60 * 1000L
             }
-
+        ) {
+            Icon(
+                Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                contentDescription = stringResource(id = R.string.account_headman_create_calendar_prev_day),
+                modifier = Modifier.size(28.dp)
+            )
+        }
+        Row(
+            modifier = Modifier.clickable { calIsView.value = true }.padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                Icons.Filled.DateRange,
+                stringResource(id = R.string.account_headman_create_calendar_select_date),
+                tint = MaterialTheme.colorScheme.primary
+            )
             Text(
                 text = SimpleDateFormat("dd.MM.yyyy (EEE)", Locale.getDefault())
                     .format(Date(datePickerState.selectedDateMillis ?: 0)),
-                modifier = Modifier
-                    .padding(8.dp),
                 style = MaterialTheme.typography.titleMedium,
             )
         }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        IconButton(
+            onClick = {
+                datePickerState.selectedDateMillis =
+                    (datePickerState.selectedDateMillis ?: cal.timeInMillis) + 24 * 60 * 60 * 1000L
+            }
+        ) {
             Icon(
-                Icons.Filled.DateRange,
-                stringResource(id = R.string.account_headman_create_calendar_select_date)
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = stringResource(id = R.string.account_headman_create_calendar_next_day),
+                modifier = Modifier.size(28.dp)
             )
-            IconButton(
-                onClick = {
-                    datePickerState.selectedDateMillis = (
-                        (datePickerState.selectedDateMillis
-                            ?: cal.timeInMillis) + 24 * 60 * 60 * 1000L
-                    )
-                }
-            ) {
-                Icon(
-                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = stringResource(id = R.string.account_headman_create_calendar_next_day)
-                )
+        }
+    }
+
+    if (calIsView.value) DatePickerDialog(
+        onDismissRequest = { calIsView.value = false },
+        confirmButton = {
+            TextButton(onClick = { calIsView.value = false }) {
+                Text(stringResource(id = android.R.string.ok))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { calIsView.value = false }) {
+                Text(stringResource(id = R.string.cancel))
             }
         }
-
-
-        if (calIsView.value) DatePickerDialog(
-            onDismissRequest = { calIsView.value = false },
-            confirmButton = {}
-        ) {
-            DatePicker(state = datePickerState, showModeToggle = false)
-        }
+    ) {
+        DatePicker(state = datePickerState, showModeToggle = false)
     }
 }

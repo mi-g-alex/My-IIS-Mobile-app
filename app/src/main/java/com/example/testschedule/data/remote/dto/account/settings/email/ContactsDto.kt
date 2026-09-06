@@ -4,7 +4,7 @@ import com.example.testschedule.domain.model.account.settings.email.ContactsMode
 
 data class ContactsDto(
     val contactDtoList: List<ContactDto>?,
-    val numberOfAttempts: Int? // 3
+    val emailAttempts: Int?
 ) {
     data class ContactDto(
         val codeExpirationTime: String?, // ISOTIME
@@ -24,6 +24,6 @@ data class ContactsDto(
 
     fun toModel() = ContactsModel(
         contactDtoList = contactDtoList?.map { it.toModel() } ?: emptyList(),
-        numberOfAttempts = numberOfAttempts ?: 0
+        numberOfAttempts = emailAttempts ?: 0
     )
 }

@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testschedule.common.Resource
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.domain.model.account.dormitory.DormitoryModel
 import com.example.testschedule.domain.model.account.dormitory.PrivilegesModel
 import com.example.testschedule.domain.repository.UserDatabaseRepository
@@ -40,6 +41,7 @@ class DormitoryViewModel @Inject constructor(
         getDormitoryUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {
+                    viewModelScope.launch { db.setLastUpdate(CacheUpdateKeys.DORMITORY) }
                     isDormitoryLoading.value = false
                     isLoading.value = isDormitoryLoading.value || isPrivilegesLoading.value
                     res.data?.let { dormitory.value = it }
@@ -70,6 +72,7 @@ class DormitoryViewModel @Inject constructor(
         getPrivilegesUseCase().onEach { res ->
             when (res) {
                 is Resource.Success -> {
+                    viewModelScope.launch { db.setLastUpdate(CacheUpdateKeys.DORMITORY) }
                     isPrivilegesLoading.value = false
                     isLoading.value = isDormitoryLoading.value || isPrivilegesLoading.value
                     res.data?.let { privileges.value = it }

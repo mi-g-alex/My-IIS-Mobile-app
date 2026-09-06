@@ -1,11 +1,12 @@
 package com.example.testschedule.data.remote
 
-import com.example.testschedule.data.remote.dto.account.announcement.AnnouncementDto
 import com.example.testschedule.data.remote.dto.account.dormitory.DormitoryDto
 import com.example.testschedule.data.remote.dto.account.dormitory.PrivilegesDto
 import com.example.testschedule.data.remote.dto.account.group.GroupDto
 import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanCreateOmissionsDto
 import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanGetOmissionsDto
+import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanStudentDto
+import com.example.testschedule.data.remote.dto.account.headman.create_omissions.HeadmanSubjectDto
 import com.example.testschedule.data.remote.dto.account.mark_book.MarkBookDto
 import com.example.testschedule.data.remote.dto.account.notifications.NotificationsDto
 import com.example.testschedule.data.remote.dto.account.notifications.ReadNotificationDto
@@ -89,6 +90,11 @@ interface IisAPI {
         @Query("pageSize") pagerSize: Int
     ): NotificationsDto
 
+    @GET("notifications/notViewed/count")
+    suspend fun getUnreadNotificationsCount(
+        @Header("Cookie") cookies: String
+    ): Int
+
     @PATCH("notifications")
     /** Пометить уведомления как прочитанные **/
     suspend fun readNotifications(
@@ -123,11 +129,6 @@ interface IisAPI {
     @GET("dormitory-queue-application/premium-penalty")
     /** Получение списка взысканий / поощрений **/
     suspend fun getPenalty(@Header("Cookie") cookies: String): List<PenaltyDto>
-
-    //  События
-    @GET("announcements")
-    /** Получение списка события для аккаунта **/
-    suspend fun getAnnouncements(@Header("Cookie") cookies: String): List<AnnouncementDto>
 
     // Рейтинг
     @GET("grade-book")
@@ -254,17 +255,17 @@ interface IisAPI {
         @Header("Cookie") cookies: String
     ): ContactsDto
 
-    @POST("settings/contact/update")
+    @PUT("settings/contact/update")
             /** Отправвка нового Email **/
     fun settingsEmailUpdate(
         @Body mail: ContactsUpdateRequestDto,
         @Header("Cookie") cookies: String
     ): Call<ResponseBody?>
 
-    @POST("settings/contact/send-confirm-message")
+    @POST("settings/contact/{id}/send-confirm")
             /** Отправка кода на почту **/
     fun settingsEmailGetConfirmCode(
-        @Body id: Int,
+        @Path("id") id: Int,
         @Header("Cookie") cookies: String
     ): Call<SendConfirmMessageResponseDto>
 
@@ -282,14 +283,23 @@ interface IisAPI {
     ): Call<String?>
 
 
-    @GET("grade-book/by-date")
-    /** Headman | Get omissions | Date: yyyy-MM-ddTHH:mm:ss.msZ **/
-    suspend fun headmanGetOmissionsByDate(
-        @Query("date") date: String,
+    @GET("headman/subjects")
+    suspend fun headmanGetSubjects(
+        @Header("Cookie") cookies: String
+    ): Map<String, List<HeadmanSubjectDto>>
+
+    @GET("headman/students")
+    suspend fun headmanGetStudents(
+        @Header("Cookie") cookies: String
+    ): List<HeadmanStudentDto>
+
+    @GET("headman/data")
+    suspend fun headmanGetData(
+        @Query("termHoursId") termHoursId: Int,
         @Header("Cookie") cookies: String
     ): HeadmanGetOmissionsDto
 
-    @POST("grade-book/create")
+    @POST("headman/create")
             /** Headman | Save omissions **/
     fun headmanSaveOmissions(
         @Body omissions: HeadmanCreateOmissionsDto,
@@ -297,5 +307,3 @@ interface IisAPI {
     ): Call<ResponseBody?>
 
 }
-
-

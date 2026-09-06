@@ -31,6 +31,7 @@ fun DialogPassword(
     onSaveClick: (oldPass: String, newPass: String) -> Unit,
     errorText: String,
     isLoading: Boolean,
+    username: String,
     onDismiss: () -> Unit
 ) {
 
@@ -49,8 +50,10 @@ fun DialogPassword(
 
     val isGoodNewPassword = fun(): Boolean {
         val reg =
-            Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#\$%^&*()_+=|{}.,\\[\\]])([A-Za-z\\d!@#\$%^&*()_+=|{}.,\\[\\]]){8,20}\$")
-        return reg.matches(passNewText)
+            Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#\$%^&*()_+=|{}.,\\[\\]])([A-Za-z\\d!@#\$%^&*()_+=|{}.,\\[\\]]){8,30}\$")
+        return reg.matches(passNewText) &&
+                passNewText != passOldText &&
+                (username.isBlank() || !passNewText.contains(username, ignoreCase = true))
     }
 
     val isAllGood = fun(): Boolean {

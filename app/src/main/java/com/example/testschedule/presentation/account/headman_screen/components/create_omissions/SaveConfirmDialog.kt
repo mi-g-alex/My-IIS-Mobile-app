@@ -63,12 +63,19 @@ fun SaveConfirmDialog(
                             },
                             supportingContent = {
                                 Text(
-                                    stringResource(
-                                        id = R.string.account_headman_create_dialog_lesson_time,
-                                        lesson.lessonPeriod.startTime,
-                                        lesson.lessonPeriod.endTime,
-                                        lesson.lessonPeriod.lessonPeriodHours,
-                                    )
+                                    if (lesson.lessonPeriod.startTime.isBlank()) {
+                                        stringResource(
+                                            R.string.account_headman_create_lesson_hours,
+                                            lesson.lessonPeriod.lessonPeriodHours
+                                        )
+                                    } else {
+                                        stringResource(
+                                            R.string.account_headman_create_dialog_lesson_time,
+                                            lesson.lessonPeriod.startTime,
+                                            lesson.lessonPeriod.endTime,
+                                            lesson.lessonPeriod.lessonPeriodHours,
+                                        )
+                                    }
                                 )
                             }
                         )

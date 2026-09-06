@@ -10,7 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CleaningServices
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -31,11 +36,12 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
 import com.example.testschedule.R
+import com.example.testschedule.common.CacheUpdateKeys
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
+import com.example.testschedule.presentation.account.additional_elements.LastUpdateListItem
 import com.example.testschedule.presentation.account.settings.additional.BasicListItem
 import com.example.testschedule.presentation.account.settings.additional.ButtonEmailUnconfirmedItem
 import com.example.testschedule.presentation.account.settings.additional.DialogType
-import com.example.testschedule.presentation.account.settings.additional.Space
 import com.example.testschedule.presentation.account.settings.additional.WithCheckBoxListItem
 import com.example.testschedule.presentation.account.settings.features.DialogBio
 import com.example.testschedule.presentation.account.settings.features.DialogChangeEmail
@@ -105,11 +111,8 @@ fun SettingsScreen(
                 onBackPressed = { onBackPressed(); enabled = false },
                 title = stringResource(id = R.string.account_settings_title),
                 enabled = enabled,
-                isOfflineResult = viewModel.isLoading.value || viewModel.errorText.value.isNotEmpty()
+                isLoading = viewModel.isLoading.value
             )
-            if (viewModel.isLoading.value) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            }
         }
     ) {
 
@@ -118,20 +121,6 @@ fun SettingsScreen(
             stringResource(id = R.string.account_settings_password_error_connection)
         val passOther = stringResource(id = R.string.account_settings_password_error_other)
         val passOk = stringResource(id = R.string.account_settings_password_success)
-        val bioOk = stringResource(id = R.string.account_settings_info_bio_success)
-        val bioOther = stringResource(id = R.string.account_settings_info_bio_error_other)
-        val bioConnection = stringResource(id = R.string.account_settings_info_bio_error_connection)
-
-        val skillsOk = stringResource(id = R.string.account_settings_info_skills_success)
-        val skillsOther = stringResource(id = R.string.account_settings_info_skills_error_other)
-        val skillsConnection =
-            stringResource(id = R.string.account_settings_info_skills_error_connection)
-
-        val linksOk = stringResource(id = R.string.account_settings_info_links_success)
-        val linksOther = stringResource(id = R.string.account_settings_info_links_error_other)
-        val linksConnection =
-            stringResource(id = R.string.account_settings_info_links_error_connection)
-
         val emailOk = stringResource(id = R.string.account_settings_email_update_success)
         val emailOther = stringResource(id = R.string.account_settings_email_update_error_other)
         val emailConnection =
@@ -188,9 +177,9 @@ fun SettingsScreen(
                     DialogChangeEmail(
                         onSaveClick = { m ->
                             emailViewModel.updateEmail(m, onError = {
-                                if (emailViewModel.errorText.value == "ConnectionFailed")
+                                if (emailViewModel.errorTextForDialog.value == "ConnectionFailed")
                                     toast(emailConnection)
-                                if (emailViewModel.errorText.value == "OtherError")
+                                if (emailViewModel.errorTextForDialog.value == "OtherError")
                                     toast(emailOther)
                             }) {
                                 selectedDialog = DialogType.NONE
@@ -232,6 +221,7 @@ fun SettingsScreen(
                         },
                         errorText = viewModel.errorPassText.value,
                         isLoading = viewModel.isLoadingPass.value,
+                        username = userBasicData?.username.orEmpty(),
                     ) { selectedDialog = DialogType.NONE; viewModel.errorPassText.value = "" }
                 }
 
@@ -263,7 +253,18 @@ fun SettingsScreen(
                                 id = R.string.account_settings_email_info,
                                 email
                             ),
-                        )
+                            icon = Icons.Outlined.Email,
+                        ) { selectedDialog = DialogType.EMAIL }
+                    }
+                    item { HorizontalDivider() }
+
+                    if (userBasicData?.hasNotConfirmedContact == true) {
+                        item {
+                            ButtonEmailUnconfirmedItem {
+                                selectedDialog = DialogType.CONFIRM_EMAIL
+                            }
+                        }
+                        item { HorizontalDivider() }
                     }
 
                     // Phone
@@ -273,19 +274,20 @@ fun SettingsScreen(
                             descText = userBasicData?.phone?.let { data ->
                                 stringResource(id = R.string.account_settings_phone_info, data)
                             } ?: "",
+                            icon = Icons.Outlined.Phone,
                         )
                     }
+                    item { HorizontalDivider() }
 
                     // Password
                     item {
                         BasicListItem(
                             mainText = stringResource(id = R.string.account_settings_password),
                             descText = stringResource(id = R.string.account_settings_password_desc),
+                            icon = Icons.Outlined.Lock,
                         ) { selectedDialog = DialogType.PASSWORD }
                     }
-
-                    // Spacer
-                    item { Space() }
+                    item { HorizontalDivider() }
 
                     // Clear cache
                     item {
@@ -294,13 +296,15 @@ fun SettingsScreen(
                         BasicListItem(
                             mainText = stringResource(id = R.string.account_settings_advanced_clear_cache),
                             descText = stringResource(id = R.string.account_settings_advanced_clear_cache_desc),
+                            icon = Icons.Outlined.CleaningServices,
                         ) {
                             coil.ImageLoader(cnt).diskCache?.clear()
                             coil.ImageLoader(cnt).memoryCache?.clear()
                             toast(textDone)
                         }
                     }
-
+                    item { HorizontalDivider() }
+                    item { LastUpdateListItem(CacheUpdateKeys.SETTINGS) }
                 }
             }
         }
