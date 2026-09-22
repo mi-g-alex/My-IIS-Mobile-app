@@ -131,9 +131,9 @@ interface IisAPI {
     suspend fun getPenalty(@Header("Cookie") cookies: String): List<PenaltyDto>
 
     // Рейтинг
-    @GET("grade-book")
+    @GET("personal-rating")
     /** Получение отметок в личном рейтинге **/
-    suspend fun getRatingOfStudent(@Header("Cookie") cookies: String): List<RatingDto>
+    suspend fun getRatingOfStudent(@Header("Cookie") cookies: String): RatingDto
 
     // Учёба | Справки | Ведомостички
     @GET("certificate")

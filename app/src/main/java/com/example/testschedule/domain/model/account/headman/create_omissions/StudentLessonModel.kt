@@ -6,5 +6,6 @@ data class StudentLessonOmissionModel(
         val lessonTypeAbbrev: String, // ЛР
         val subGroup: Int, // 0 | 1 | 2
         val lessonPeriod: HeadmanGetOmissionsModel.LessonModel.LessonPeriodModel,
-        val omission: HeadmanGetOmissionsModel.LessonModel.StudentModel.OmissionModel?
+        val omission: HeadmanGetOmissionsModel.LessonModel.StudentModel.OmissionModel?,
+        val scheduleInfo: HeadmanGetOmissionsModel.LessonModel.ScheduleInfoModel? = null
     )

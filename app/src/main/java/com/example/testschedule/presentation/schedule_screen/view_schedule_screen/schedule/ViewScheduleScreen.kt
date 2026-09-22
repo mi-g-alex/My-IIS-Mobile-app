@@ -517,17 +517,19 @@ private fun ScheduleDaySection(
     onLessonClick: (ScheduleModel.WeeksSchedule.Lesson) -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text = day.header(), fontWeight = FontWeight.Medium)
+        Text(
+            text = day.header(),
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(8.dp)
+        )
         if (day.isRestDay) {
             Text(
                 stringResource(R.string.schedule_ui_rest_day),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
             )
         } else {
             day.lessons.forEach { lesson ->

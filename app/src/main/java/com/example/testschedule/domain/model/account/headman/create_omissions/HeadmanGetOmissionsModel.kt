@@ -11,12 +11,20 @@ data class HeadmanGetOmissionsModel(
         val lessonTypeAbbrev: String, // ЛР
         val subGroup: Int, // 0 | 1 | 2
         val lessonPeriod: LessonPeriodModel,
-        val students: List<StudentModel>
+        val students: List<StudentModel>,
+        val scheduleInfo: ScheduleInfoModel? = null
     ) {
         data class LessonPeriodModel(
             val startTime: String, // 10:35
             val endTime: String, // 11:55
             val lessonPeriodHours: Int // 2
+        )
+
+        data class ScheduleInfoModel(
+            val subjectFullName: String,
+            val subjectAbbrev: String,
+            val auditories: List<String>,
+            val teacherFullNames: List<String>
         )
 
         data class StudentModel(
@@ -37,7 +45,8 @@ data class HeadmanGetOmissionsModel(
             lessonTypeAbbrev = lessonTypeAbbrev,
             subGroup = subGroup,
             lessonPeriod = lessonPeriod,
-            omission = omission
+            omission = omission,
+            scheduleInfo = scheduleInfo
         )
     }
 }

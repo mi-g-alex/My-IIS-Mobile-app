@@ -16,8 +16,8 @@ android {
         applicationId 'by.g_alex.my_iis'
         minSdk 21
         targetSdk 36
-        versionCode 301
-        versionName '0.3.1'
+        versionCode 303
+        versionName '0.3.3'
 
         vectorDrawables {
             useSupportLibrary true
@@ -82,6 +82,7 @@ dependencies {
     implementation "androidx.compose.material3:material3-window-size-class:$m3_version"
 
     implementation 'com.google.code.gson:gson:2.10.1'
+    testImplementation 'junit:junit:4.13.2'
 
     implementation "com.github.bumptech.glide:compose:1.0.0-beta01"
 

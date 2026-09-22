@@ -4,199 +4,200 @@ import com.example.testschedule.domain.model.account.rating.RatingModel
 import com.google.gson.annotations.SerializedName
 
 data class RatingDto(
-    val student: StudentDto,
-    val students: List<StudentDto>
+    @SerializedName("subjects") val subjects: List<SubjectDto> = emptyList(),
+    @SerializedName("deadlines") val deadlines: List<DeadlineGroupDto> = emptyList(),
+    @SerializedName("percentageMarks") val percentageMarks: List<PercentageMarkDto> = emptyList()
 ) {
-    data class StudentDto(
-        val fio: String, // Иванов Иван Иванович
-        val id: Int?, // 123456
-        val lessons: List<LessonDto>,
-        val subGroup: Int, // 0
-        val subGroupStudent: Int // 2
-    ) {
-        data class LessonDto(
-            val controlPoint: String, // 01.10.2023
-            val dateString: String, // 01.09.2023
-            val deadline: String?,
-            val deadlineOverdue: Boolean,
-            val deadlineTaskNumber: Int?,
-            @SerializedName("gradebookOmissions")
-            val gradeBookOmissions: Int, // 0
-            val id: Int, // 911022
-            val lessonNameAbbrev: String, // ФизК
-            val lessonTypeAbbrev: String, // ПЗ
-            val lessonTypeId: Int, // 3
-            val marks: List<MarkDto>,
-            val subGroup: Int // 0
-        ) {
-            data class MarkDto(
-                val mark: Int,
-                val taskNumber: Int?
-            )
+    data class SubjectDto(
+        @SerializedName("id") val id: Int,
+        @SerializedName("name") val name: String,
+        @SerializedName("abbrev") val abbrev: String,
+        @SerializedName("lessonTypes") val lessonTypes: List<LessonTypeDto> = emptyList()
+    )
 
-            val markValues: List<Int>
-                get() = marks.map { it.mark }
-        }
-    }
+    data class LessonTypeDto(
+        @SerializedName("id") val id: Int,
+        @SerializedName("abbrev") val abbrev: String,
+        @SerializedName("termHoursId") val termHoursId: Int,
+        @SerializedName("lessons") val lessons: List<LessonDto> = emptyList()
+    )
+
+    data class LessonDto(
+        @SerializedName("id") val id: Int,
+        @SerializedName("controlPoint") val controlPoint: String,
+        @SerializedName("dateString") val dateString: String,
+        @SerializedName("gradebookOmissions") val gradebookOmissions: Int,
+        @SerializedName("marks") val marks: List<MarkDto> = emptyList(),
+        @SerializedName("subGroup") val subGroup: Int?
+    )
+
+    data class MarkDto(
+        @SerializedName("mark") val mark: Int?,
+        @SerializedName("taskNumber") val taskNumber: Int?
+    )
+
+    data class DeadlineGroupDto(
+        @SerializedName("termHoursId") val termHoursId: Int,
+        @SerializedName("labCount") val labCount: Int?,
+        @SerializedName("deadlines") val deadlines: List<DeadlineDto> = emptyList()
+    )
+
+    data class DeadlineDto(
+        @SerializedName("lessonId") val lessonId: Int,
+        @SerializedName("taskNumber") val taskNumber: Int?
+    )
+
+    data class PercentageMarkDto(
+        @SerializedName("discipline") val discipline: String,
+        @SerializedName("date") val date: String,
+        @SerializedName("number") val number: Double?
+    )
 
     fun toModel(): RatingModel {
-        val les = this.student.lessons
+        val subjectNames = subjects.associate { it.abbrev to it.name }
+        val lessonsById = subjects
+            .flatMap { it.lessonTypes }
+            .flatMap { it.lessons }
+            .associateBy { it.id }
 
-        data class Lesson(
-            val name: String,
-            val point: String,
-            val date: String,
-            val hours: Int,
-            val marks: List<Int>,
-            val deadline: String?,
-            val deadlineOverdue: Boolean,
-            val deadlineTaskNumber: Int?
+        val deadlineInfoBySubject = subjects.mapNotNull { subject ->
+            val labLessonType = subject.lessonTypes.firstOrNull { it.id == LAB_LESSON_TYPE_ID }
+                ?: return@mapNotNull null
+            if (labLessonType.lessons.isEmpty()) return@mapNotNull null
+
+            val deadlineGroup = deadlines.firstOrNull {
+                it.termHoursId == labLessonType.termHoursId
+            }
+            if (deadlineGroup?.labCount == 0) return@mapNotNull null
+
+            val submittedLabs = labLessonType.lessons.flatMap { lesson ->
+                lesson.marks.mapNotNull { mark ->
+                    mark.taskNumber
+                        ?.takeIf { mark.mark != null }
+                        ?.let { taskNumber -> lesson.id to taskNumber }
+                }
+            }.toSet().size
+
+            val subjectDeadlines = deadlineGroup?.deadlines.orEmpty().mapNotNull { deadline ->
+                lessonsById[deadline.lessonId]?.let { lesson ->
+                    RatingModel.Point.LessonByName.DeadlineInfo.Deadline(
+                        date = lesson.dateString,
+                        taskNumber = deadline.taskNumber
+                    )
+                }
+            }
+
+            subject.abbrev to RatingModel.Point.LessonByName.DeadlineInfo(
+                totalLabs = deadlineGroup?.labCount,
+                submittedLabs = submittedLabs,
+                deadlines = subjectDeadlines
+            )
+        }.toMap()
+
+        val percentageMarksBySubject = percentageMarks.groupBy { it.discipline }.mapValues { (_, marks) ->
+            marks.mapNotNull { mark ->
+                mark.number?.let { number ->
+                    RatingModel.Point.LessonByName.PercentageMark(
+                        date = mark.date,
+                        number = number.toDisplayString()
+                    )
+                }
+            }
+        }
+
+        val pointData = mutableMapOf<
+            String,
+            MutableMap<
+                String,
+                MutableMap<
+                    String,
+                    MutableList<RatingModel.Point.LessonByName.LessonsByType.Lesson>
+                    >
+                >
+            >()
+        pointData[ALL_POINTS] = mutableMapOf()
+
+        fun addLesson(
+            point: String,
+            subject: SubjectDto,
+            lessonType: LessonTypeDto,
+            lesson: LessonDto
         ) {
-            fun toModel() = RatingModel.Point.LessonByName.LessonsByType.Lesson(
-                name = this.name,
-                point = this.point,
-                date = this.date,
-                omissions = this.hours,
-                marks = this.marks.toList(),
-                deadline = this.deadline,
-                deadlineOverdue = this.deadlineOverdue,
-                deadlineTaskNumber = this.deadlineTaskNumber
+            val lessons = pointData
+                .getOrPut(point) { mutableMapOf() }
+                .getOrPut(subject.abbrev) { mutableMapOf() }
+                .getOrPut(lessonType.abbrev) { mutableListOf() }
+
+            lessons += RatingModel.Point.LessonByName.LessonsByType.Lesson(
+                name = "",
+                point = lesson.controlPoint,
+                date = lesson.dateString,
+                omissions = lesson.gradebookOmissions,
+                marks = lesson.marks.mapNotNull { it.mark }
             )
         }
 
-        data class LessonsByType(
-            val all: MutableList<Lesson> = mutableListOf(),
-            val countOfMarks: MutableList<Int> = mutableListOf(),
-            var countOfOmissions: Int = 0
-        ) {
-            fun toModel() = RatingModel.Point.LessonByName.LessonsByType(
-                all = this.all.map { it.toModel() }.toList(),
-                countOfMarks = this.countOfMarks.toList(),
-                countOfOmissions = this.countOfOmissions
-            )
+        subjects.forEach { subject ->
+            val summaryTypes = pointData
+                .getValue(ALL_POINTS)
+                .getOrPut(subject.abbrev) { mutableMapOf() }
+
+            subject.lessonTypes.forEach { lessonType ->
+                summaryTypes.getOrPut(lessonType.abbrev) { mutableListOf() }
+
+                lessonType.lessons.forEach { lesson ->
+                    if (lesson.controlPoint.isNotBlank()) {
+                        addLesson(lesson.controlPoint, subject, lessonType, lesson)
+                    }
+                    addLesson(ALL_POINTS, subject, lessonType, lesson)
+                }
+            }
         }
 
-        data class LessonByName(
-            val types: MutableMap<String, LessonsByType> = mutableMapOf(),
-            val allTypes: MutableSet<String> = mutableSetOf(),
-            val listOfMarks: MutableList<Int> = mutableListOf(),
-            var countOfOmissions: Int = 0
-        ) {
-            fun toModel(name: String) = RatingModel.Point.LessonByName(
-                types = this.types.mapValues { it.value.toModel() },
-                allTypes = this.allTypes.toSet(),
-                listOfMarks = this.listOfMarks.toList(),
-                name = name,
-                countOfOmissions = this.countOfOmissions
-            )
-        }
+        val points = pointData.mapValues { (pointName, subjectsByName) ->
+            val subjectModels = subjectsByName.mapValues { (subjectAbbrev, lessonsByType) ->
+                val typeModels = lessonsByType.mapValues { (_, lessons) ->
+                    RatingModel.Point.LessonByName.LessonsByType(
+                        all = lessons,
+                        countOfMarks = lessons.flatMap { it.marks },
+                        countOfOmissions = lessons.sumOf { it.omissions }
+                    )
+                }
 
-        data class Point(
-            val subjects: MutableMap<String, LessonByName> = mutableMapOf(),
-            val listOfSubjects: MutableSet<String> = mutableSetOf(),
-            val listOfMarks: MutableList<Int> = mutableListOf(),
-            var countOfOmissions: Int = 0
-        ) {
-            fun toModel() = RatingModel.Point(
-                subjects = this.subjects.mapValues { it.value.toModel(it.key) },
-                listOfSubjects = this.listOfSubjects.toSet(),
-                listOfMarks = this.listOfMarks.toList(),
-                countOfOmissions = this.countOfOmissions
-            )
-        }
-
-        val points: MutableMap<String, Point> = mutableMapOf()
-        val allPoints: MutableSet<String> = mutableSetOf()
-        allPoints.add("all_points")
-        les.forEach {
-            allPoints.add(it.controlPoint)
-            if (!points.containsKey(it.controlPoint)) points[it.controlPoint] = Point()
-
-            points[it.controlPoint]?.countOfOmissions =
-                points[it.controlPoint]?.countOfOmissions!! + it.gradeBookOmissions
-            points[it.controlPoint]?.listOfMarks?.addAll(it.markValues)
-            points[it.controlPoint]?.listOfSubjects?.add(it.lessonNameAbbrev)
-
-            if (points[it.controlPoint]?.subjects?.containsKey(it.lessonNameAbbrev) != true)
-                points[it.controlPoint]?.subjects?.set(it.lessonNameAbbrev, LessonByName())
-
-            points[it.controlPoint]?.subjects?.get(it.lessonNameAbbrev)?.allTypes?.add(it.lessonTypeAbbrev)
-            points[it.controlPoint]?.subjects?.get(it.lessonNameAbbrev)?.listOfMarks?.addAll(it.markValues)
-            points[it.controlPoint]?.subjects?.get(it.lessonNameAbbrev)?.countOfOmissions =
-                points[it.controlPoint]?.subjects?.get(it.lessonNameAbbrev)?.countOfOmissions!! + it.gradeBookOmissions
-
-            if (points[it.controlPoint]?.subjects?.get(it.lessonNameAbbrev)?.types?.containsKey(it.lessonTypeAbbrev) != true)
-                points[it.controlPoint]?.subjects?.get(it.lessonNameAbbrev)?.types?.set(
-                    it.lessonTypeAbbrev,
-                    LessonsByType()
+                RatingModel.Point.LessonByName(
+                    types = typeModels,
+                    name = subjectNames[subjectAbbrev].orEmpty(),
+                    allTypes = typeModels.keys,
+                    listOfMarks = typeModels.values.flatMap { it.countOfMarks },
+                    countOfOmissions = typeModels.values.sumOf { it.countOfOmissions },
+                    deadlineInfo = deadlineInfoBySubject[subjectAbbrev]
+                        .takeIf { pointName == ALL_POINTS },
+                    percentageMarks = percentageMarksBySubject[subjectAbbrev]
+                        .orEmpty()
+                        .takeIf { pointName == ALL_POINTS }
+                        .orEmpty()
                 )
+            }
 
-            points[it.controlPoint]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.all?.add(
-                Lesson(
-                    name = it.lessonNameAbbrev,
-                    point = it.controlPoint,
-                    date = it.dateString,
-                    hours = it.gradeBookOmissions,
-                    marks = it.markValues,
-                    deadline = it.deadline,
-                    deadlineOverdue = it.deadlineOverdue,
-                    deadlineTaskNumber = it.deadlineTaskNumber
-                )
+            RatingModel.Point(
+                subjects = subjectModels,
+                listOfSubjects = subjectModels.keys,
+                listOfMarks = subjectModels.values.flatMap { it.listOfMarks },
+                countOfOmissions = subjectModels.values.sumOf { it.countOfOmissions }
             )
-
-            points[it.controlPoint]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.countOfMarks?.addAll(
-                it.markValues
-            )
-            points[it.controlPoint]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.countOfOmissions =
-                points[it.controlPoint]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.countOfOmissions!! + it.gradeBookOmissions
-
-
-
-            if (!points.containsKey("all_points")) points["all_points"] = Point()
-
-            points["all_points"]?.countOfOmissions =
-                points["all_points"]?.countOfOmissions!! + it.gradeBookOmissions
-            points["all_points"]?.listOfMarks?.addAll(it.markValues)
-            points["all_points"]?.listOfSubjects?.add(it.lessonNameAbbrev)
-
-            if (points["all_points"]?.subjects?.containsKey(it.lessonNameAbbrev) != true)
-                points["all_points"]?.subjects?.set(it.lessonNameAbbrev, LessonByName())
-
-            points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.allTypes?.add(it.lessonTypeAbbrev)
-            points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.listOfMarks?.addAll(it.markValues)
-            points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.countOfOmissions =
-                points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.countOfOmissions!! + it.gradeBookOmissions
-
-            if (points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.types?.containsKey(it.lessonTypeAbbrev) != true)
-                points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.types?.set(
-                    it.lessonTypeAbbrev,
-                    LessonsByType()
-                )
-
-            points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.all?.add(
-                Lesson(
-                    name = it.lessonNameAbbrev,
-                    point = it.controlPoint,
-                    date = it.dateString,
-                    hours = it.gradeBookOmissions,
-                    marks = it.markValues,
-                    deadline = it.deadline,
-                    deadlineOverdue = it.deadlineOverdue,
-                    deadlineTaskNumber = it.deadlineTaskNumber
-                )
-            )
-
-            points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.countOfMarks?.addAll(
-                it.markValues
-            )
-            points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.countOfOmissions =
-                points["all_points"]?.subjects?.get(it.lessonNameAbbrev)?.types?.get(it.lessonTypeAbbrev)?.countOfOmissions!! + it.gradeBookOmissions
         }
-
 
         return RatingModel(
-            points = points.mapValues { it.value.toModel() },
-            allPoints = allPoints.toSet()
+            points = points,
+            allPoints = points.keys - ALL_POINTS
         )
+    }
+
+    private fun Double.toDisplayString(): String =
+        if (this % 1.0 == 0.0) toInt().toString() else toString()
+
+    private companion object {
+        const val ALL_POINTS = "all_points"
+        const val LAB_LESSON_TYPE_ID = 4
     }
 }

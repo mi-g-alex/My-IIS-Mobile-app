@@ -17,7 +17,25 @@ data class RatingModel(
             val allTypes: Set<String>,
             val listOfMarks: List<Int>,
             val countOfOmissions: Int,
+            val deadlineInfo: DeadlineInfo? = null,
+            val percentageMarks: List<PercentageMark> = emptyList()
         ) {
+            data class DeadlineInfo(
+                val totalLabs: Int?,
+                val submittedLabs: Int,
+                val deadlines: List<Deadline>
+            ) {
+                data class Deadline(
+                    val date: String,
+                    val taskNumber: Int?
+                )
+            }
+
+            data class PercentageMark(
+                val date: String,
+                val number: String
+            )
+
             data class LessonsByType(
                 val all: List<Lesson>,
                 val countOfMarks: List<Int>,
@@ -28,10 +46,7 @@ data class RatingModel(
                     val point: String,
                     val date: String,
                     val omissions: Int,
-                    val marks: List<Int>,
-                    val deadline: String?,
-                    val deadlineOverdue: Boolean,
-                    val deadlineTaskNumber: Int?
+                    val marks: List<Int>
                 )
             }
         }

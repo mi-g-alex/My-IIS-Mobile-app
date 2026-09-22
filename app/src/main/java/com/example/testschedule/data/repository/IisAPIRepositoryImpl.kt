@@ -60,7 +60,8 @@ class IisAPIRepositoryImpl @Inject constructor(
     private data class HeadmanDataCache(
         val cookie: String,
         val studentNames: Map<Int, String>,
-        val terms: List<HeadmanTermData>
+        val terms: List<HeadmanTermData>,
+        val schedule: ScheduleModel?
     )
 
     private val headmanCacheMutex = Mutex()
@@ -151,7 +152,7 @@ class IisAPIRepositoryImpl @Inject constructor(
 
     // Рейтинг
     override suspend fun getRating(cookies: String): RatingModel =
-        api.getRatingOfStudent(cookies)[0].toModel()
+        api.getRatingOfStudent(cookies).toModel()
 
     // Учёба
 
@@ -267,7 +268,7 @@ class IisAPIRepositoryImpl @Inject constructor(
         cookies: String
     ): HeadmanGetOmissionsModel {
         val cache = getHeadmanData(cookies)
-        val lessons = cache.terms
+        val rawLessons = cache.terms
             .flatMap { term ->
                 term.data.lessonsByDate(
                     date = date,
@@ -276,7 +277,15 @@ class IisAPIRepositoryImpl @Inject constructor(
                     studentNames = cache.studentNames
                 )
             }
-            .sortedWith(compareBy({ it.nameAbbrev }, { it.lessonTypeAbbrev }, { it.subGroup }))
+        val currentWeek = cache.schedule?.let {
+            runCatching { api.getCurrentWeek() }.getOrNull()
+        }
+        val lessons = orderHeadmanLessonsBySchedule(
+            lessons = rawLessons,
+            date = date,
+            schedule = cache.schedule,
+            currentWeek = currentWeek
+        )
 
         return HeadmanGetOmissionsModel(lessons = lessons, date = date)
     }
@@ -299,6 +308,13 @@ class IisAPIRepositoryImpl @Inject constructor(
             val subjects = api.headmanGetSubjects(cookies)
             val cache = coroutineScope {
                 val students = async { api.headmanGetStudents(cookies) }
+                val schedule = async {
+                    runCatching {
+                        api.getAccountProfile(cookies).studentGroup
+                            ?.takeIf { it.isNotBlank() }
+                            ?.let { group -> scheduleFromDtoToModel(api.getGroupSchedule(group)) }
+                    }.getOrNull()
+                }
                 val terms = subjects.flatMap { (subjectName, subjectItems) ->
                     subjectItems.map { subject ->
                         async {
@@ -314,7 +330,8 @@ class IisAPIRepositoryImpl @Inject constructor(
                 HeadmanDataCache(
                     cookie = cookies,
                     studentNames = students.await().associate { it.studentId to it.fullName },
-                    terms = terms
+                    terms = terms,
+                    schedule = schedule.await()
                 )
             }
             headmanDataCache = cache

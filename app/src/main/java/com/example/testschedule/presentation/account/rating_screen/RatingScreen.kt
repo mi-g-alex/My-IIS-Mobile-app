@@ -51,6 +51,9 @@ import com.example.testschedule.domain.model.account.rating.RatingModel
 import com.example.testschedule.presentation.account.additional_elements.BasicTopBar
 import com.example.testschedule.presentation.account.additional_elements.LastUpdateListItem
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun RatingScreen(
@@ -214,7 +217,7 @@ private fun RatingSummary(average: Double?, omissions: Int) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SubjectCard(subject: RatingModel.Point.LessonByName, onClick: () -> Unit) {
-    val deadlines = subject.deadlines()
+    val deadlineInfo = subject.deadlineInfo
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -266,11 +269,8 @@ private fun SubjectCard(subject: RatingModel.Point.LessonByName, onClick: () -> 
                 }
             }
 
-            if (deadlines.isNotEmpty()) {
-                DeadlineBadge(
-                    deadlineCount = deadlines.size,
-                    hasOverdue = deadlines.any { it.lesson.deadlineOverdue }
-                )
+            if (deadlineInfo != null) {
+                DeadlineBadge(deadlineInfo)
             }
         }
     }
@@ -279,7 +279,7 @@ private fun SubjectCard(subject: RatingModel.Point.LessonByName, onClick: () -> 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SubjectDetailSheet(subject: RatingModel.Point.LessonByName) {
-    val deadlines = subject.deadlines()
+    val deadlineInfo = subject.deadlineInfo
 
     Column(
         modifier = Modifier
@@ -363,26 +363,53 @@ private fun SubjectDetailSheet(subject: RatingModel.Point.LessonByName) {
             }
         }
 
-        if (deadlines.isNotEmpty()) {
+        if (subject.percentageMarks.isNotEmpty()) {
+            HorizontalDivider()
+            TypeBadge(stringResource(R.string.account_rating_percentage_type))
+
+            subject.percentageMarks.forEach { mark ->
+                Text(
+                    text = stringResource(
+                        R.string.account_rating_percentage_mark,
+                        mark.date,
+                        mark.number
+                    ),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        if (deadlineInfo != null) {
             HorizontalDivider()
             Text(
                 text = stringResource(R.string.account_rating_deadlines_title),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            deadlines.forEach { deadline ->
+
+            Text(
+                text = deadlineInfo.progressText(),
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            if (deadlineInfo.deadlines.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.account_rating_deadlines_missing),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            deadlineInfo.deadlines
+                .sortedBy { deadlineTimestamp(it.date) }
+                .forEach { deadline ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.Top
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = deadline.lessonType,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium
-                        )
-                        deadline.lesson.deadlineTaskNumber?.let { taskNumber ->
+                        deadline.taskNumber?.let { taskNumber ->
                             Text(
                                 text = stringResource(R.string.account_rating_deadline_task, taskNumber),
                                 style = MaterialTheme.typography.bodySmall,
@@ -394,11 +421,11 @@ private fun SubjectDetailSheet(subject: RatingModel.Point.LessonByName) {
                         Text(
                             text = stringResource(
                                 R.string.account_rating_deadline_date,
-                                deadline.lesson.deadline.orEmpty()
+                                deadline.date
                             ),
                             style = MaterialTheme.typography.bodySmall
                         )
-                        if (deadline.lesson.deadlineOverdue) {
+                        if (deadline.isOverdue()) {
                             Text(
                                 text = stringResource(R.string.account_rating_deadline_overdue),
                                 style = MaterialTheme.typography.labelSmall,
@@ -413,34 +440,24 @@ private fun SubjectDetailSheet(subject: RatingModel.Point.LessonByName) {
     }
 }
 
-private data class SubjectDeadline(
-    val lessonType: String,
-    val lesson: RatingModel.Point.LessonByName.LessonsByType.Lesson
-)
-
-private fun RatingModel.Point.LessonByName.deadlines(): List<SubjectDeadline> =
-    types.toSortedMap().flatMap { (lessonType, details) ->
-        details.all.mapNotNull { lesson ->
-            lesson.deadline
-                ?.takeIf { it.isNotBlank() }
-                ?.let { SubjectDeadline(lessonType, lesson) }
-        }
-    }
-
 @Composable
-private fun DeadlineBadge(deadlineCount: Int, hasOverdue: Boolean) {
+private fun DeadlineBadge(deadlineInfo: RatingModel.Point.LessonByName.DeadlineInfo) {
+    val hasProblems = deadlineInfo.totalLabs == null ||
+        deadlineInfo.deadlines.isEmpty() ||
+        deadlineInfo.deadlines.any { it.isOverdue() }
+
     Surface(
         shape = RoundedCornerShape(4.dp),
-        color = if (hasOverdue) {
+        color = if (hasProblems) {
             MaterialTheme.colorScheme.errorContainer
         } else {
             MaterialTheme.colorScheme.tertiaryContainer
         }
     ) {
         Text(
-            text = stringResource(R.string.account_rating_deadlines_count, deadlineCount),
+            text = deadlineInfo.progressText(),
             style = MaterialTheme.typography.labelSmall,
-            color = if (hasOverdue) {
+            color = if (hasProblems) {
                 MaterialTheme.colorScheme.onErrorContainer
             } else {
                 MaterialTheme.colorScheme.onTertiaryContainer
@@ -448,6 +465,30 @@ private fun DeadlineBadge(deadlineCount: Int, hasOverdue: Boolean) {
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
         )
     }
+}
+
+@Composable
+private fun RatingModel.Point.LessonByName.DeadlineInfo.progressText(): String =
+    totalLabs?.let { total ->
+        stringResource(R.string.account_rating_deadlines_progress, submittedLabs, total)
+    } ?: stringResource(R.string.account_rating_deadlines_submitted, submittedLabs)
+
+private fun RatingModel.Point.LessonByName.DeadlineInfo.Deadline.isOverdue(): Boolean =
+    deadlineTimestamp(date) < startOfTodayTimestamp()
+
+private fun deadlineTimestamp(date: String): Long =
+    runCatching {
+        SimpleDateFormat("dd.MM.yyyy", Locale.ROOT).apply {
+            isLenient = false
+        }.parse(date)?.time
+    }.getOrNull() ?: Long.MAX_VALUE
+
+private fun startOfTodayTimestamp(): Long = Calendar.getInstance().run {
+    set(Calendar.HOUR_OF_DAY, 0)
+    set(Calendar.MINUTE, 0)
+    set(Calendar.SECOND, 0)
+    set(Calendar.MILLISECOND, 0)
+    timeInMillis
 }
 
 @Composable

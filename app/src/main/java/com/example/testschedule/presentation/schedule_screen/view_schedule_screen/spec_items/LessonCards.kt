@@ -8,16 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -29,7 +25,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -115,7 +110,12 @@ fun LessonCard(
         else -> colorResource(id = R.color.other)
     }
 
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center
@@ -133,43 +133,40 @@ fun LessonCard(
                 fontWeight = FontWeight.Bold
             )
         }
-        Spacer(Modifier.width(8.dp))
-        Surface(
-            onClick = click,
-            modifier = Modifier.weight(1f),
-            shape = MaterialTheme.shapes.small,
-            tonalElevation = 2.dp
+        Card(
+            onClick = { click() },
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp)
         ) {
-            Row(Modifier.height(IntrinsicSize.Min)) {
-                Column(
-                    Modifier
-                        .weight(1f)
-                        .padding(8.dp)
-                ) {
+            Row(
+                Modifier
+                    .fillMaxSize()
+                    .padding(8.dp)
+            ) {
+                Column(Modifier.fillMaxSize()) {
                     Row(
                         Modifier.fillMaxWidth(),
                         Arrangement.SpaceBetween,
                         Alignment.CenterVertically
                     ) {
                         Text(
-                            text = if (lesson.announcement) {
+                            text = (if (lesson.announcement) {
                                 stringResource(R.string.schedule_announcement)
                             } else {
                                 lesson.subject
+                            }) + if (lesson.lessonTypeAbbrev.isNotEmpty()) {
+                                " (${lesson.lessonTypeAbbrev})"
+                            } else {
+                                ""
                             },
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            style = MaterialTheme.typography.titleMedium
                         )
-                        if (lesson.auditories.isNotEmpty()) {
-                            Spacer(Modifier.width(6.dp))
+                        if (lesson.auditories.isNotEmpty())
                             Text(
-                                text = lesson.auditories.joinToString(", "),
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                text = lesson.auditories[0],
+                                style = MaterialTheme.typography.titleMedium
                             )
-                        }
                     }
                     Row(
                         Modifier.fillMaxWidth(),
@@ -195,20 +192,14 @@ fun LessonCard(
                         }
                         Text(
                             text = fio,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            style = MaterialTheme.typography.bodyMedium
                         )
-                        val lessonMetadata = listOfNotNull(
-                            lesson.lessonTypeAbbrev.takeIf(String::isNotBlank),
-                            lesson.numSubgroup.takeIf { it != 0 }?.let {
-                                stringResource(R.string.schedule_subgroup_text, it)
-                            }
-                        ).joinToString(" · ")
-                        if (lessonMetadata.isNotEmpty()) {
+                        if (lesson.numSubgroup != 0) {
                             Text(
-                                text = lessonMetadata,
+                                text = stringResource(
+                                    id = R.string.schedule_subgroup_text,
+                                    lesson.numSubgroup
+                                ),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -218,17 +209,16 @@ fun LessonCard(
                             text = lesson.note,
                             modifier = Modifier.fillMaxWidth(),
                             style = MaterialTheme.typography.bodySmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            maxLines = 1
                         )
                 }
-                Box(
-                    Modifier
-                        .width(5.dp)
-                        .fillMaxHeight()
-                        .background(color)
-                )
             }
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(5.dp)
+                    .background(color)
+            )
         }
     }
 }
@@ -450,12 +440,17 @@ fun MoreDetailCard(
                 )
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     lesson.employees.sortedBy { it.lastName }.forEach { employee ->
+                        val fullName = listOf(
+                            employee.lastName,
+                            employee.firstName,
+                            employee.middleName.orEmpty()
+                        ).filter { it.isNotBlank() }.joinToString(" ")
                         AssistChip(
                             onClick = {
-                                selectScheduleClicked(employee.urlId, employee.getFio())
+                                selectScheduleClicked(employee.urlId, fullName)
                                 onDismissRequest()
                             },
-                            label = { Text(employee.getFio()) }
+                            label = { Text(fullName) }
                         )
                     }
                 }

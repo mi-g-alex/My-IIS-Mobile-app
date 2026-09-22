@@ -79,6 +79,7 @@ private fun StudentCard(
     checkCheck: (lessonId: Int, userId: Int) -> ToggleableState
 ) {
     var isOpen by remember { mutableStateOf(false) }
+    var selectedScheduleLesson by remember { mutableStateOf<StudentLessonOmissionModel?>(null) }
     val availableLessons = list.count { it.omission == null }
     val selectedLessons = hours.count { it.value.containsKey(id) }
     val state = when {
@@ -160,7 +161,11 @@ private fun StudentCard(
                                     lesson.nameAbbrev,
                                     lesson.lessonTypeAbbrev
                                 ),
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.clickable {
+                                    selectedScheduleLesson = lesson
+                                }
                             )
                         },
                         supportingContent = {
@@ -207,5 +212,16 @@ private fun StudentCard(
                 }
             }
         }
+    }
+
+    selectedScheduleLesson?.let { lesson ->
+        LessonScheduleInfoSheet(
+            nameAbbrev = lesson.nameAbbrev,
+            lessonTypeAbbrev = lesson.lessonTypeAbbrev,
+            subGroup = lesson.subGroup,
+            lessonPeriod = lesson.lessonPeriod,
+            scheduleInfo = lesson.scheduleInfo,
+            onDismiss = { selectedScheduleLesson = null }
+        )
     }
 }

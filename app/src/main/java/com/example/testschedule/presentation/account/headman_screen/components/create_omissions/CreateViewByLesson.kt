@@ -61,6 +61,7 @@ private fun LessonCard(
     checkCheck: (lessonId: Int, userId: Int) -> ToggleableState
 ) {
     var isOpen by remember { mutableStateOf(false) }
+    var showScheduleInfo by remember { mutableStateOf(false) }
     val selectedStudents = hours[lesson.id]?.size ?: 0
     val selectedHours = hours[lesson.id]?.values?.sum() ?: 0
     val subgroups = stringArrayResource(id = R.array.subgroups)
@@ -87,7 +88,9 @@ private fun LessonCard(
                         lesson.lessonTypeAbbrev
                     ),
                     style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable { showScheduleInfo = true }
                 )
                 Text(
                     text = if (lesson.lessonPeriod.startTime.isBlank()) {
@@ -179,5 +182,16 @@ private fun LessonCard(
                 }
             }
         }
+    }
+
+    if (showScheduleInfo) {
+        LessonScheduleInfoSheet(
+            nameAbbrev = lesson.nameAbbrev,
+            lessonTypeAbbrev = lesson.lessonTypeAbbrev,
+            subGroup = lesson.subGroup,
+            lessonPeriod = lesson.lessonPeriod,
+            scheduleInfo = lesson.scheduleInfo,
+            onDismiss = { showScheduleInfo = false }
+        )
     }
 }
