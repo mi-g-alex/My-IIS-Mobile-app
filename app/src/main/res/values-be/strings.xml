@@ -107,7 +107,7 @@
     <string name="account_rating_all_point">Все</string>
     <string name="account_rating_average_mark">Средний балл: %s</string>
     <string name="account_rating_dialog_marks">\nОтметки</string>
-    <string name="account_rating_dialog_omissions">\nПропуски</string>
+    <string name="account_rating_dialog_omissions">\nНяўважлівыя пропускі</string>
     <string name="account_rating_deadline_date">Тэрмін: %s</string>
     <string name="account_rating_deadline_overdue">Пратэрмінавана</string>
     <string name="account_rating_deadline_task">Заданне %d</string>
@@ -116,7 +116,7 @@
     <string name="account_rating_deadlines_submitted">Здадзена ЛР: %d</string>
     <string name="account_rating_deadlines_title">Дэдлайны</string>
     <string name="account_rating_main_info">%s шт. | %sч</string>
-    <string name="account_rating_omissions">Пропущено часов: %d</string>
+    <string name="account_rating_omissions">Няўважлівых пропускаў: %d г</string>
     <string name="account_rating_omissions_detailed">%s - %dч</string>
     <string name="account_rating_other_point">Другие</string>
     <string name="account_rating_percentage_mark">%1$s — %2$s%%</string>

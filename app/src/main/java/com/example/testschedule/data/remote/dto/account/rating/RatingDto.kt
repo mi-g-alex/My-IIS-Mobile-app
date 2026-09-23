@@ -53,12 +53,40 @@ data class RatingDto(
         @SerializedName("number") val number: Double?
     )
 
-    fun toModel(): RatingModel {
+    fun toModel(disrespectfulOmissions: List<DisrespectfulOmissionDto>): RatingModel {
         val subjectNames = subjects.associate { it.abbrev to it.name }
         val lessonsById = subjects
             .flatMap { it.lessonTypes }
             .flatMap { it.lessons }
             .associateBy { it.id }
+        val disrespectfulHoursByKey = disrespectfulOmissions
+            .groupingBy { omission ->
+                OmissionKey(
+                    subjectId = omission.subject.id,
+                    lessonType = omission.lessonTypeAbbrev,
+                    date = omission.date.normalizedDate()
+                )
+            }
+            .fold(0) { hours, omission -> hours + omission.hours }
+        val disrespectfulHoursByLessonId = buildMap {
+            subjects.forEach { subject ->
+                subject.lessonTypes.forEach { lessonType ->
+                    lessonType.lessons
+                        .groupBy { lesson -> lesson.dateString.normalizedDate() }
+                        .forEach { (date, lessonsOnDate) ->
+                            val hours = disrespectfulHoursByKey[
+                                OmissionKey(subject.id, lessonType.abbrev, date)
+                            ] ?: 0
+                            if (hours > 0) {
+                                val targetLesson = lessonsOnDate.firstOrNull {
+                                    it.gradebookOmissions > 0
+                                } ?: lessonsOnDate.first()
+                                put(targetLesson.id, hours)
+                            }
+                        }
+                }
+            }
+        }
 
         val deadlineInfoBySubject = subjects.mapNotNull { subject ->
             val labLessonType = subject.lessonTypes.firstOrNull { it.id == LAB_LESSON_TYPE_ID }
@@ -132,7 +160,7 @@ data class RatingDto(
                 name = "",
                 point = lesson.controlPoint,
                 date = lesson.dateString,
-                omissions = lesson.gradebookOmissions,
+                omissions = disrespectfulHoursByLessonId[lesson.id] ?: 0,
                 marks = lesson.marks.mapNotNull { it.mark }
             )
         }
@@ -195,6 +223,21 @@ data class RatingDto(
 
     private fun Double.toDisplayString(): String =
         if (this % 1.0 == 0.0) toInt().toString() else toString()
+
+    private fun String.normalizedDate(): String {
+        val parts = split('.')
+        return if (parts.size == 3) {
+            "${parts[2]}-${parts[1]}-${parts[0]}"
+        } else {
+            this
+        }
+    }
+
+    private data class OmissionKey(
+        val subjectId: Int,
+        val lessonType: String,
+        val date: String
+    )
 
     private companion object {
         const val ALL_POINTS = "all_points"

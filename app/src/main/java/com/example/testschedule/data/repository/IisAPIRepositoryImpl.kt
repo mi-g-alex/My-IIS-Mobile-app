@@ -151,8 +151,16 @@ class IisAPIRepositoryImpl @Inject constructor(
         api.getPenalty(cookies).map { it.toModel() }
 
     // Рейтинг
-    override suspend fun getRating(cookies: String): RatingModel =
-        api.getRatingOfStudent(cookies).toModel()
+    override suspend fun getRating(cookies: String): RatingModel {
+        val rating = api.getRatingOfStudent(cookies)
+        val disrespectfulOmissions = runCatching {
+            api.getDisrespectfulOmissions(cookies)
+        }.getOrElse { error ->
+            Log.w("IisAPIRepository", "Failed to load disrespectful omissions", error)
+            emptyList()
+        }
+        return rating.toModel(disrespectfulOmissions)
+    }
 
     // Учёба
 

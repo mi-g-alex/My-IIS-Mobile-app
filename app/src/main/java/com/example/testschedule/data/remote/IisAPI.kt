@@ -13,6 +13,7 @@ import com.example.testschedule.data.remote.dto.account.notifications.ReadNotifi
 import com.example.testschedule.data.remote.dto.account.omissions.OmissionsDto
 import com.example.testschedule.data.remote.dto.account.penalty.PenaltyDto
 import com.example.testschedule.data.remote.dto.account.profile.AccountProfileDto
+import com.example.testschedule.data.remote.dto.account.rating.DisrespectfulOmissionDto
 import com.example.testschedule.data.remote.dto.account.rating.RatingDto
 import com.example.testschedule.data.remote.dto.account.settings.email.ContactsDto
 import com.example.testschedule.data.remote.dto.account.settings.email.ContactsUpdateRequestDto
@@ -134,6 +135,12 @@ interface IisAPI {
     @GET("personal-rating")
     /** Получение отметок в личном рейтинге **/
     suspend fun getRatingOfStudent(@Header("Cookie") cookies: String): RatingDto
+
+    @GET("disrespectful-omissions-by-student")
+    /** Получение списка неуважительных пропусков **/
+    suspend fun getDisrespectfulOmissions(
+        @Header("Cookie") cookies: String
+    ): List<DisrespectfulOmissionDto>
 
     // Учёба | Справки | Ведомостички
     @GET("certificate")
